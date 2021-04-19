@@ -15,6 +15,7 @@ namespace CollegeManagement.Models
         public string? Code { get; set; }
         [MaxLength(1000, ErrorMessage = "Info number max length is 1000")]
         public string? Info { get; set; }
+        [MaxLength(500, ErrorMessage = "Info number max length is 1000")]
         public string? ImageUrl { get; set; }
         [ForeignKey("Teacher")]
         public int? DeanID { get; set; }
