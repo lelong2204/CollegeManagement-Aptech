@@ -14,5 +14,7 @@ namespace CollegeManagement.Models
         [MaxLength(2000, ErrorMessage = "Department infomation max length is 255")]
         public string? Info { get; set; }
         public ICollection<Faculty> Faculties { get; set; }
+        [ForeignKey("Faculty")]
+        public int? DeanID { get; set; }
     }
 }
