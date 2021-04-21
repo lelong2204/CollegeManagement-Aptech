@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CollegeManagement.Models
 {
-    public class Facilities : BaseModel
+    public class Facility : BaseModel
     {
         [Required(ErrorMessage = "Facilities name is required")]
         [MaxLength(255, ErrorMessage = "Facilities name max length is 255")]

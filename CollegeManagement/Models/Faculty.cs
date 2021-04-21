@@ -19,7 +19,7 @@ namespace CollegeManagement.Models
         [MaxLength(500)]
         public string? ImageUrl { get; set; }
         public DateTime? DOB { get; set; }
-        [MaxLength(500, ErrorMessage = "Address max length is 255"))]
+        [MaxLength(500, ErrorMessage = "Address max length is 255")]
         public string? Address { get; set; }
         [MaxLength(11, ErrorMessage = "Phone number max length is 11")]
         [Phone(ErrorMessage = "Phone number is wrong format")]
