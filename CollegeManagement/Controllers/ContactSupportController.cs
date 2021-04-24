@@ -10,22 +10,22 @@ using CollegeManagement.Models;
 
 namespace CollegeManagement.Controllers
 {
-    public class HomeController : Controller
+    public class ContactSupportController : Controller
     {
         private readonly DataContext _context;
 
-        public HomeController(DataContext context)
+        public ContactSupportController(DataContext context)
         {
             _context = context;
         }
 
-        // GET: Home
+        // GET: ContactSupport
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Homes.ToListAsync());
+            return View(await _context.ContactSupports.ToListAsync());
         }
 
-        // GET: Home/Details/5
+        // GET: ContactSupport/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,39 +33,39 @@ namespace CollegeManagement.Controllers
                 return NotFound();
             }
 
-            var home = await _context.Homes
+            var contactSupport = await _context.ContactSupports
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (home == null)
+            if (contactSupport == null)
             {
                 return NotFound();
             }
 
-            return View(home);
+            return View(contactSupport);
         }
 
-        // GET: Home/Create
+        // GET: ContactSupport/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Home/Create
+        // POST: ContactSupport/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Title,Description,Type,ExpiredDate,ID,Deleted,CreatedAt,UpdatedAt")] Home home)
+        public async Task<IActionResult> Create([Bind("FirstName,LastName,Email,PhoneNumber,Infomation,ID,Deleted,CreatedAt,UpdatedAt")] ContactSupport contactSupport)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(home);
+                _context.Add(contactSupport);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(home);
+            return View(contactSupport);
         }
 
-        // GET: Home/Edit/5
+        // GET: ContactSupport/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -73,22 +73,22 @@ namespace CollegeManagement.Controllers
                 return NotFound();
             }
 
-            var home = await _context.Homes.FindAsync(id);
-            if (home == null)
+            var contactSupport = await _context.ContactSupports.FindAsync(id);
+            if (contactSupport == null)
             {
                 return NotFound();
             }
-            return View(home);
+            return View(contactSupport);
         }
 
-        // POST: Home/Edit/5
+        // POST: ContactSupport/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int? id, [Bind("Title,Description,Type,ExpiredDate,ID,Deleted,CreatedAt,UpdatedAt")] Home home)
+        public async Task<IActionResult> Edit(int? id, [Bind("FirstName,LastName,Email,PhoneNumber,Infomation,ID,Deleted,CreatedAt,UpdatedAt")] ContactSupport contactSupport)
         {
-            if (id != home.ID)
+            if (id != contactSupport.ID)
             {
                 return NotFound();
             }
@@ -97,12 +97,12 @@ namespace CollegeManagement.Controllers
             {
                 try
                 {
-                    _context.Update(home);
+                    _context.Update(contactSupport);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!HomeExists(home.ID))
+                    if (!ContactSupportExists(contactSupport.ID))
                     {
                         return NotFound();
                     }
@@ -113,10 +113,10 @@ namespace CollegeManagement.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(home);
+            return View(contactSupport);
         }
 
-        // GET: Home/Delete/5
+        // GET: ContactSupport/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -124,30 +124,30 @@ namespace CollegeManagement.Controllers
                 return NotFound();
             }
 
-            var home = await _context.Homes
+            var contactSupport = await _context.ContactSupports
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (home == null)
+            if (contactSupport == null)
             {
                 return NotFound();
             }
 
-            return View(home);
+            return View(contactSupport);
         }
 
-        // POST: Home/Delete/5
+        // POST: ContactSupport/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int? id)
         {
-            var home = await _context.Homes.FindAsync(id);
-            _context.Homes.Remove(home);
+            var contactSupport = await _context.ContactSupports.FindAsync(id);
+            _context.ContactSupports.Remove(contactSupport);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool HomeExists(int? id)
+        private bool ContactSupportExists(int? id)
         {
-            return _context.Homes.Any(e => e.ID == id);
+            return _context.ContactSupports.Any(e => e.ID == id);
         }
     }
 }

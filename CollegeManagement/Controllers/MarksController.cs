@@ -10,22 +10,22 @@ using CollegeManagement.Models;
 
 namespace CollegeManagement.Controllers
 {
-    public class HomeController : Controller
+    public class MarksController : Controller
     {
         private readonly DataContext _context;
 
-        public HomeController(DataContext context)
+        public MarksController(DataContext context)
         {
             _context = context;
         }
 
-        // GET: Home
+        // GET: Marks
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Homes.ToListAsync());
+            return View(await _context.Markss.ToListAsync());
         }
 
-        // GET: Home/Details/5
+        // GET: Marks/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,39 +33,39 @@ namespace CollegeManagement.Controllers
                 return NotFound();
             }
 
-            var home = await _context.Homes
+            var marks = await _context.Markss
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (home == null)
+            if (marks == null)
             {
                 return NotFound();
             }
 
-            return View(home);
+            return View(marks);
         }
 
-        // GET: Home/Create
+        // GET: Marks/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Home/Create
+        // POST: Marks/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Title,Description,Type,ExpiredDate,ID,Deleted,CreatedAt,UpdatedAt")] Home home)
+        public async Task<IActionResult> Create([Bind("SubjectID,StudentID,Score,Status,ID,Deleted,CreatedAt,UpdatedAt")] Marks marks)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(home);
+                _context.Add(marks);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(home);
+            return View(marks);
         }
 
-        // GET: Home/Edit/5
+        // GET: Marks/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -73,22 +73,22 @@ namespace CollegeManagement.Controllers
                 return NotFound();
             }
 
-            var home = await _context.Homes.FindAsync(id);
-            if (home == null)
+            var marks = await _context.Markss.FindAsync(id);
+            if (marks == null)
             {
                 return NotFound();
             }
-            return View(home);
+            return View(marks);
         }
 
-        // POST: Home/Edit/5
+        // POST: Marks/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int? id, [Bind("Title,Description,Type,ExpiredDate,ID,Deleted,CreatedAt,UpdatedAt")] Home home)
+        public async Task<IActionResult> Edit(int? id, [Bind("SubjectID,StudentID,Score,Status,ID,Deleted,CreatedAt,UpdatedAt")] Marks marks)
         {
-            if (id != home.ID)
+            if (id != marks.ID)
             {
                 return NotFound();
             }
@@ -97,12 +97,12 @@ namespace CollegeManagement.Controllers
             {
                 try
                 {
-                    _context.Update(home);
+                    _context.Update(marks);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!HomeExists(home.ID))
+                    if (!MarksExists(marks.ID))
                     {
                         return NotFound();
                     }
@@ -113,10 +113,10 @@ namespace CollegeManagement.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(home);
+            return View(marks);
         }
 
-        // GET: Home/Delete/5
+        // GET: Marks/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -124,30 +124,30 @@ namespace CollegeManagement.Controllers
                 return NotFound();
             }
 
-            var home = await _context.Homes
+            var marks = await _context.Markss
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (home == null)
+            if (marks == null)
             {
                 return NotFound();
             }
 
-            return View(home);
+            return View(marks);
         }
 
-        // POST: Home/Delete/5
+        // POST: Marks/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int? id)
         {
-            var home = await _context.Homes.FindAsync(id);
-            _context.Homes.Remove(home);
+            var marks = await _context.Markss.FindAsync(id);
+            _context.Markss.Remove(marks);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool HomeExists(int? id)
+        private bool MarksExists(int? id)
         {
-            return _context.Homes.Any(e => e.ID == id);
+            return _context.Markss.Any(e => e.ID == id);
         }
     }
 }

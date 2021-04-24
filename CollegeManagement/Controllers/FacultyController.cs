@@ -8,24 +8,24 @@ using Microsoft.EntityFrameworkCore;
 using CollegeManagement.Helper;
 using CollegeManagement.Models;
 
-namespace CollegeManagement.Views
+namespace CollegeManagement.Controllers
 {
-    public class ContactSupportController : Controller
+    public class FacultyController : Controller
     {
         private readonly DataContext _context;
 
-        public ContactSupportController(DataContext context)
+        public FacultyController(DataContext context)
         {
             _context = context;
         }
 
-        // GET: ContactSupport
+        // GET: Faculty
         public async Task<IActionResult> Index()
         {
-            return View(await _context.ContactSupports.ToListAsync());
+            return View(await _context.Faculties.ToListAsync());
         }
 
-        // GET: ContactSupport/Details/5
+        // GET: Faculty/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,39 +33,39 @@ namespace CollegeManagement.Views
                 return NotFound();
             }
 
-            var contactSupport = await _context.ContactSupports
+            var faculty = await _context.Faculties
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (contactSupport == null)
+            if (faculty == null)
             {
                 return NotFound();
             }
 
-            return View(contactSupport);
+            return View(faculty);
         }
 
-        // GET: ContactSupport/Create
+        // GET: Faculty/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: ContactSupport/Create
+        // POST: Faculty/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("FirstName,LastName,Email,PhoneNumber,Infomation,ID,Deleted,CreatedAt,UpdatedAt")] ContactSupport contactSupport)
+        public async Task<IActionResult> Create([Bind("Name,Info,Code,Gender,ImageUrl,DOB,Address,PhoneNumber,Email,ExperienceYear,ID,Deleted,CreatedAt,UpdatedAt")] Faculty faculty)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(contactSupport);
+                _context.Add(faculty);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(contactSupport);
+            return View(faculty);
         }
 
-        // GET: ContactSupport/Edit/5
+        // GET: Faculty/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -73,22 +73,22 @@ namespace CollegeManagement.Views
                 return NotFound();
             }
 
-            var contactSupport = await _context.ContactSupports.FindAsync(id);
-            if (contactSupport == null)
+            var faculty = await _context.Faculties.FindAsync(id);
+            if (faculty == null)
             {
                 return NotFound();
             }
-            return View(contactSupport);
+            return View(faculty);
         }
 
-        // POST: ContactSupport/Edit/5
+        // POST: Faculty/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int? id, [Bind("FirstName,LastName,Email,PhoneNumber,Infomation,ID,Deleted,CreatedAt,UpdatedAt")] ContactSupport contactSupport)
+        public async Task<IActionResult> Edit(int? id, [Bind("Name,Info,Code,Gender,ImageUrl,DOB,Address,PhoneNumber,Email,ExperienceYear,ID,Deleted,CreatedAt,UpdatedAt")] Faculty faculty)
         {
-            if (id != contactSupport.ID)
+            if (id != faculty.ID)
             {
                 return NotFound();
             }
@@ -97,12 +97,12 @@ namespace CollegeManagement.Views
             {
                 try
                 {
-                    _context.Update(contactSupport);
+                    _context.Update(faculty);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ContactSupportExists(contactSupport.ID))
+                    if (!FacultyExists(faculty.ID))
                     {
                         return NotFound();
                     }
@@ -113,10 +113,10 @@ namespace CollegeManagement.Views
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(contactSupport);
+            return View(faculty);
         }
 
-        // GET: ContactSupport/Delete/5
+        // GET: Faculty/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -124,30 +124,30 @@ namespace CollegeManagement.Views
                 return NotFound();
             }
 
-            var contactSupport = await _context.ContactSupports
+            var faculty = await _context.Faculties
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (contactSupport == null)
+            if (faculty == null)
             {
                 return NotFound();
             }
 
-            return View(contactSupport);
+            return View(faculty);
         }
 
-        // POST: ContactSupport/Delete/5
+        // POST: Faculty/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int? id)
         {
-            var contactSupport = await _context.ContactSupports.FindAsync(id);
-            _context.ContactSupports.Remove(contactSupport);
+            var faculty = await _context.Faculties.FindAsync(id);
+            _context.Faculties.Remove(faculty);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ContactSupportExists(int? id)
+        private bool FacultyExists(int? id)
         {
-            return _context.ContactSupports.Any(e => e.ID == id);
+            return _context.Faculties.Any(e => e.ID == id);
         }
     }
 }
