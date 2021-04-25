@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,24 +8,24 @@ using Microsoft.EntityFrameworkCore;
 using CollegeManagement.Helper;
 using CollegeManagement.Models;
 
-namespace CollegeManagement.Controllers
+namespace CollegeManagement.Areas.Admin.Controllers
 {
-    public class MarksController : Controller
+    public class CourseController : BaseController
     {
         private readonly DataContext _context;
 
-        public MarksController(DataContext context)
+        public CourseController(DataContext context)
         {
             _context = context;
         }
 
-        // GET: Marks
+        // GET: Courses
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Markss.ToListAsync());
+            return View(await _context.Courses.ToListAsync());
         }
 
-        // GET: Marks/Details/5
+        // GET: Courses/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,39 +33,39 @@ namespace CollegeManagement.Controllers
                 return NotFound();
             }
 
-            var marks = await _context.Markss
+            var course = await _context.Courses
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (marks == null)
+            if (course == null)
             {
                 return NotFound();
             }
 
-            return View(marks);
+            return View(course);
         }
 
-        // GET: Marks/Create
+        // GET: Courses/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Marks/Create
+        // POST: Courses/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("SubjectID,StudentID,Score,Status,ID,Deleted,CreatedAt,UpdatedAt")] Marks marks)
+        public async Task<IActionResult> Create([Bind("Name,Duration,Info,SemesterNumber,MaxStudentPerCourse,Evaluate,Price,favourite,DepartmentID,ID,Deleted,CreatedAt,UpdatedAt")] Course course)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(marks);
+                _context.Add(course);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(marks);
+            return View(course);
         }
 
-        // GET: Marks/Edit/5
+        // GET: Courses/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -73,22 +73,22 @@ namespace CollegeManagement.Controllers
                 return NotFound();
             }
 
-            var marks = await _context.Markss.FindAsync(id);
-            if (marks == null)
+            var course = await _context.Courses.FindAsync(id);
+            if (course == null)
             {
                 return NotFound();
             }
-            return View(marks);
+            return View(course);
         }
 
-        // POST: Marks/Edit/5
+        // POST: Courses/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int? id, [Bind("SubjectID,StudentID,Score,Status,ID,Deleted,CreatedAt,UpdatedAt")] Marks marks)
+        public async Task<IActionResult> Edit(int? id, [Bind("Name,Duration,Info,SemesterNumber,MaxStudentPerCourse,Evaluate,Price,favourite,DepartmentID,ID,Deleted,CreatedAt,UpdatedAt")] Course course)
         {
-            if (id != marks.ID)
+            if (id != course.ID)
             {
                 return NotFound();
             }
@@ -97,12 +97,12 @@ namespace CollegeManagement.Controllers
             {
                 try
                 {
-                    _context.Update(marks);
+                    _context.Update(course);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!MarksExists(marks.ID))
+                    if (!CourseExists(course.ID))
                     {
                         return NotFound();
                     }
@@ -113,10 +113,10 @@ namespace CollegeManagement.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(marks);
+            return View(course);
         }
 
-        // GET: Marks/Delete/5
+        // GET: Courses/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -124,30 +124,30 @@ namespace CollegeManagement.Controllers
                 return NotFound();
             }
 
-            var marks = await _context.Markss
+            var course = await _context.Courses
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (marks == null)
+            if (course == null)
             {
                 return NotFound();
             }
 
-            return View(marks);
+            return View(course);
         }
 
-        // POST: Marks/Delete/5
+        // POST: Courses/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int? id)
         {
-            var marks = await _context.Markss.FindAsync(id);
-            _context.Markss.Remove(marks);
+            var course = await _context.Courses.FindAsync(id);
+            _context.Courses.Remove(course);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool MarksExists(int? id)
+        private bool CourseExists(int? id)
         {
-            return _context.Markss.Any(e => e.ID == id);
+            return _context.Courses.Any(e => e.ID == id);
         }
     }
 }

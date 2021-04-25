@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,24 +8,24 @@ using Microsoft.EntityFrameworkCore;
 using CollegeManagement.Helper;
 using CollegeManagement.Models;
 
-namespace CollegeManagement.Controllers
+namespace CollegeManagement.Areas.Admin.Controllers
 {
-    public class FacultiesController : Controller
+    public class ContactSupportController : BaseController
     {
         private readonly DataContext _context;
 
-        public FacultiesController(DataContext context)
+        public ContactSupportController(DataContext context)
         {
             _context = context;
         }
 
-        // GET: Faculties
+        // GET: ContactSupport
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Faculties.ToListAsync());
+            return View(await _context.ContactSupports.ToListAsync());
         }
 
-        // GET: Faculties/Details/5
+        // GET: ContactSupport/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,39 +33,39 @@ namespace CollegeManagement.Controllers
                 return NotFound();
             }
 
-            var faculty = await _context.Faculties
+            var contactSupport = await _context.ContactSupports
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (faculty == null)
+            if (contactSupport == null)
             {
                 return NotFound();
             }
 
-            return View(faculty);
+            return View(contactSupport);
         }
 
-        // GET: Faculties/Create
+        // GET: ContactSupport/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Faculties/Create
+        // POST: ContactSupport/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Info,Code,Gender,ImageUrl,DOB,Address,PhoneNumber,Email,ExperienceYear,ID,Deleted,CreatedAt,UpdatedAt")] Faculty faculty)
+        public async Task<IActionResult> Create([Bind("FirstName,LastName,Email,PhoneNumber,Infomation,ID,Deleted,CreatedAt,UpdatedAt")] ContactSupport contactSupport)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(faculty);
+                _context.Add(contactSupport);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(faculty);
+            return View(contactSupport);
         }
 
-        // GET: Faculties/Edit/5
+        // GET: ContactSupport/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -73,22 +73,22 @@ namespace CollegeManagement.Controllers
                 return NotFound();
             }
 
-            var faculty = await _context.Faculties.FindAsync(id);
-            if (faculty == null)
+            var contactSupport = await _context.ContactSupports.FindAsync(id);
+            if (contactSupport == null)
             {
                 return NotFound();
             }
-            return View(faculty);
+            return View(contactSupport);
         }
 
-        // POST: Faculties/Edit/5
+        // POST: ContactSupport/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int? id, [Bind("Name,Info,Code,Gender,ImageUrl,DOB,Address,PhoneNumber,Email,ExperienceYear,ID,Deleted,CreatedAt,UpdatedAt")] Faculty faculty)
+        public async Task<IActionResult> Edit(int? id, [Bind("FirstName,LastName,Email,PhoneNumber,Infomation,ID,Deleted,CreatedAt,UpdatedAt")] ContactSupport contactSupport)
         {
-            if (id != faculty.ID)
+            if (id != contactSupport.ID)
             {
                 return NotFound();
             }
@@ -97,12 +97,12 @@ namespace CollegeManagement.Controllers
             {
                 try
                 {
-                    _context.Update(faculty);
+                    _context.Update(contactSupport);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!FacultyExists(faculty.ID))
+                    if (!ContactSupportExists(contactSupport.ID))
                     {
                         return NotFound();
                     }
@@ -113,10 +113,10 @@ namespace CollegeManagement.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(faculty);
+            return View(contactSupport);
         }
 
-        // GET: Faculties/Delete/5
+        // GET: ContactSupport/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -124,30 +124,30 @@ namespace CollegeManagement.Controllers
                 return NotFound();
             }
 
-            var faculty = await _context.Faculties
+            var contactSupport = await _context.ContactSupports
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (faculty == null)
+            if (contactSupport == null)
             {
                 return NotFound();
             }
 
-            return View(faculty);
+            return View(contactSupport);
         }
 
-        // POST: Faculties/Delete/5
+        // POST: ContactSupport/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int? id)
         {
-            var faculty = await _context.Faculties.FindAsync(id);
-            _context.Faculties.Remove(faculty);
+            var contactSupport = await _context.ContactSupports.FindAsync(id);
+            _context.ContactSupports.Remove(contactSupport);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool FacultyExists(int? id)
+        private bool ContactSupportExists(int? id)
         {
-            return _context.Faculties.Any(e => e.ID == id);
+            return _context.ContactSupports.Any(e => e.ID == id);
         }
     }
 }

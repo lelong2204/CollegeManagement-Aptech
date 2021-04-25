@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,24 +8,24 @@ using Microsoft.EntityFrameworkCore;
 using CollegeManagement.Helper;
 using CollegeManagement.Models;
 
-namespace CollegeManagement.Controllers
+namespace CollegeManagement.Areas.Admin.Controllers
 {
-    public class FacilityController : Controller
+    public class FacultiesController : BaseController
     {
         private readonly DataContext _context;
 
-        public FacilityController(DataContext context)
+        public FacultiesController(DataContext context)
         {
             _context = context;
         }
 
-        // GET: Facility
+        // GET: Faculties
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Facilities.ToListAsync());
+            return View(await _context.Faculties.ToListAsync());
         }
 
-        // GET: Facility/Details/5
+        // GET: Faculties/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,39 +33,39 @@ namespace CollegeManagement.Controllers
                 return NotFound();
             }
 
-            var facility = await _context.Facilities
+            var faculty = await _context.Faculties
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (facility == null)
+            if (faculty == null)
             {
                 return NotFound();
             }
 
-            return View(facility);
+            return View(faculty);
         }
 
-        // GET: Facility/Create
+        // GET: Faculties/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Facility/Create
+        // POST: Faculties/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Qty,Info,ID,Deleted,CreatedAt,UpdatedAt")] Facility facility)
+        public async Task<IActionResult> Create([Bind("Name,Info,Code,Gender,ImageUrl,DOB,Address,PhoneNumber,Email,ExperienceYear,ID,Deleted,CreatedAt,UpdatedAt")] Faculty faculty)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(facility);
+                _context.Add(faculty);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(facility);
+            return View(faculty);
         }
 
-        // GET: Facility/Edit/5
+        // GET: Faculties/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -73,22 +73,22 @@ namespace CollegeManagement.Controllers
                 return NotFound();
             }
 
-            var facility = await _context.Facilities.FindAsync(id);
-            if (facility == null)
+            var faculty = await _context.Faculties.FindAsync(id);
+            if (faculty == null)
             {
                 return NotFound();
             }
-            return View(facility);
+            return View(faculty);
         }
 
-        // POST: Facility/Edit/5
+        // POST: Faculties/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int? id, [Bind("Name,Qty,Info,ID,Deleted,CreatedAt,UpdatedAt")] Facility facility)
+        public async Task<IActionResult> Edit(int? id, [Bind("Name,Info,Code,Gender,ImageUrl,DOB,Address,PhoneNumber,Email,ExperienceYear,ID,Deleted,CreatedAt,UpdatedAt")] Faculty faculty)
         {
-            if (id != facility.ID)
+            if (id != faculty.ID)
             {
                 return NotFound();
             }
@@ -97,12 +97,12 @@ namespace CollegeManagement.Controllers
             {
                 try
                 {
-                    _context.Update(facility);
+                    _context.Update(faculty);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!FacilityExists(facility.ID))
+                    if (!FacultyExists(faculty.ID))
                     {
                         return NotFound();
                     }
@@ -113,10 +113,10 @@ namespace CollegeManagement.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(facility);
+            return View(faculty);
         }
 
-        // GET: Facility/Delete/5
+        // GET: Faculties/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -124,30 +124,30 @@ namespace CollegeManagement.Controllers
                 return NotFound();
             }
 
-            var facility = await _context.Facilities
+            var faculty = await _context.Faculties
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (facility == null)
+            if (faculty == null)
             {
                 return NotFound();
             }
 
-            return View(facility);
+            return View(faculty);
         }
 
-        // POST: Facility/Delete/5
+        // POST: Faculties/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int? id)
         {
-            var facility = await _context.Facilities.FindAsync(id);
-            _context.Facilities.Remove(facility);
+            var faculty = await _context.Faculties.FindAsync(id);
+            _context.Faculties.Remove(faculty);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool FacilityExists(int? id)
+        private bool FacultyExists(int? id)
         {
-            return _context.Facilities.Any(e => e.ID == id);
+            return _context.Faculties.Any(e => e.ID == id);
         }
     }
 }

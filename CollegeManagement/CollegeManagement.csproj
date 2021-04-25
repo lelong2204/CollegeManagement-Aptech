@@ -16,4 +16,10 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.4" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Controllers\Admin\" />
+    <Folder Include="Views\Admin\" />
+    <Folder Include="wwwroot\admin\js\pages\" />
+  </ItemGroup>
 </Project>

@@ -8,24 +8,24 @@ using Microsoft.EntityFrameworkCore;
 using CollegeManagement.Helper;
 using CollegeManagement.Models;
 
-namespace CollegeManagement.Controllers
+namespace CollegeManagement.Areas.Admin.Controllers
 {
-    public class DepartmentController : Controller
+    public class FacilityController : BaseController
     {
         private readonly DataContext _context;
 
-        public DepartmentController(DataContext context)
+        public FacilityController(DataContext context)
         {
             _context = context;
         }
 
-        // GET: Department
+        // GET: Facility
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Departments.ToListAsync());
+            return View(await _context.Facilities.ToListAsync());
         }
 
-        // GET: Department/Details/5
+        // GET: Facility/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,39 +33,39 @@ namespace CollegeManagement.Controllers
                 return NotFound();
             }
 
-            var department = await _context.Departments
+            var facility = await _context.Facilities
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (department == null)
+            if (facility == null)
             {
                 return NotFound();
             }
 
-            return View(department);
+            return View(facility);
         }
 
-        // GET: Department/Create
+        // GET: Facility/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Department/Create
+        // POST: Facility/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Info,DeanID,ID,Deleted,CreatedAt,UpdatedAt")] Department department)
+        public async Task<IActionResult> Create([Bind("Name,Qty,Info,ID,Deleted,CreatedAt,UpdatedAt")] Facility facility)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(department);
+                _context.Add(facility);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(department);
+            return View(facility);
         }
 
-        // GET: Department/Edit/5
+        // GET: Facility/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -73,22 +73,22 @@ namespace CollegeManagement.Controllers
                 return NotFound();
             }
 
-            var department = await _context.Departments.FindAsync(id);
-            if (department == null)
+            var facility = await _context.Facilities.FindAsync(id);
+            if (facility == null)
             {
                 return NotFound();
             }
-            return View(department);
+            return View(facility);
         }
 
-        // POST: Department/Edit/5
+        // POST: Facility/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int? id, [Bind("Name,Info,DeanID,ID,Deleted,CreatedAt,UpdatedAt")] Department department)
+        public async Task<IActionResult> Edit(int? id, [Bind("Name,Qty,Info,ID,Deleted,CreatedAt,UpdatedAt")] Facility facility)
         {
-            if (id != department.ID)
+            if (id != facility.ID)
             {
                 return NotFound();
             }
@@ -97,12 +97,12 @@ namespace CollegeManagement.Controllers
             {
                 try
                 {
-                    _context.Update(department);
+                    _context.Update(facility);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!DepartmentExists(department.ID))
+                    if (!FacilityExists(facility.ID))
                     {
                         return NotFound();
                     }
@@ -113,10 +113,10 @@ namespace CollegeManagement.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(department);
+            return View(facility);
         }
 
-        // GET: Department/Delete/5
+        // GET: Facility/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -124,30 +124,30 @@ namespace CollegeManagement.Controllers
                 return NotFound();
             }
 
-            var department = await _context.Departments
+            var facility = await _context.Facilities
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (department == null)
+            if (facility == null)
             {
                 return NotFound();
             }
 
-            return View(department);
+            return View(facility);
         }
 
-        // POST: Department/Delete/5
+        // POST: Facility/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int? id)
         {
-            var department = await _context.Departments.FindAsync(id);
-            _context.Departments.Remove(department);
+            var facility = await _context.Facilities.FindAsync(id);
+            _context.Facilities.Remove(facility);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool DepartmentExists(int? id)
+        private bool FacilityExists(int? id)
         {
-            return _context.Departments.Any(e => e.ID == id);
+            return _context.Facilities.Any(e => e.ID == id);
         }
     }
 }
