@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CollegeManagement.Migrations
 {
-    public partial class DbMigrations : Migration
+    public partial class DBMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -88,20 +88,6 @@ namespace CollegeManagement.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "FacultySubject",
-                columns: table => new
-                {
-                    ID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FacultyID = table.Column<int>(type: "int", nullable: false),
-                    SubjectID = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_FacultySubject", x => x.ID);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Home",
                 columns: table => new
                 {
@@ -136,25 +122,6 @@ namespace CollegeManagement.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Marks",
-                columns: table => new
-                {
-                    ID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    SubjectID = table.Column<int>(type: "int", nullable: true),
-                    StudentID = table.Column<int>(type: "int", nullable: true),
-                    Score = table.Column<int>(type: "int", nullable: true),
-                    Status = table.Column<int>(type: "int", nullable: true),
-                    Deleted = table.Column<byte>(type: "tinyint", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Marks", x => x.ID);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Student",
                 columns: table => new
                 {
@@ -178,20 +145,6 @@ namespace CollegeManagement.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "StudentCourse",
-                columns: table => new
-                {
-                    ID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    StudentID = table.Column<int>(type: "int", nullable: false),
-                    CourseID = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_StudentCourse", x => x.ID);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Subject",
                 columns: table => new
                 {
@@ -207,20 +160,6 @@ namespace CollegeManagement.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Subject", x => x.ID);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "SubjectCourse",
-                columns: table => new
-                {
-                    ID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    SubjectID = table.Column<int>(type: "int", nullable: false),
-                    CourseID = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SubjectCourse", x => x.ID);
                 });
 
             migrationBuilder.CreateTable(
@@ -294,6 +233,115 @@ namespace CollegeManagement.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "StudentCourse",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    StudentID = table.Column<int>(type: "int", nullable: false),
+                    CourseID = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StudentCourse", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_StudentCourse_Course_CourseID",
+                        column: x => x.CourseID,
+                        principalTable: "Course",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_StudentCourse_Student_StudentID",
+                        column: x => x.StudentID,
+                        principalTable: "Student",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Marks",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SubjectID = table.Column<int>(type: "int", nullable: true),
+                    StudentID = table.Column<int>(type: "int", nullable: true),
+                    Score = table.Column<int>(type: "int", nullable: true),
+                    Status = table.Column<int>(type: "int", nullable: true),
+                    Deleted = table.Column<byte>(type: "tinyint", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Marks", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Marks_Student_StudentID",
+                        column: x => x.StudentID,
+                        principalTable: "Student",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Marks_Subject_SubjectID",
+                        column: x => x.SubjectID,
+                        principalTable: "Subject",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SubjectCourse",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SubjectID = table.Column<int>(type: "int", nullable: false),
+                    CourseID = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SubjectCourse", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_SubjectCourse_Course_CourseID",
+                        column: x => x.CourseID,
+                        principalTable: "Course",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_SubjectCourse_Subject_SubjectID",
+                        column: x => x.SubjectID,
+                        principalTable: "Subject",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "FacultySubject",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FacultyID = table.Column<int>(type: "int", nullable: false),
+                    SubjectID = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FacultySubject", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_FacultySubject_Faculty_FacultyID",
+                        column: x => x.FacultyID,
+                        principalTable: "Faculty",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_FacultySubject_Subject_SubjectID",
+                        column: x => x.SubjectID,
+                        principalTable: "Subject",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_CourseImage_CourseID",
                 table: "CourseImage",
@@ -303,6 +351,46 @@ namespace CollegeManagement.Migrations
                 name: "IX_Faculty_DepartmentID",
                 table: "Faculty",
                 column: "DepartmentID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FacultySubject_FacultyID",
+                table: "FacultySubject",
+                column: "FacultyID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FacultySubject_SubjectID",
+                table: "FacultySubject",
+                column: "SubjectID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Marks_StudentID",
+                table: "Marks",
+                column: "StudentID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Marks_SubjectID",
+                table: "Marks",
+                column: "SubjectID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StudentCourse_CourseID",
+                table: "StudentCourse",
+                column: "CourseID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StudentCourse_StudentID",
+                table: "StudentCourse",
+                column: "StudentID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SubjectCourse_CourseID",
+                table: "SubjectCourse",
+                column: "CourseID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SubjectCourse_SubjectID",
+                table: "SubjectCourse",
+                column: "SubjectID");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -317,9 +405,6 @@ namespace CollegeManagement.Migrations
                 name: "Facility");
 
             migrationBuilder.DropTable(
-                name: "Faculty");
-
-            migrationBuilder.DropTable(
                 name: "FacultySubject");
 
             migrationBuilder.DropTable(
@@ -332,13 +417,7 @@ namespace CollegeManagement.Migrations
                 name: "Marks");
 
             migrationBuilder.DropTable(
-                name: "Student");
-
-            migrationBuilder.DropTable(
                 name: "StudentCourse");
-
-            migrationBuilder.DropTable(
-                name: "Subject");
 
             migrationBuilder.DropTable(
                 name: "SubjectCourse");
@@ -347,7 +426,16 @@ namespace CollegeManagement.Migrations
                 name: "User");
 
             migrationBuilder.DropTable(
+                name: "Faculty");
+
+            migrationBuilder.DropTable(
+                name: "Student");
+
+            migrationBuilder.DropTable(
                 name: "Course");
+
+            migrationBuilder.DropTable(
+                name: "Subject");
 
             migrationBuilder.DropTable(
                 name: "Department");

@@ -27,5 +27,7 @@ namespace CollegeManagement.Models
         public byte? favourite { get; set; }
         [ForeignKey("Department")]
         public int? DepartmentID { get; set; }
+        public ICollection<SubjectCourse> SubjectCourse { get; set; }
+        public ICollection<StudentCourse> StudentCourse { get; set; }
     }
 }

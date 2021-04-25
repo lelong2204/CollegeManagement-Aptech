@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CollegeManagement.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20210421060430_DbMigrations")]
-    partial class DbMigrations
+    [Migration("20210425024505_DBMigration")]
+    partial class DBMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -286,6 +286,10 @@ namespace CollegeManagement.Migrations
 
                     b.HasKey("ID");
 
+                    b.HasIndex("FacultyID");
+
+                    b.HasIndex("SubjectID");
+
                     b.ToTable("FacultySubject");
                 });
 
@@ -376,6 +380,10 @@ namespace CollegeManagement.Migrations
 
                     b.HasKey("ID");
 
+                    b.HasIndex("StudentID");
+
+                    b.HasIndex("SubjectID");
+
                     b.ToTable("Marks");
                 });
 
@@ -446,6 +454,10 @@ namespace CollegeManagement.Migrations
 
                     b.HasKey("ID");
 
+                    b.HasIndex("CourseID");
+
+                    b.HasIndex("StudentID");
+
                     b.ToTable("StudentCourse");
                 });
 
@@ -497,6 +509,10 @@ namespace CollegeManagement.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("CourseID");
+
+                    b.HasIndex("SubjectID");
 
                     b.ToTable("SubjectCourse");
                 });
@@ -551,14 +567,105 @@ namespace CollegeManagement.Migrations
                     b.Navigation("Department");
                 });
 
+            modelBuilder.Entity("CollegeManagement.Models.FacultySubject", b =>
+                {
+                    b.HasOne("CollegeManagement.Models.Faculty", "Faculty")
+                        .WithMany("FacultySubject")
+                        .HasForeignKey("FacultyID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CollegeManagement.Models.Subject", "Subject")
+                        .WithMany("FacultySubject")
+                        .HasForeignKey("SubjectID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Faculty");
+
+                    b.Navigation("Subject");
+                });
+
+            modelBuilder.Entity("CollegeManagement.Models.Marks", b =>
+                {
+                    b.HasOne("CollegeManagement.Models.Student", null)
+                        .WithMany("Marks")
+                        .HasForeignKey("StudentID");
+
+                    b.HasOne("CollegeManagement.Models.Subject", null)
+                        .WithMany("Marks")
+                        .HasForeignKey("SubjectID");
+                });
+
+            modelBuilder.Entity("CollegeManagement.Models.StudentCourse", b =>
+                {
+                    b.HasOne("CollegeManagement.Models.Course", "Course")
+                        .WithMany("StudentCourse")
+                        .HasForeignKey("CourseID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CollegeManagement.Models.Student", "Student")
+                        .WithMany("StudentCourse")
+                        .HasForeignKey("StudentID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+
+                    b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("CollegeManagement.Models.SubjectCourse", b =>
+                {
+                    b.HasOne("CollegeManagement.Models.Course", "Course")
+                        .WithMany("SubjectCourse")
+                        .HasForeignKey("CourseID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CollegeManagement.Models.Subject", "Subject")
+                        .WithMany()
+                        .HasForeignKey("SubjectID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+
+                    b.Navigation("Subject");
+                });
+
             modelBuilder.Entity("CollegeManagement.Models.Course", b =>
                 {
                     b.Navigation("CourseImages");
+
+                    b.Navigation("StudentCourse");
+
+                    b.Navigation("SubjectCourse");
                 });
 
             modelBuilder.Entity("CollegeManagement.Models.Department", b =>
                 {
                     b.Navigation("Faculties");
+                });
+
+            modelBuilder.Entity("CollegeManagement.Models.Faculty", b =>
+                {
+                    b.Navigation("FacultySubject");
+                });
+
+            modelBuilder.Entity("CollegeManagement.Models.Student", b =>
+                {
+                    b.Navigation("Marks");
+
+                    b.Navigation("StudentCourse");
+                });
+
+            modelBuilder.Entity("CollegeManagement.Models.Subject", b =>
+                {
+                    b.Navigation("FacultySubject");
+
+                    b.Navigation("Marks");
                 });
 #pragma warning restore 612, 618
         }

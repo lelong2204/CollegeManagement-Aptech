@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CollegeManagement.Models
 {
-    public class Student: BaseModel
+    public class Student : BaseModel
     {
         [Required(ErrorMessage = "Student name is required")]
         [MaxLength(255, ErrorMessage = "The maximum length of the name is 255")]
@@ -25,6 +25,7 @@ namespace CollegeManagement.Models
         public byte? Gender { get; set; }
         public DateTime? DOB { get; set; }
         public int? Status { get; set; }
-
+        public ICollection<Marks> Marks { get; set; }
+        public ICollection<StudentCourse> StudentCourse { get; set; }
     }
 }

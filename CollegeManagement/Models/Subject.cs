@@ -15,5 +15,7 @@ namespace CollegeManagement.Models
         public string? Info { get; set; }
         [MaxLength(500)]
         public string? ImageUrl { get; set; }
+        public ICollection<FacultySubject> FacultySubject { get; set; }
+        public ICollection<Marks> Marks { get; set; }
     }
 }

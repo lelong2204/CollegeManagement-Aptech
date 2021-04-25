@@ -30,5 +30,6 @@ namespace CollegeManagement.Models
         public string? Email { get; set; }
         public int? ExperienceYear { get; set; }
         public Department Department { get; set; }
+        public ICollection<FacultySubject> FacultySubject { get; set; }
     }
 }

@@ -11,7 +11,9 @@ namespace CollegeManagement.Models
         public int ID { get; set; }
         [ForeignKey("Faculty")]
         public int FacultyID { get; set; }
+        public Faculty Faculty { get; set; }
         [ForeignKey("Subject")]
         public int SubjectID { get; set; }
+        public Subject Subject { get; set; }
     }
 }

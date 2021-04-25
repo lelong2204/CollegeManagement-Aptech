@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,22 +10,22 @@ using CollegeManagement.Models;
 
 namespace CollegeManagement.Controllers
 {
-    public class FacultyController : Controller
+    public class FacultiesController : Controller
     {
         private readonly DataContext _context;
 
-        public FacultyController(DataContext context)
+        public FacultiesController(DataContext context)
         {
             _context = context;
         }
 
-        // GET: Faculty
+        // GET: Faculties
         public async Task<IActionResult> Index()
         {
             return View(await _context.Faculties.ToListAsync());
         }
 
-        // GET: Faculty/Details/5
+        // GET: Faculties/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -43,13 +43,13 @@ namespace CollegeManagement.Controllers
             return View(faculty);
         }
 
-        // GET: Faculty/Create
+        // GET: Faculties/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Faculty/Create
+        // POST: Faculties/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -65,7 +65,7 @@ namespace CollegeManagement.Controllers
             return View(faculty);
         }
 
-        // GET: Faculty/Edit/5
+        // GET: Faculties/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -81,7 +81,7 @@ namespace CollegeManagement.Controllers
             return View(faculty);
         }
 
-        // POST: Faculty/Edit/5
+        // POST: Faculties/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -116,7 +116,7 @@ namespace CollegeManagement.Controllers
             return View(faculty);
         }
 
-        // GET: Faculty/Delete/5
+        // GET: Faculties/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -134,7 +134,7 @@ namespace CollegeManagement.Controllers
             return View(faculty);
         }
 
-        // POST: Faculty/Delete/5
+        // POST: Faculties/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int? id)
