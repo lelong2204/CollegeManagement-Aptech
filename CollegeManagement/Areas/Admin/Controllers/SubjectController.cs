@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CollegeManagement.Helper;
 using CollegeManagement.Models;
+using CollegeManagement.DTO.Subject;
 
 namespace CollegeManagement.Areas.Admin.Controllers
 {
@@ -54,15 +55,19 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Info,ImageUrl,ID,Deleted,CreatedAt,UpdatedAt")] Subject subject)
+        public async Task<IActionResult> Create(SubjectUpSertDTO req)
         {
             if (ModelState.IsValid)
             {
+                var subject = new Subject
+                {
+                    
+                };
                 _context.Add(subject);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(subject);
+            return View(req);
         }
 
         // GET: Subjects/Edit/5

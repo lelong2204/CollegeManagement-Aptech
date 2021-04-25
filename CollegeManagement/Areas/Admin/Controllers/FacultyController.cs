@@ -10,11 +10,11 @@ using CollegeManagement.Models;
 
 namespace CollegeManagement.Areas.Admin.Controllers
 {
-    public class FacultiesController : BaseController
+    public class FacultyController : BaseController
     {
         private readonly DataContext _context;
 
-        public FacultiesController(DataContext context)
+        public FacultyController(DataContext context)
         {
             _context = context;
         }

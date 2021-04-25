@@ -61,14 +61,14 @@
                         <li class="sidebar-item">
                             <a href="/Admin/Student" class='sidebar-link'>
                                 <i class="bi bi-grid-fill"></i>
-                                <span>Courses</span>
+                                <span>Student</span>
                             </a>
                         </li>
 
                         <li class="sidebar-item">
-                            <a href="/Admin/Teacher" class='sidebar-link'>
+                            <a href="/Admin/Faculty" class='sidebar-link'>
                                 <i class="bi bi-grid-fill"></i>
-                                <span>Teacher</span>
+                                <span>Faculty</span>
                             </a>
                         </li>
 
@@ -505,7 +505,7 @@
                     </div>
                 </nav>
             </header>
-            <div id="main-content" class="pt-0">
+            <div id="main-content" class="pt-3">
 
                 <div class="page-heading">
                     <h3>@ViewData["PageHeader"]</h3>
@@ -513,28 +513,26 @@
                         @RenderBody()
                     </section>
                 </div>
-
-                <footer>
-                    <div class="footer clearfix mb-0 text-muted">
-                        <div class="float-start">
-                            <p>2021 &copy; Mazer</p>
-                        </div>
-                        <div class="float-end">
-                            <p>
-                                Crafted with <span class="text-danger"><i class="bi bi-heart-fill icon-mid"></i></span>
-                                by <a href="https://ahmadsaugi.com">Saugi</a>
-                            </p>
-                        </div>
-                    </div>
-                </footer>
             </div>
+
+            <footer>
+                <div class="footer clearfix">
+                    <div class="float-start">
+                        <p>2021 &copy; Mazer</p>
+                    </div>
+                    <div class="float-end">
+                        <p>
+                            Crafted with <span class="text-danger"><i class="bi bi-heart-fill icon-mid"></i></span>
+                            by <a href="https://ahmadsaugi.com">Saugi</a>
+                        </p>
+                    </div>
+                </div>
+            </footer>
         </div>
     </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/admin/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
-    <script src="~/admin/assets/js/bootstrap.bundle.min.js"></script>
-
-    <script src="~/admin/assets/vendors/apexcharts/apexcharts.js"></script>
-    <script src="~/admin/assets/js/pages/dashboard.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
     <script src="~/admin/assets/js/main.js"></script>
     <script src="~/admin/js/adminsite.js"></script>
