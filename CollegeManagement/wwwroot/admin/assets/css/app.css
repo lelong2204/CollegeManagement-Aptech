@@ -1,3 +1,7 @@
+body {
+    background-color: rgba(161,220,232, 0.3)
+}
+
 .alert {
     border: none
 }
@@ -933,7 +937,8 @@
     background-color: #fff;
     bottom: 0;
     transition: left .5s ease-out;
-    background-color: #56a87f
+    box-shadow: 0 0 15px 0 rgb(34 41 47 / 5%);
+    transform: translateZ(0)
 }
 
     .sidebar-wrapper .sidebar-header {
@@ -980,17 +985,33 @@
             color: #253A1C;
         }
 
-            .sidebar-wrapper .menu .sidebar-link i,
-            .sidebar-wrapper .menu .sidebar-link svg {
-                color: #000
+        .sidebar-wrapper .menu .sidebar-link i,
+        .sidebar-wrapper .menu .sidebar-link svg {
+            color: #625f6e
+        }
+
+            .sidebar-wrapper .menu .active .sidebar-link i,
+            .sidebar-wrapper .menu .active .sidebar-link svg,
+            .sidebar-wrapper .menu .sidebar-link:hover i,
+            .sidebar-wrapper .menu .sidebar-link:hover svg {
+                color: #fff
             }
 
-            .sidebar-wrapper .menu .sidebar-link span {
-                margin-left: 1rem
+        .sidebar-wrapper .menu .sidebar-link span {
+            margin-left: 1rem;
+            color: #625f6e
+        }
+
+            .sidebar-wrapper .menu .active .sidebar-link span {
+                color: #fff
+            }
+
+            .sidebar-wrapper .menu .sidebar-link:hover span {
+                color: #fff
             }
 
             .sidebar-wrapper .menu .sidebar-link:hover {
-                background-color: #F0F0AC
+                background: linear-gradient(118deg,#7367f0,rgba(115,103,240,.7))
             }
 
         .sidebar-wrapper .menu .sidebar-item {
@@ -1009,7 +1030,8 @@
             }
 
             .sidebar-wrapper .menu .sidebar-item.active .sidebar-link {
-                background-color: #F0F0AC
+                background: linear-gradient(118deg,#7367f0,rgba(115,103,240,.7));
+                color: #fff
             }
 
                 .sidebar-wrapper .menu .sidebar-item.active .sidebar-link.has-sub:after {
@@ -1421,7 +1443,7 @@
 
 #main #main-content {
     padding: 2rem;
-    background-color: #F0F0AC;
+    background-color: #FFF;
     margin: 0.5rem;
     border-radius: 0.42rem;
 }
@@ -1580,7 +1602,7 @@ a {
 }
 
 .footer {
-    background: #F0F0AC;
+    background: #FFF;
     margin: 0.5rem 0.5rem 0 0.5rem;
     border-radius: 0.42rem;
     padding: 0 1rem;
