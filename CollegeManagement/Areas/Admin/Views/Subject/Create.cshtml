@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
@@ -19,8 +19,18 @@
             </div>
             <div class="form-group">
                 <label asp-for="Info" class="control-label"></label>
-                <input asp-for="Info" class="form-control" />
+                <textarea class="form-control" asp-for="Info" rows="3"></textarea>
                 <span asp-validation-for="Info" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AdvancedDuration" class="control-label">Advanced Duration</label>
+                <input asp-for="AdvancedDuration" type="number" class="form-control" />
+                <span asp-validation-for="AdvancedDuration" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="BasicDuration" class="control-label">Basic Duration</label>
+                <input asp-for="BasicDuration" type="number" class="form-control" />
+                <span asp-validation-for="BasicDuration" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Image" class="control-label"></label>
@@ -31,7 +41,7 @@
                 <img class="upload-img"/>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-success" />
+                <input type="submit" value="Create" class="btn btn-success mr-2" />
                 <a asp-action="Index" class="btn btn-primary">Back to List</a>
             </div>
         </form>

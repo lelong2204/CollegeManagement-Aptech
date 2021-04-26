@@ -19,10 +19,13 @@
                 @Html.DisplayNameFor(model => model.Info)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ImageUrl)
+                Image
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Deleted)
+                Advanced Duration
+            </th>
+            <th>
+                Basic Duration
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.CreatedAt)
@@ -43,10 +46,13 @@
                 @Html.DisplayFor(modelItem => item.Info)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ImageUrl)
+                <img src="@item.ImageUrl" class="img-index"/>
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Deleted)
+                @Html.DisplayFor(modelItem => item.AdvancedDuration)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.BasicDuration)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CreatedAt)
@@ -55,9 +61,9 @@
                 @Html.DisplayFor(modelItem => item.UpdatedAt)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-action btn-warning"><i class="fa fa-edit"></i></a>
+                <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-action btn-info"><i class="fa fa-eye"></i></a>
+                <a asp-action="Delete" asp-route-id="@item.ID" class="btn btn-action btn-danger"><i class="fa fa-trash"></i></a>
             </td>
         </tr>
 }

@@ -13,6 +13,8 @@ namespace CollegeManagement.Models
         public string? Name { get; set; }
         [MaxLength(2000, ErrorMessage = "Subject name max length is 255")]
         public string? Info { get; set; }
+        public int? BasicDuration { get; set; }
+        public int? AdvancedDuration { get; set; }
         [MaxLength(500)]
         public string? ImageUrl { get; set; }
         public ICollection<FacultySubject> FacultySubject { get; set; }

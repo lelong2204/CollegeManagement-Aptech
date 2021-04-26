@@ -28,13 +28,15 @@
                 reader.readAsDataURL($(this).get(0).files[0]);
             }
         }
+
+        console.log($(this).val())
     })
 
-    var url = window.location.pathname,
+    var url = window.location.pathname.toUpperCase(),
         urlRegExp = new RegExp(url.replace(/\/$/, '') + "$");
 
     $('.sidebar-item a').each(function () {
-        if (urlRegExp.test(this.href.replace(/\/$/, ''))) {
+        if (urlRegExp.test(this.href.replace(/\/$/, '').toUpperCase())) {
             $(this).parent().addClass('active');
             document.querySelector('.sidebar-item.active').scrollIntoView(false)
         }

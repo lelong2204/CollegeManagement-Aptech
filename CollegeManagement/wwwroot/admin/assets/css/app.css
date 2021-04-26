@@ -1615,3 +1615,21 @@ img.upload-img {
     border-radius: 0.42rem;
     height: 200px;
 }
+
+.img-index {
+    height: 120px;
+    max-width: 200px;
+    border: 0.13rem solid #6f6f6f;
+    border-radius: 0.42rem;
+}
+
+img.img-detail {
+    height: 300px;
+    border: 0.13rem solid #6f6f6f;
+    border-radius: 0.42rem;
+}
+
+.btn-action {
+    width: 55px;
+    margin: 5px;
+}

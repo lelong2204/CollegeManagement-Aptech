@@ -466,6 +466,12 @@ namespace CollegeManagement.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int?>("AdvancedDuration")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("BasicDuration")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
 

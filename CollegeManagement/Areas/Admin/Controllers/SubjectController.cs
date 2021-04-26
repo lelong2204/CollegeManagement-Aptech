@@ -23,7 +23,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // GET: Subjects
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Subjects.ToListAsync());
+            return View(await _context.Subjects.Where(s => s.Deleted != 1).ToListAsync());
         }
 
         // GET: Subjects/Details/5
@@ -59,9 +59,17 @@ namespace CollegeManagement.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
+                var imgPath = await Utils.SaveFile(req.Image, "Subject");
+
                 var subject = new Subject
                 {
-                    
+                    Name = req.Name,
+                    Info = req.Info,
+                    BasicDuration = req.BasicDuration,
+                    AdvancedDuration = req.AdvancedDuration,
+                    ImageUrl = imgPath,
+                    CreatedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now,
                 };
                 _context.Add(subject);
                 await _context.SaveChangesAsync();
@@ -78,12 +86,25 @@ namespace CollegeManagement.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var subject = await _context.Subjects.FindAsync(id);
+            var subject = await _context.Subjects
+                .FirstOrDefaultAsync(s => s.ID == id && s.Deleted != 1);
+
             if (subject == null)
             {
                 return NotFound();
             }
-            return View(subject);
+
+            var res = new SubjectUpSertDTO
+            {
+                ID = subject.ID,
+                BasicDuration = subject.BasicDuration,
+                AdvancedDuration = subject.AdvancedDuration,
+                ImageUrl = subject.ImageUrl,
+                Info = subject.Info,
+                Name = subject.Name
+            };
+
+            return View(res);
         }
 
         // POST: Subjects/Edit/5
@@ -91,23 +112,35 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int? id, [Bind("Name,Info,ImageUrl,ID,Deleted,CreatedAt,UpdatedAt")] Subject subject)
+        public async Task<IActionResult> Edit(int? id, SubjectUpSertDTO req)
         {
-            if (id != subject.ID)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
                 try
                 {
+                    var subject = await _context.Subjects
+                        .FirstOrDefaultAsync(s => s.ID == req.ID && s.Deleted != 1);
+
+                    if (subject == null)
+                    {
+                        return NotFound();
+                    }
+
+                    var imgPath = await Utils.SaveFile(req.Image, "Subject");
+
+                    subject.Info = req.Info;
+                    subject.Name = req.Name;
+                    subject.AdvancedDuration = req.AdvancedDuration;
+                    subject.BasicDuration = req.BasicDuration;
+                    subject.ImageUrl = string.IsNullOrEmpty(imgPath) ? subject.ImageUrl: imgPath;
+                    subject.UpdatedAt = DateTime.Now;
+
                     _context.Update(subject);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!SubjectExists(subject.ID))
+                    if (!SubjectExists(req.ID))
                     {
                         return NotFound();
                     }
@@ -118,7 +151,8 @@ namespace CollegeManagement.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(subject);
+
+            return View(req);
         }
 
         // GET: Subjects/Delete/5
@@ -130,7 +164,8 @@ namespace CollegeManagement.Areas.Admin.Controllers
             }
 
             var subject = await _context.Subjects
-                .FirstOrDefaultAsync(m => m.ID == id);
+                .FirstOrDefaultAsync(m => m.ID == id && m.Deleted != 1);
+
             if (subject == null)
             {
                 return NotFound();
@@ -144,15 +179,19 @@ namespace CollegeManagement.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int? id)
         {
-            var subject = await _context.Subjects.FindAsync(id);
-            _context.Subjects.Remove(subject);
+            var subject = await _context.Subjects
+                .FirstOrDefaultAsync(m => m.ID == id && m.Deleted != 1);
+            subject.Deleted = 1;
+
+            _context.Subjects.Update(subject);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
         private bool SubjectExists(int? id)
         {
-            return _context.Subjects.Any(e => e.ID == id);
+            return _context.Subjects.Any(e => e.ID == id && e.Deleted != 1);
         }
     }
 }
