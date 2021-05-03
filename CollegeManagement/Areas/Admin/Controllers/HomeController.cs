@@ -10,6 +10,7 @@ using CollegeManagement.Models;
 
 namespace CollegeManagement.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class HomeController : BaseController
     {
         private readonly DataContext _context;
@@ -22,7 +23,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // GET: Home
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Homes.ToListAsync());
+            return View(await _context.Contents.ToListAsync());
         }
 
         // GET: Home/Details/5
@@ -33,7 +34,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var home = await _context.Homes
+            var home = await _context.Contents
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (home == null)
             {
@@ -54,7 +55,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Title,Description,Type,ExpiredDate,ID,Deleted,CreatedAt,UpdatedAt")] Home home)
+        public async Task<IActionResult> Create([Bind("Title,Description,Type,ExpiredDate,ID,Deleted,CreatedAt,UpdatedAt")] Content home)
         {
             if (ModelState.IsValid)
             {
@@ -73,7 +74,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var home = await _context.Homes.FindAsync(id);
+            var home = await _context.Contents.FindAsync(id);
             if (home == null)
             {
                 return NotFound();
@@ -86,7 +87,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int? id, [Bind("Title,Description,Type,ExpiredDate,ID,Deleted,CreatedAt,UpdatedAt")] Home home)
+        public async Task<IActionResult> Edit(int? id, [Bind("Title,Description,Type,ExpiredDate,ID,Deleted,CreatedAt,UpdatedAt")] Content home)
         {
             if (id != home.ID)
             {
@@ -124,7 +125,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var home = await _context.Homes
+            var home = await _context.Contents
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (home == null)
             {
@@ -139,15 +140,15 @@ namespace CollegeManagement.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int? id)
         {
-            var home = await _context.Homes.FindAsync(id);
-            _context.Homes.Remove(home);
+            var home = await _context.Contents.FindAsync(id);
+            _context.Contents.Remove(home);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool HomeExists(int? id)
         {
-            return _context.Homes.Any(e => e.ID == id);
+            return _context.Contents.Any(e => e.ID == id);
         }
     }
 }

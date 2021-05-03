@@ -7,7 +7,7 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-success">Create New</a>
 </p>
 <table class="table">
     <thead>
@@ -16,34 +16,19 @@
                 @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Info)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Code)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.Gender)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ImageUrl)
+                Image
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.DOB)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Address)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.PhoneNumber)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ExperienceYear)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Deleted)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.CreatedAt)
@@ -61,22 +46,13 @@
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Info)
+                @(item.Gender == 1? "Male": item.Gender == 0 ? "Female": "Other" )
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Code)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Gender)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ImageUrl)
+                <img src="@item.ImageUrl" class="img-index" />
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.DOB)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Address)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.PhoneNumber)
@@ -85,21 +61,15 @@
                 @Html.DisplayFor(modelItem => item.Email)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ExperienceYear)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Deleted)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.CreatedAt)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.UpdatedAt)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-action btn-warning"><i class="fa fa-edit"></i></a>
+                <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-action btn-info"><i class="fa fa-eye"></i></a>
+                <a asp-action="Delete" asp-route-id="@item.ID" class="btn btn-action btn-danger"><i class="fa fa-trash"></i></a>
             </td>
         </tr>
 }

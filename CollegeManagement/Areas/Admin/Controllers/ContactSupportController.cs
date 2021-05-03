@@ -10,6 +10,7 @@ using CollegeManagement.Models;
 
 namespace CollegeManagement.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class ContactSupportController : BaseController
     {
         private readonly DataContext _context;

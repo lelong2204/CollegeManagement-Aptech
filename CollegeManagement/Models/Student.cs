@@ -12,20 +12,20 @@ namespace CollegeManagement.Models
         [MaxLength(255, ErrorMessage = "The maximum length of the name is 255")]
         public string? Name { get; set; }
         [Required(ErrorMessage = "Student code is required")]
-        [MaxLength(255, ErrorMessage = "The maximum length of the code is 255")]
+        [MaxLength(20, ErrorMessage = "The maximum length of the code is 20")]
         public string? Code { get; set; }
-        [MaxLength(500, ErrorMessage = "The maximum length of the mail is 500")]
-        [EmailAddress(ErrorMessage = "Email is wrong format")]
+        [MaxLength(500)]
         public string? Email { get; set; }
-        [MaxLength(11, ErrorMessage = "The maximum length of the phone is 11")]
-        [Phone(ErrorMessage = "Email is wrong format")]
-        public string? Phone { get; set; }
+        [MaxLength(11)]
+        public string? PhoneNumber { get; set; }
         [MaxLength(500, ErrorMessage = "The maximum length of the address is 500")]
         public string? Address { get; set; }
+        [MaxLength(500, ErrorMessage = "The maximum length of the image url is 500")]
+        public string? ImageURL { get; set; }
         public byte? Gender { get; set; }
         public DateTime? DOB { get; set; }
         public int? Status { get; set; }
+        public int? ClassID { get; set; }
         public ICollection<Marks> Marks { get; set; }
-        public ICollection<StudentCourse> StudentCourse { get; set; }
     }
 }

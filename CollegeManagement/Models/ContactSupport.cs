@@ -22,5 +22,7 @@ namespace CollegeManagement.Models
         public string? PhoneNumber { get; set; }
         [MaxLength(2000, ErrorMessage = "Infomation max length is 2000")]
         public string? Infomation { get; set; }
+        [MaxLength(5000, ErrorMessage = "Question max length is 5000")]
+        public string? Question { get; set; }
     }
 }

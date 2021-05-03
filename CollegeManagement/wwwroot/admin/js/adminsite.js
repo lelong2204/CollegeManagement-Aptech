@@ -41,6 +41,9 @@
             document.querySelector('.sidebar-item.active').scrollIntoView(false)
         }
     });
+
+    $('.select2').select2({ allowClear: true, placeholder: "Select option" })
+    $('.select2-multiple').select2({ allowClear: true, placeholder: "Select option" })
 })
 
 const DEFAULT_IMG = '/admin/assets/images/default-image.jpg';

@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CollegeManagement.Helper;
 using CollegeManagement.Models;
+using CollegeManagement.DTO.Student;
 
 namespace CollegeManagement.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class StudentController : BaseController
     {
         private readonly DataContext _context;
@@ -22,7 +24,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // GET: Students
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Students.ToListAsync());
+            return View(await _context.Students.Where(s => s.Deleted != 1).ToListAsync());
         }
 
         // GET: Students/Details/5
@@ -54,15 +56,28 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Code,Email,Phone,Address,Gender,DOB,Status,ID,Deleted,CreatedAt,UpdatedAt")] Student student)
+        public async Task<IActionResult> Create(StudentUpsertDTO req)
         {
             if (ModelState.IsValid)
             {
+                var student = new Student
+                {
+                    Name = req.Name,
+                    Code = req.Code,
+                    Address = req.Address,
+                    DOB = req.DOB,
+                    Email = req.Email,
+                    PhoneNumber = req.Phone,
+                    Gender = req.Gender,
+                    ImageURL = await Utils.SaveFile(req.Image, "Student"),
+                    CreatedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now
+                };
                 _context.Add(student);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(student);
+            return View(req);
         }
 
         // GET: Students/Edit/5
@@ -73,12 +88,28 @@ namespace CollegeManagement.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var student = await _context.Students.FindAsync(id);
+            var student = await _context.Students
+                .FirstOrDefaultAsync(s => s.ID == id && s.Deleted != 1);
+
             if (student == null)
             {
                 return NotFound();
             }
-            return View(student);
+
+            var res = new StudentUpsertDTO
+            {
+                ID = student.ID,
+                Name = student.Name,
+                Address = student.Address,
+                DOB = student.DOB,
+                Email = student.Email,
+                Gender = student.Gender,
+                Code = student.Code,
+                ImageURL = student.ImageURL,
+                Phone = student.PhoneNumber,
+            };
+
+            return View(res);
         }
 
         // POST: Students/Edit/5
@@ -86,9 +117,9 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int? id, [Bind("Name,Code,Email,Phone,Address,Gender,DOB,Status,ID,Deleted,CreatedAt,UpdatedAt")] Student student)
+        public async Task<IActionResult> Edit(int? id, StudentUpsertDTO req)
         {
-            if (id != student.ID)
+            if (id != req.ID)
             {
                 return NotFound();
             }
@@ -97,23 +128,32 @@ namespace CollegeManagement.Areas.Admin.Controllers
             {
                 try
                 {
+                    var imgPath = await Utils.SaveFile(req.Image, "Student");
+                    var student = await _context.Students
+                                    .FirstOrDefaultAsync(s => s.ID == id && s.Deleted != 1);
+
+                    if (student == null) return NotFound();
+
+                    student.Name = req.Name;
+                    student.Code = req.Code;
+                    student.Address = req.Address;
+                    student.DOB = req.DOB;
+                    student.Email = req.Email;
+                    student.PhoneNumber = req.Phone;
+                    student.Gender = req.Gender;
+                    student.ImageURL = string.IsNullOrWhiteSpace(imgPath) ? student.ImageURL: imgPath;
+                    student.UpdatedAt = DateTime.Now;
+
                     _context.Update(student);
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception)
                 {
-                    if (!StudentExists(student.ID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(student);
+            return View(req);
         }
 
         // GET: Students/Delete/5
@@ -140,14 +180,16 @@ namespace CollegeManagement.Areas.Admin.Controllers
         public async Task<IActionResult> DeleteConfirmed(int? id)
         {
             var student = await _context.Students.FindAsync(id);
-            _context.Students.Remove(student);
+            student.Deleted = 1;
+            student.UpdatedAt = DateTime.Now;
+            _context.Students.Update(student);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool StudentExists(int? id)
         {
-            return _context.Students.Any(e => e.ID == id);
+            return _context.Students.Any(e => e.ID == id && e.Deleted != 1);
         }
     }
 }

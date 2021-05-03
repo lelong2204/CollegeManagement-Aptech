@@ -19,6 +19,37 @@ namespace CollegeManagement.Migrations
                 .HasAnnotation("ProductVersion", "5.0.5")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("CollegeManagement.Models.Class", b =>
+                {
+                    b.Property<int?>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("CourseID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte?>("Deleted")
+                        .HasColumnType("tinyint");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("CourseID");
+
+                    b.ToTable("Class");
+                });
+
             modelBuilder.Entity("CollegeManagement.Models.ContactSupport", b =>
                 {
                     b.Property<int?>("ID")
@@ -54,12 +85,82 @@ namespace CollegeManagement.Migrations
                         .HasMaxLength(11)
                         .HasColumnType("nvarchar(11)");
 
+                    b.Property<string>("Question")
+                        .HasMaxLength(5000)
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("ID");
 
                     b.ToTable("ContactSupport");
+                });
+
+            modelBuilder.Entity("CollegeManagement.Models.Content", b =>
+                {
+                    b.Property<int?>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte?>("Deleted")
+                        .HasColumnType("tinyint");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<DateTime?>("ExpiredDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int?>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Content");
+                });
+
+            modelBuilder.Entity("CollegeManagement.Models.ContentBody", b =>
+                {
+                    b.Property<int?>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("ContentID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Decription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte?>("Deleted")
+                        .HasColumnType("tinyint");
+
+                    b.Property<string>("ImageURL")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("ImgDes")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ContentID");
+
+                    b.ToTable("ContentBody");
                 });
 
             modelBuilder.Entity("CollegeManagement.Models.Course", b =>
@@ -78,11 +179,11 @@ namespace CollegeManagement.Migrations
                     b.Property<int?>("DepartmentID")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Duration")
-                        .HasColumnType("int");
-
                     b.Property<int?>("Evaluate")
                         .HasColumnType("int");
+
+                    b.Property<byte?>("Focus")
+                        .HasColumnType("tinyint");
 
                     b.Property<string>("Info")
                         .HasColumnType("nvarchar(max)");
@@ -103,9 +204,6 @@ namespace CollegeManagement.Migrations
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<byte?>("favourite")
-                        .HasColumnType("tinyint");
 
                     b.HasKey("ID");
 
@@ -134,6 +232,28 @@ namespace CollegeManagement.Migrations
                     b.HasIndex("CourseID");
 
                     b.ToTable("CourseImage");
+                });
+
+            modelBuilder.Entity("CollegeManagement.Models.CourseSubject", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CourseID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SubjectID")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("CourseID");
+
+                    b.HasIndex("SubjectID");
+
+                    b.ToTable("CourseSubject");
                 });
 
             modelBuilder.Entity("CollegeManagement.Models.Department", b =>
@@ -214,11 +334,6 @@ namespace CollegeManagement.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -232,9 +347,8 @@ namespace CollegeManagement.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<int?>("ExperienceYear")
                         .HasColumnType("int");
@@ -291,63 +405,6 @@ namespace CollegeManagement.Migrations
                     b.ToTable("FacultySubject");
                 });
 
-            modelBuilder.Entity("CollegeManagement.Models.Home", b =>
-                {
-                    b.Property<int?>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<byte?>("Deleted")
-                        .HasColumnType("tinyint");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
-
-                    b.Property<DateTime?>("ExpiredDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Title")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<int?>("Type")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("Home");
-                });
-
-            modelBuilder.Entity("CollegeManagement.Models.HomeImage", b =>
-                {
-                    b.Property<int?>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<byte?>("Deleted")
-                        .HasColumnType("tinyint");
-
-                    b.Property<int?>("HomeID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ImgUrl")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("HomeImage");
-                });
-
             modelBuilder.Entity("CollegeManagement.Models.Marks", b =>
                 {
                     b.Property<int?>("ID")
@@ -396,10 +453,13 @@ namespace CollegeManagement.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
+                    b.Property<int?>("ClassID")
+                        .HasColumnType("int");
+
                     b.Property<string>("Code")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -417,12 +477,16 @@ namespace CollegeManagement.Migrations
                     b.Property<byte?>("Gender")
                         .HasColumnType("tinyint");
 
+                    b.Property<string>("ImageURL")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<string>("Phone")
+                    b.Property<string>("PhoneNumber")
                         .HasMaxLength(11)
                         .HasColumnType("nvarchar(11)");
 
@@ -434,29 +498,9 @@ namespace CollegeManagement.Migrations
 
                     b.HasKey("ID");
 
+                    b.HasIndex("ClassID");
+
                     b.ToTable("Student");
-                });
-
-            modelBuilder.Entity("CollegeManagement.Models.StudentCourse", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("CourseID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("StudentID")
-                        .HasColumnType("int");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("CourseID");
-
-                    b.HasIndex("StudentID");
-
-                    b.ToTable("StudentCourse");
                 });
 
             modelBuilder.Entity("CollegeManagement.Models.Subject", b =>
@@ -499,28 +543,6 @@ namespace CollegeManagement.Migrations
                     b.ToTable("Subject");
                 });
 
-            modelBuilder.Entity("CollegeManagement.Models.SubjectCourse", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("CourseID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SubjectID")
-                        .HasColumnType("int");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("CourseID");
-
-                    b.HasIndex("SubjectID");
-
-                    b.ToTable("SubjectCourse");
-                });
-
             modelBuilder.Entity("CollegeManagement.Models.User", b =>
                 {
                     b.Property<int?>("ID")
@@ -528,19 +550,34 @@ namespace CollegeManagement.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<byte?>("Deleted")
                         .HasColumnType("tinyint");
 
+                    b.Property<string>("Email")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("FullName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageURL")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<int?>("RoleType")
-                        .HasColumnType("int");
+                    b.Property<string>("PhoneNumber")
+                        .HasMaxLength(11)
+                        .HasColumnType("nvarchar(11)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -555,11 +592,44 @@ namespace CollegeManagement.Migrations
                     b.ToTable("User");
                 });
 
+            modelBuilder.Entity("CollegeManagement.Models.Class", b =>
+                {
+                    b.HasOne("CollegeManagement.Models.Course", null)
+                        .WithMany("Classes")
+                        .HasForeignKey("CourseID");
+                });
+
+            modelBuilder.Entity("CollegeManagement.Models.ContentBody", b =>
+                {
+                    b.HasOne("CollegeManagement.Models.Content", null)
+                        .WithMany("ContentBody")
+                        .HasForeignKey("ContentID");
+                });
+
             modelBuilder.Entity("CollegeManagement.Models.CourseImage", b =>
                 {
                     b.HasOne("CollegeManagement.Models.Course", null)
                         .WithMany("CourseImages")
                         .HasForeignKey("CourseID");
+                });
+
+            modelBuilder.Entity("CollegeManagement.Models.CourseSubject", b =>
+                {
+                    b.HasOne("CollegeManagement.Models.Course", "Course")
+                        .WithMany("CourseSubjects")
+                        .HasForeignKey("CourseID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CollegeManagement.Models.Subject", "Subject")
+                        .WithMany()
+                        .HasForeignKey("SubjectID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+
+                    b.Navigation("Subject");
                 });
 
             modelBuilder.Entity("CollegeManagement.Models.Faculty", b =>
@@ -601,51 +671,30 @@ namespace CollegeManagement.Migrations
                         .HasForeignKey("SubjectID");
                 });
 
-            modelBuilder.Entity("CollegeManagement.Models.StudentCourse", b =>
+            modelBuilder.Entity("CollegeManagement.Models.Student", b =>
                 {
-                    b.HasOne("CollegeManagement.Models.Course", "Course")
-                        .WithMany("StudentCourse")
-                        .HasForeignKey("CourseID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CollegeManagement.Models.Student", "Student")
-                        .WithMany("StudentCourse")
-                        .HasForeignKey("StudentID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Course");
-
-                    b.Navigation("Student");
+                    b.HasOne("CollegeManagement.Models.Class", null)
+                        .WithMany("Students")
+                        .HasForeignKey("ClassID");
                 });
 
-            modelBuilder.Entity("CollegeManagement.Models.SubjectCourse", b =>
+            modelBuilder.Entity("CollegeManagement.Models.Class", b =>
                 {
-                    b.HasOne("CollegeManagement.Models.Course", "Course")
-                        .WithMany("SubjectCourse")
-                        .HasForeignKey("CourseID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Students");
+                });
 
-                    b.HasOne("CollegeManagement.Models.Subject", "Subject")
-                        .WithMany()
-                        .HasForeignKey("SubjectID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Course");
-
-                    b.Navigation("Subject");
+            modelBuilder.Entity("CollegeManagement.Models.Content", b =>
+                {
+                    b.Navigation("ContentBody");
                 });
 
             modelBuilder.Entity("CollegeManagement.Models.Course", b =>
                 {
+                    b.Navigation("Classes");
+
                     b.Navigation("CourseImages");
 
-                    b.Navigation("StudentCourse");
-
-                    b.Navigation("SubjectCourse");
+                    b.Navigation("CourseSubjects");
                 });
 
             modelBuilder.Entity("CollegeManagement.Models.Department", b =>
@@ -661,8 +710,6 @@ namespace CollegeManagement.Migrations
             modelBuilder.Entity("CollegeManagement.Models.Student", b =>
                 {
                     b.Navigation("Marks");
-
-                    b.Navigation("StudentCourse");
                 });
 
             modelBuilder.Entity("CollegeManagement.Models.Subject", b =>

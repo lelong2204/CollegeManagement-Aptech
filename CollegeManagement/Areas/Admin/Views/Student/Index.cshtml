@@ -22,28 +22,19 @@
                 @Html.DisplayNameFor(model => model.Email)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Phone)
+                Phone Number
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Address)
+            </th>
+            <th>
+                Image
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Gender)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.DOB)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Status)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Deleted)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedAt)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UpdatedAt)
             </th>
             <th></th>
         </tr>
@@ -61,33 +52,27 @@
                 @Html.DisplayFor(modelItem => item.Email)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Phone)
+                @Html.DisplayFor(modelItem => item.PhoneNumber)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Address)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Gender)
+                <img src="@item.ImageURL" class="img-index" />
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.DOB)
+                @(item.Gender == 1? "Male": item.Gender == 0 ? "Female": "Other" )
             </td>
+            @if (item.DOB != null)
+            {
+                <td>
+                    @(((DateTime)item.DOB).ToString("MM/dd/yyyy"))
+                </td>
+            }
             <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Deleted)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UpdatedAt)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-action btn-warning"><i class="fa fa-edit"></i></a>
+                <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-action btn-info"><i class="fa fa-eye"></i></a>
+                <a asp-action="Delete" asp-route-id="@item.ID" class="btn btn-action btn-danger"><i class="fa fa-trash"></i></a>
             </td>
         </tr>
 }

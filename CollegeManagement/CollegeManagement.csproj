@@ -19,7 +19,7 @@
 
   <ItemGroup>
     <Folder Include="Controllers\Admin\" />
-    <Folder Include="Views\Admin\" />
+    <Folder Include="Migrations\" />
     <Folder Include="wwwroot\admin\js\pages\" />
   </ItemGroup>
 </Project>

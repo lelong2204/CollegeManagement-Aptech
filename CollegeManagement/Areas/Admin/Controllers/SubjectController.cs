@@ -11,6 +11,7 @@ using CollegeManagement.DTO.Subject;
 
 namespace CollegeManagement.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class SubjectController : BaseController
     {
         private readonly DataContext _context;

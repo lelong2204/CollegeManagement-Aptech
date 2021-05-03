@@ -1,15 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CollegeManagement.Helper;
 using CollegeManagement.Models;
+using CollegeManagement.DTO.Faculty;
+using System;
+using CollegeManagement.DTO.Departments;
+using CollegeManagement.DTO.Subject;
+using System.Collections.Generic;
 
 namespace CollegeManagement.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class FacultyController : BaseController
     {
         private readonly DataContext _context;
@@ -46,7 +49,24 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // GET: Faculties/Create
         public IActionResult Create()
         {
-            return View();
+            var res = new FacultyUpSertDTO();
+            res.DepartmentList =  _context.Departments.Where(d => d.Deleted != 1)
+                .OrderByDescending(d => d.UpdatedAt)
+                .Select(d => new DepartmentSelectDTO
+                {
+                    ID = (int) d.ID,
+                    Name = d.Name
+                });
+
+            res.SubjectList =  _context.Subjects.Where(d => d.Deleted != 1)
+                .OrderByDescending(d => d.UpdatedAt)
+                .Select(d => new SubjectSelectDTO
+                {
+                    ID = (int) d.ID,
+                    Name = d.Name
+                });
+
+            return View(res);
         }
 
         // POST: Faculties/Create
@@ -54,15 +74,47 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Info,Code,Gender,ImageUrl,DOB,Address,PhoneNumber,Email,ExperienceYear,ID,Deleted,CreatedAt,UpdatedAt")] Faculty faculty)
+        public async Task<IActionResult> Create(FacultyUpSertDTO req)
         {
             if (ModelState.IsValid)
             {
+                var imgPath = await Utils.SaveFile(req.Image, "Faculty");
+
+                var faculty = new Faculty
+                {
+                    Address = req.Address,
+                    CreatedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now,
+                    DepartmentID = req.DepartmentID,
+                    DOB = req.DOB,
+                    Email = req.Email,
+                    ExperienceYear = req.ExperienceYear,
+                    Gender = req.Gender,
+                    ImageUrl = imgPath,
+                    Info = req.Info,
+                    Name = req.Name,
+                    PhoneNumber = req.PhoneNumber
+                };
                 _context.Add(faculty);
                 await _context.SaveChangesAsync();
+
+                var facultySubjectList = new List<FacultySubject>();
+
+                if (req.SubjectIDs.Count() > 0)
+                {
+                    var subjectIDs = req.SubjectIDs.Distinct<int>();
+                    foreach (var subjectID in subjectIDs)
+                    {
+                        facultySubjectList.Add(new FacultySubject { SubjectID = subjectID, FacultyID = (int) faculty.ID });
+                    }
+
+                    await _context.FacultySubjects.AddRangeAsync(facultySubjectList);
+                    await _context.SaveChangesAsync();
+                }
+
                 return RedirectToAction(nameof(Index));
             }
-            return View(faculty);
+            return View(req);
         }
 
         // GET: Faculties/Edit/5
@@ -73,12 +125,44 @@ namespace CollegeManagement.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var faculty = await _context.Faculties.FindAsync(id);
+            var faculty = await _context.Faculties.
+                FirstOrDefaultAsync(d => d.ID == id && d.Deleted != 1);
+
             if (faculty == null)
             {
                 return NotFound();
             }
-            return View(faculty);
+
+            var res = new FacultyUpSertDTO
+            {
+                ID = faculty.ID,
+                Name = faculty.Name,
+                Info = faculty.Info,
+                Gender = faculty.Gender,
+                PhoneNumber = faculty.PhoneNumber,
+                ExperienceYear = faculty.ExperienceYear,
+                DepartmentID = faculty.DepartmentID,
+                DOB = faculty.DOB,
+                Address = faculty.Address,
+                Email = faculty.Email,
+                ImageUrl = faculty.ImageUrl,
+                SubjectIDs = await _context.FacultySubjects
+                    .Where(fs => fs.FacultyID == faculty.ID).Select(fs => fs.SubjectID).ToListAsync(),
+                DepartmentList = _context.Departments.Where(d => d.Deleted != 1)
+                    .OrderByDescending(d => d.UpdatedAt).Select(d => new DepartmentSelectDTO
+                    {
+                        ID = (int)d.ID,
+                        Name = d.Name
+                    }),
+                SubjectList = _context.Subjects.Where(d => d.Deleted != 1)
+                    .OrderByDescending(d => d.UpdatedAt).Select(d => new SubjectSelectDTO
+                    {
+                        ID = (int)d.ID,
+                        Name = d.Name
+                    })
+            };
+
+            return View(res);
         }
 
         // POST: Faculties/Edit/5
@@ -86,9 +170,9 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int? id, [Bind("Name,Info,Code,Gender,ImageUrl,DOB,Address,PhoneNumber,Email,ExperienceYear,ID,Deleted,CreatedAt,UpdatedAt")] Faculty faculty)
+        public async Task<IActionResult> Edit(int? id, FacultyUpSertDTO req)
         {
-            if (id != faculty.ID)
+            if (id != req.ID)
             {
                 return NotFound();
             }
@@ -97,12 +181,55 @@ namespace CollegeManagement.Areas.Admin.Controllers
             {
                 try
                 {
+                    var imgPath = await Utils.SaveFile(req.Image, "Faculty");
+
+                    var faculty = await _context.Faculties
+                        .FirstOrDefaultAsync(f => f.Deleted != 1 && f.ID == id);
+
+                    faculty.Address = req.Address;
+                    faculty.UpdatedAt = DateTime.Now;
+                    faculty.DepartmentID = req.DepartmentID;
+                    faculty.DOB = req.DOB;
+                    faculty.Email = req.Email;
+                    faculty.ExperienceYear = req.ExperienceYear;
+                    faculty.Gender = req.Gender;
+                    faculty.ImageUrl = string.IsNullOrEmpty(imgPath) ? faculty.ImageUrl: imgPath;
+                    faculty.Info = req.Info;
+                    faculty.Name = req.Name;
+                    faculty.PhoneNumber = req.PhoneNumber;
+
+                    var facultySubjectList = new List<FacultySubject>();
+                    var facultySubjectExistList = await _context.FacultySubjects
+                        .Where(fs => fs.FacultyID == faculty.ID).ToListAsync();
+                    var facultySubjectIDExistList = facultySubjectExistList.Select(fs => fs.ID).ToList();
+                    var subjectIDs = req.SubjectIDs.Distinct<int>();
+
+                    foreach (var subjectID in subjectIDs)
+                    {
+                        if (facultySubjectIDExistList.Contains(subjectID))
+                        {
+                            facultySubjectExistList = facultySubjectExistList
+                                .Where(fs => fs.SubjectID != subjectID).ToList();
+                            continue;
+                        }
+
+                        facultySubjectList.Add(new FacultySubject { SubjectID = subjectID, FacultyID = (int)faculty.ID });
+                    }
+
+                    if (facultySubjectExistList.Count > 0)
+                    {
+                        _context.FacultySubjects.RemoveRange(facultySubjectExistList);
+                    }
+
+                    await _context.FacultySubjects.AddRangeAsync(facultySubjectList);
+                    await _context.SaveChangesAsync();
+
                     _context.Update(faculty);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!FacultyExists(faculty.ID))
+                    if (!FacultyExists(req.ID))
                     {
                         return NotFound();
                     }
@@ -113,7 +240,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(faculty);
+            return View(req);
         }
 
         // GET: Faculties/Delete/5
