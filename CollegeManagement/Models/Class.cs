@@ -12,7 +12,7 @@ namespace CollegeManagement.Models
         [Required(ErrorMessage = "Name is required")]
         [MaxLength(50, ErrorMessage = "Class name max length is 50")]
         public string? Name { get; set; }
-        [Range(0, int.MaxValue, ErrorMessage = "Max student number per course must be greater than or equal 0")]
+        [Range(1, 100, ErrorMessage = "Max student number per course must be between 1 and 100")]
         public int? MaxStudentPerClass { get; set; }
         [ForeignKey("Course")]
         public int? CourseID { get; set; }

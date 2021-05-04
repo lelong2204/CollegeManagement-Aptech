@@ -50,7 +50,8 @@ namespace CollegeManagement.Areas.Admin.Controllers
         public IActionResult Create()
         {
             var res = new FacultyUpSertDTO();
-            res.DepartmentList =  _context.Departments.Where(d => d.Deleted != 1)
+
+            res.DepartmentList = _context.Departments.Where(d => d.Deleted != 1)
                 .OrderByDescending(d => d.UpdatedAt)
                 .Select(d => new DepartmentSelectDTO
                 {
@@ -58,7 +59,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
                     Name = d.Name
                 });
 
-            res.SubjectList =  _context.Subjects.Where(d => d.Deleted != 1)
+            res.SubjectList = _context.Subjects.Where(d => d.Deleted != 1)
                 .OrderByDescending(d => d.UpdatedAt)
                 .Select(d => new SubjectSelectDTO
                 {
@@ -100,7 +101,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
 
                 var facultySubjectList = new List<FacultySubject>();
 
-                if (req.SubjectIDs.Count() > 0)
+                if (req.SubjectIDs != null && req.SubjectIDs.Count() > 0)
                 {
                     var subjectIDs = req.SubjectIDs.Distinct<int>();
                     foreach (var subjectID in subjectIDs)

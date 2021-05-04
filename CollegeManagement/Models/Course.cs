@@ -13,9 +13,6 @@ namespace CollegeManagement.Models
         [MaxLength(255 ,ErrorMessage = "Course name max length is 255")]
         public string? Name { get; set; }
         public string? Info { get; set; }
-        public ICollection<CourseImage> CourseImages { get; set; }
-        [Range(1, int.MaxValue, ErrorMessage = "Semester number must be greater than or equal 1")]
-        public int? SemesterNumber { get; set; }
         [Range(1, 5, ErrorMessage = "Evaluate must be between 1 and 5")]
         public int? Evaluate { get; set; }
         [Range(0, int.MaxValue, ErrorMessage = "Price must be greater than or equal 0")]
@@ -23,7 +20,10 @@ namespace CollegeManagement.Models
         public byte? Focus { get; set; }
         [ForeignKey("Department")]
         public int? DepartmentID { get; set; }
+        public Department Department { get; set; }
+        [MaxLength(500, ErrorMessage = "The maximum length of the image url is 500")]
+        public string? ImageURL { get; set; }
         public ICollection<Class> Classes { get; set; }
-        public ICollection<CourseSubject> CourseSubjects { get; set; }
+        public ICollection<CourseSubject> CourseSubject { get; set; }
     }
 }

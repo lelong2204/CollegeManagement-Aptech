@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CollegeManagement.Helper;
 using CollegeManagement.Models;
+using CollegeManagement.DTO.Course;
+using CollegeManagement.DTO.Subject;
+using CollegeManagement.DTO.Departments;
 
 namespace CollegeManagement.Areas.Admin.Controllers
 {
@@ -47,7 +50,25 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // GET: Admin/Course/Create
         public IActionResult Create()
         {
-            return View();
+            var res = new CourseUpSertDTO();
+
+            res.DepartmentList = _context.Departments.Where(d => d.Deleted != 1)
+                .OrderByDescending(d => d.UpdatedAt)
+                .Select(d => new DepartmentSelectDTO
+                {
+                    ID = (int)d.ID,
+                    Name = d.Name
+                });
+
+            res.SubjectList = _context.Subjects.Where(d => d.Deleted != 1)
+                .OrderByDescending(d => d.UpdatedAt)
+                .Select(d => new SubjectSelectDTO
+                {
+                    ID = (int)d.ID,
+                    Name = d.Name
+                });
+
+            return View(res);
         }
 
         // POST: Admin/Course/Create
@@ -55,15 +76,44 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Info,SemesterNumber,Evaluate,Price,Focus,DepartmentID,ID,Deleted,CreatedAt,UpdatedAt")] Course course)
+        public async Task<IActionResult> Create(CourseUpSertDTO req)
         {
             if (ModelState.IsValid)
             {
+                var imgPath = await Utils.SaveFile(req.Image, "Course");
+
+                var course = new Course
+                {
+                    DepartmentID = req.DepartmentID,
+                    Focus = req.Focus,
+                    ImageURL = imgPath,
+                    Name = req.Name,
+                    Info = req.Info,
+                    Price = req.Price,
+                    UpdatedAt = DateTime.Now,
+                    CreatedAt = DateTime.Now
+                };
+
                 _context.Add(course);
                 await _context.SaveChangesAsync();
+
+                var courseSubjectList = new List<CourseSubject>();
+
+                if (req.SubjectIDs != null && req.SubjectIDs.Count() > 0)
+                {
+                    var subjectIDs = req.SubjectIDs.Distinct<int>();
+                    foreach (var subjectID in subjectIDs)
+                    {
+                        courseSubjectList.Add(new CourseSubject { SubjectID = subjectID, CourseID = (int)course.ID });
+                    }
+
+                    await _context.CourseSubjects.AddRangeAsync(courseSubjectList);
+                    await _context.SaveChangesAsync();
+                }
+
                 return RedirectToAction(nameof(Index));
             }
-            return View(course);
+            return View(req);
         }
 
         // GET: Admin/Course/Edit/5
@@ -87,9 +137,9 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Name,Info,SemesterNumber,Evaluate,Price,Focus,DepartmentID,ID,Deleted,CreatedAt,UpdatedAt")] Course course)
+        public async Task<IActionResult> Edit(int id, CourseUpSertDTO req)
         {
-            if (id != course.ID)
+            if (id != req.ID)
             {
                 return NotFound();
             }
@@ -98,12 +148,13 @@ namespace CollegeManagement.Areas.Admin.Controllers
             {
                 try
                 {
-                    _context.Update(course);
+                    var imgPath = await Utils.SaveFile(req.Image, "Faculty");
+                    _context.Update(req);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CourseExists(course.ID))
+                    if (!CourseExists(id))
                     {
                         return NotFound();
                     }
@@ -114,7 +165,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(course);
+            return View(req);
         }
 
         // GET: Admin/Course/Delete/5

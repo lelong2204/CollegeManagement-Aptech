@@ -18,7 +18,6 @@ namespace CollegeManagement.Helper
         public DbSet<Class> Classes { get; set; }
         public DbSet<ContactSupport> ContactSupports { get; set; }
         public DbSet<Course> Courses { get; set; }
-        public DbSet<CourseImage> CourseImages { get; set; }
         public DbSet<CourseSubject> CourseSubjects { get; set; }
         public DbSet<Facility> Facilities { get; set; }
         public DbSet<Faculty> Faculties { get; set; }
@@ -36,7 +35,6 @@ namespace CollegeManagement.Helper
             modelBuilder.Entity<Class>().ToTable("Class");
             modelBuilder.Entity<ContactSupport>().ToTable("ContactSupport");
             modelBuilder.Entity<Course>().ToTable("Course");
-            modelBuilder.Entity<CourseImage>().ToTable("CourseImage");
             modelBuilder.Entity<CourseSubject>().ToTable("CourseSubject");
             modelBuilder.Entity<Facility>().ToTable("Facility");
             modelBuilder.Entity<Faculty>().ToTable("Faculty");

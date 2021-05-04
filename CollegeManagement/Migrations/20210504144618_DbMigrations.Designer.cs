@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CollegeManagement.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20210503061518_DBMigrations")]
-    partial class DBMigrations
+    [Migration("20210504144618_DbMigrations")]
+    partial class DbMigrations
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,7 +23,7 @@ namespace CollegeManagement.Migrations
 
             modelBuilder.Entity("CollegeManagement.Models.Class", b =>
                 {
-                    b.Property<int?>("ID")
+                    b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -36,6 +36,9 @@ namespace CollegeManagement.Migrations
 
                     b.Property<byte?>("Deleted")
                         .HasColumnType("tinyint");
+
+                    b.Property<int?>("MaxStudentPerClass")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -54,7 +57,7 @@ namespace CollegeManagement.Migrations
 
             modelBuilder.Entity("CollegeManagement.Models.ContactSupport", b =>
                 {
-                    b.Property<int?>("ID")
+                    b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -101,7 +104,7 @@ namespace CollegeManagement.Migrations
 
             modelBuilder.Entity("CollegeManagement.Models.Content", b =>
                 {
-                    b.Property<int?>("ID")
+                    b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -167,7 +170,7 @@ namespace CollegeManagement.Migrations
 
             modelBuilder.Entity("CollegeManagement.Models.Course", b =>
                 {
-                    b.Property<int?>("ID")
+                    b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -187,11 +190,12 @@ namespace CollegeManagement.Migrations
                     b.Property<byte?>("Focus")
                         .HasColumnType("tinyint");
 
+                    b.Property<string>("ImageURL")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
                     b.Property<string>("Info")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("MaxStudentPerCourse")
-                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -201,39 +205,14 @@ namespace CollegeManagement.Migrations
                     b.Property<int?>("Price")
                         .HasColumnType("int");
 
-                    b.Property<int?>("SemesterNumber")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("ID");
 
+                    b.HasIndex("DepartmentID");
+
                     b.ToTable("Course");
-                });
-
-            modelBuilder.Entity("CollegeManagement.Models.CourseImage", b =>
-                {
-                    b.Property<int?>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("CourseID")
-                        .HasColumnType("int");
-
-                    b.Property<byte?>("Deleted")
-                        .HasColumnType("tinyint");
-
-                    b.Property<string>("ImgUrl")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("CourseID");
-
-                    b.ToTable("CourseImage");
                 });
 
             modelBuilder.Entity("CollegeManagement.Models.CourseSubject", b =>
@@ -244,6 +223,9 @@ namespace CollegeManagement.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("CourseID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Level")
                         .HasColumnType("int");
 
                     b.Property<int>("SubjectID")
@@ -260,7 +242,7 @@ namespace CollegeManagement.Migrations
 
             modelBuilder.Entity("CollegeManagement.Models.Department", b =>
                 {
-                    b.Property<int?>("ID")
+                    b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -294,7 +276,7 @@ namespace CollegeManagement.Migrations
 
             modelBuilder.Entity("CollegeManagement.Models.Facility", b =>
                 {
-                    b.Property<int?>("ID")
+                    b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -327,7 +309,7 @@ namespace CollegeManagement.Migrations
 
             modelBuilder.Entity("CollegeManagement.Models.Faculty", b =>
                 {
-                    b.Property<int?>("ID")
+                    b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -409,7 +391,7 @@ namespace CollegeManagement.Migrations
 
             modelBuilder.Entity("CollegeManagement.Models.Marks", b =>
                 {
-                    b.Property<int?>("ID")
+                    b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -446,7 +428,7 @@ namespace CollegeManagement.Migrations
 
             modelBuilder.Entity("CollegeManagement.Models.Student", b =>
                 {
-                    b.Property<int?>("ID")
+                    b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -507,7 +489,7 @@ namespace CollegeManagement.Migrations
 
             modelBuilder.Entity("CollegeManagement.Models.Subject", b =>
                 {
-                    b.Property<int?>("ID")
+                    b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -547,7 +529,7 @@ namespace CollegeManagement.Migrations
 
             modelBuilder.Entity("CollegeManagement.Models.User", b =>
                 {
-                    b.Property<int?>("ID")
+                    b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -608,23 +590,25 @@ namespace CollegeManagement.Migrations
                         .HasForeignKey("ContentID");
                 });
 
-            modelBuilder.Entity("CollegeManagement.Models.CourseImage", b =>
+            modelBuilder.Entity("CollegeManagement.Models.Course", b =>
                 {
-                    b.HasOne("CollegeManagement.Models.Course", null)
-                        .WithMany("CourseImages")
-                        .HasForeignKey("CourseID");
+                    b.HasOne("CollegeManagement.Models.Department", "Department")
+                        .WithMany()
+                        .HasForeignKey("DepartmentID");
+
+                    b.Navigation("Department");
                 });
 
             modelBuilder.Entity("CollegeManagement.Models.CourseSubject", b =>
                 {
                     b.HasOne("CollegeManagement.Models.Course", "Course")
-                        .WithMany("CourseSubjects")
+                        .WithMany("CourseSubject")
                         .HasForeignKey("CourseID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("CollegeManagement.Models.Subject", "Subject")
-                        .WithMany()
+                        .WithMany("CourseSubject")
                         .HasForeignKey("SubjectID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -694,9 +678,7 @@ namespace CollegeManagement.Migrations
                 {
                     b.Navigation("Classes");
 
-                    b.Navigation("CourseImages");
-
-                    b.Navigation("CourseSubjects");
+                    b.Navigation("CourseSubject");
                 });
 
             modelBuilder.Entity("CollegeManagement.Models.Department", b =>
@@ -716,6 +698,8 @@ namespace CollegeManagement.Migrations
 
             modelBuilder.Entity("CollegeManagement.Models.Subject", b =>
                 {
+                    b.Navigation("CourseSubject");
+
                     b.Navigation("FacultySubject");
 
                     b.Navigation("Marks");

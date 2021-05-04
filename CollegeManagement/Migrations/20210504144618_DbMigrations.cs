@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CollegeManagement.Migrations
 {
-    public partial class DBMigrations : Migration
+    public partial class DbMigrations : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -45,29 +45,6 @@ namespace CollegeManagement.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Content", x => x.ID);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Course",
-                columns: table => new
-                {
-                    ID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Info = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SemesterNumber = table.Column<int>(type: "int", nullable: true),
-                    MaxStudentPerCourse = table.Column<int>(type: "int", nullable: true),
-                    Evaluate = table.Column<int>(type: "int", nullable: true),
-                    Price = table.Column<int>(type: "int", nullable: true),
-                    Focus = table.Column<byte>(type: "tinyint", nullable: true),
-                    DepartmentID = table.Column<int>(type: "int", nullable: true),
-                    Deleted = table.Column<byte>(type: "tinyint", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Course", x => x.ID);
                 });
 
             migrationBuilder.CreateTable(
@@ -172,45 +149,29 @@ namespace CollegeManagement.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Class",
+                name: "Course",
                 columns: table => new
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    CourseID = table.Column<int>(type: "int", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Info = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Evaluate = table.Column<int>(type: "int", nullable: true),
+                    Price = table.Column<int>(type: "int", nullable: true),
+                    Focus = table.Column<byte>(type: "tinyint", nullable: true),
+                    DepartmentID = table.Column<int>(type: "int", nullable: true),
+                    ImageURL = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     Deleted = table.Column<byte>(type: "tinyint", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Class", x => x.ID);
+                    table.PrimaryKey("PK_Course", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_Class_Course_CourseID",
-                        column: x => x.CourseID,
-                        principalTable: "Course",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "CourseImage",
-                columns: table => new
-                {
-                    ID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ImgUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    CourseID = table.Column<int>(type: "int", nullable: true),
-                    Deleted = table.Column<byte>(type: "tinyint", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CourseImage", x => x.ID);
-                    table.ForeignKey(
-                        name: "FK_CourseImage_Course_CourseID",
-                        column: x => x.CourseID,
-                        principalTable: "Course",
+                        name: "FK_Course_Department_DepartmentID",
+                        column: x => x.DepartmentID,
+                        principalTable: "Department",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -247,13 +208,38 @@ namespace CollegeManagement.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Class",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    MaxStudentPerClass = table.Column<int>(type: "int", nullable: true),
+                    CourseID = table.Column<int>(type: "int", nullable: true),
+                    Deleted = table.Column<byte>(type: "tinyint", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Class", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Class_Course_CourseID",
+                        column: x => x.CourseID,
+                        principalTable: "Course",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "CourseSubject",
                 columns: table => new
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CourseID = table.Column<int>(type: "int", nullable: false),
-                    SubjectID = table.Column<int>(type: "int", nullable: false)
+                    SubjectID = table.Column<int>(type: "int", nullable: false),
+                    Level = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -266,6 +252,32 @@ namespace CollegeManagement.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_CourseSubject_Subject_SubjectID",
+                        column: x => x.SubjectID,
+                        principalTable: "Subject",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "FacultySubject",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FacultyID = table.Column<int>(type: "int", nullable: false),
+                    SubjectID = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FacultySubject", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_FacultySubject_Faculty_FacultyID",
+                        column: x => x.FacultyID,
+                        principalTable: "Faculty",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_FacultySubject_Subject_SubjectID",
                         column: x => x.SubjectID,
                         principalTable: "Subject",
                         principalColumn: "ID",
@@ -301,32 +313,6 @@ namespace CollegeManagement.Migrations
                         principalTable: "Class",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "FacultySubject",
-                columns: table => new
-                {
-                    ID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FacultyID = table.Column<int>(type: "int", nullable: false),
-                    SubjectID = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_FacultySubject", x => x.ID);
-                    table.ForeignKey(
-                        name: "FK_FacultySubject_Faculty_FacultyID",
-                        column: x => x.FacultyID,
-                        principalTable: "Faculty",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_FacultySubject_Subject_SubjectID",
-                        column: x => x.SubjectID,
-                        principalTable: "Subject",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -371,9 +357,9 @@ namespace CollegeManagement.Migrations
                 column: "ContentID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CourseImage_CourseID",
-                table: "CourseImage",
-                column: "CourseID");
+                name: "IX_Course_DepartmentID",
+                table: "Course",
+                column: "DepartmentID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CourseSubject_CourseID",
@@ -425,9 +411,6 @@ namespace CollegeManagement.Migrations
                 name: "ContentBody");
 
             migrationBuilder.DropTable(
-                name: "CourseImage");
-
-            migrationBuilder.DropTable(
                 name: "CourseSubject");
 
             migrationBuilder.DropTable(
@@ -455,13 +438,13 @@ namespace CollegeManagement.Migrations
                 name: "Subject");
 
             migrationBuilder.DropTable(
-                name: "Department");
-
-            migrationBuilder.DropTable(
                 name: "Class");
 
             migrationBuilder.DropTable(
                 name: "Course");
+
+            migrationBuilder.DropTable(
+                name: "Department");
         }
     }
 }
