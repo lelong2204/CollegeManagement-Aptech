@@ -8,6 +8,14 @@ namespace CollegeManagement.Models
 {
     public class Student : BaseModel
     {
+        public enum StudentStatus
+        {
+            Processing,
+            Admission,
+            Expelled,
+            Graduating
+        };
+
         [Required(ErrorMessage = "Student name is required")]
         [MaxLength(255, ErrorMessage = "The maximum length of the name is 255")]
         public string? Name { get; set; }

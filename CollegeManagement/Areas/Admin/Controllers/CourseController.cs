@@ -11,7 +11,7 @@ using CollegeManagement.Models;
 namespace CollegeManagement.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    public class CourseController : BaseController
+    public class CourseController : Controller
     {
         private readonly DataContext _context;
 
@@ -20,13 +20,13 @@ namespace CollegeManagement.Areas.Admin.Controllers
             _context = context;
         }
 
-        // GET: Admin/Courses
+        // GET: Admin/Course
         public async Task<IActionResult> Index()
         {
             return View(await _context.Courses.ToListAsync());
         }
 
-        // GET: Admin/Courses/Details/5
+        // GET: Admin/Course/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -44,18 +44,18 @@ namespace CollegeManagement.Areas.Admin.Controllers
             return View(course);
         }
 
-        // GET: Admin/Courses/Create
+        // GET: Admin/Course/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Admin/Courses/Create
+        // POST: Admin/Course/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Info,SemesterNumber,MaxStudentPerCourse,Evaluate,Price,Focus,DepartmentID,ID,Deleted,CreatedAt,UpdatedAt")] Course course)
+        public async Task<IActionResult> Create([Bind("Name,Info,SemesterNumber,Evaluate,Price,Focus,DepartmentID,ID,Deleted,CreatedAt,UpdatedAt")] Course course)
         {
             if (ModelState.IsValid)
             {
@@ -66,7 +66,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
             return View(course);
         }
 
-        // GET: Admin/Courses/Edit/5
+        // GET: Admin/Course/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -82,12 +82,12 @@ namespace CollegeManagement.Areas.Admin.Controllers
             return View(course);
         }
 
-        // POST: Admin/Courses/Edit/5
+        // POST: Admin/Course/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int? id, [Bind("Name,Info,SemesterNumber,MaxStudentPerCourse,Evaluate,Price,Focus,DepartmentID,ID,Deleted,CreatedAt,UpdatedAt")] Course course)
+        public async Task<IActionResult> Edit(int id, [Bind("Name,Info,SemesterNumber,Evaluate,Price,Focus,DepartmentID,ID,Deleted,CreatedAt,UpdatedAt")] Course course)
         {
             if (id != course.ID)
             {
@@ -117,7 +117,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
             return View(course);
         }
 
-        // GET: Admin/Courses/Delete/5
+        // GET: Admin/Course/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -135,10 +135,10 @@ namespace CollegeManagement.Areas.Admin.Controllers
             return View(course);
         }
 
-        // POST: Admin/Courses/Delete/5
+        // POST: Admin/Course/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int? id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var course = await _context.Courses.FindAsync(id);
             _context.Courses.Remove(course);
@@ -146,7 +146,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CourseExists(int? id)
+        private bool CourseExists(int id)
         {
             return _context.Courses.Any(e => e.ID == id);
         }

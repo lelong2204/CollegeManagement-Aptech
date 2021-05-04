@@ -19,7 +19,7 @@
                 @Html.DisplayNameFor(model => model.Qty)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Info)
+                Information
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Deleted)
@@ -55,9 +55,9 @@
                 @Html.DisplayFor(modelItem => item.UpdatedAt)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-action btn-warning"><i class="fa fa-edit"></i></a>
+                <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-action btn-info"><i class="fa fa-eye"></i></a>
+                <a asp-action="Delete" asp-route-id="@item.ID" class="btn btn-action btn-danger"><i class="fa fa-trash"></i></a>
             </td>
         </tr>
 }
