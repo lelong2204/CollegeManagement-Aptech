@@ -31,7 +31,7 @@
                 @Html.DisplayNameFor(model => model.DepartmentID)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Deleted)
+                Image
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.CreatedAt)
@@ -64,7 +64,7 @@
                 @Html.DisplayFor(modelItem => item.DepartmentID)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Deleted)
+                <img src="@item.ImageURL" class="img-index" />
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CreatedAt)

@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CollegeManagement.Helper;
 using CollegeManagement.Models;
+using CollegeManagement.DTO.Class;
+using CollegeManagement.DTO.Course;
 
 namespace CollegeManagement.Areas.Admin.Controllers
 {
@@ -47,7 +49,17 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // GET: Admin/Class/Create
         public IActionResult Create()
         {
-            return View();
+            var res = new ClassUpSertDTO
+            {
+                CourseList = _context.Courses.Where(c => c.Deleted != 1)
+                    .OrderByDescending(c => c.UpdatedAt).Select(c => new CourseSelectDTO
+                    {
+                        ID = c.ID,
+                        Name = c.Name
+                    })
+            };
+
+            return View(res);
         }
 
         // POST: Admin/Class/Create
@@ -55,15 +67,23 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,MaxStudentPerClass,CourseID,ID,Deleted,CreatedAt,UpdatedAt")] Class @class)
+        public async Task<IActionResult> Create(ClassUpSertDTO req)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(@class);
+                var data = new Class
+                {
+                    CourseID = req.CourseID,
+                    CreatedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now,
+                    MaxStudentPerClass = req.MaxStudentPerClass,
+                    Name = req.Name
+                };
+                _context.Classes.Add(data);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(@class);
+            return View(req);
         }
 
         // GET: Admin/Class/Edit/5
@@ -74,12 +94,26 @@ namespace CollegeManagement.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var @class = await _context.Classes.FindAsync(id);
-            if (@class == null)
+            var data = await _context.Classes.FirstOrDefaultAsync(c => c.ID == id && c.Deleted != 1);
+            if (data == null)
             {
                 return NotFound();
             }
-            return View(@class);
+
+            var res = new ClassUpSertDTO
+            {
+                CourseList = _context.Courses.Where(c => c.Deleted != 1)
+                    .OrderByDescending(c => c.UpdatedAt).Select(c => new CourseSelectDTO
+                    {
+                        ID = c.ID,
+                        Name = c.Name
+                    }),
+                CourseID = data.CourseID,
+                ID = data.ID,
+                MaxStudentPerClass = data.MaxStudentPerClass,
+                Name = data.Name 
+            };
+            return View(res);
         }
 
         // POST: Admin/Class/Edit/5

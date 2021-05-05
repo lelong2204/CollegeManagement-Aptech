@@ -202,7 +202,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
                     var facultySubjectList = new List<FacultySubject>();
                     var facultySubjectExistList = await _context.FacultySubjects
                         .Where(fs => fs.FacultyID == faculty.ID).ToListAsync();
-                    var facultySubjectIDExistList = facultySubjectExistList.Select(fs => fs.ID).ToList();
+                    var facultySubjectIDExistList = facultySubjectExistList.Select(fs => fs.SubjectID).ToList();
                     var subjectIDs = req.SubjectIDs.Distinct<int>();
 
                     foreach (var subjectID in subjectIDs)
@@ -223,8 +223,6 @@ namespace CollegeManagement.Areas.Admin.Controllers
                     }
 
                     await _context.FacultySubjects.AddRangeAsync(facultySubjectList);
-                    await _context.SaveChangesAsync();
-
                     _context.Update(faculty);
                     await _context.SaveChangesAsync();
                 }

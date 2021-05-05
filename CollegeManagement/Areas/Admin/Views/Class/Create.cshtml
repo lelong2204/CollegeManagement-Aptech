@@ -1,4 +1,4 @@
-﻿@model CollegeManagement.Models.Class
+﻿@model ClassUpSertDTO
 
 @{
     ViewData["Title"] = "Create";
@@ -24,22 +24,13 @@
             </div>
             <div class="form-group">
                 <label asp-for="CourseID" class="control-label"></label>
-                <select asp-for="CourseID" class="form-control" asp-items="ViewBag.CourseID"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="Deleted" class="control-label"></label>
-                <input asp-for="Deleted" class="form-control" />
-                <span asp-validation-for="Deleted" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreatedAt" class="control-label"></label>
-                <input asp-for="CreatedAt" class="form-control" />
-                <span asp-validation-for="CreatedAt" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UpdatedAt" class="control-label"></label>
-                <input asp-for="UpdatedAt" class="form-control" />
-                <span asp-validation-for="UpdatedAt" class="text-danger"></span>
+                <select asp-for="CourseID" class="select2 form-control">
+                    @foreach (var course in Model.CourseList)
+                    {
+                        <option value="@course.ID">@course.Name</option>
+                    }
+                </select>
+                <span asp-validation-for="CourseID" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-success mr-2" />
