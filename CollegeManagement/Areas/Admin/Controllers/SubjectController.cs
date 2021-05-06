@@ -66,8 +66,6 @@ namespace CollegeManagement.Areas.Admin.Controllers
                 {
                     Name = req.Name,
                     Info = req.Info,
-                    BasicDuration = req.BasicDuration,
-                    AdvancedDuration = req.AdvancedDuration,
                     ImageUrl = imgPath,
                     CreatedAt = DateTime.Now,
                     UpdatedAt = DateTime.Now,
@@ -98,8 +96,6 @@ namespace CollegeManagement.Areas.Admin.Controllers
             var res = new SubjectUpSertDTO
             {
                 ID = subject.ID,
-                BasicDuration = subject.BasicDuration,
-                AdvancedDuration = subject.AdvancedDuration,
                 ImageUrl = subject.ImageUrl,
                 Info = subject.Info,
                 Name = subject.Name
@@ -131,8 +127,6 @@ namespace CollegeManagement.Areas.Admin.Controllers
 
                     subject.Info = req.Info;
                     subject.Name = req.Name;
-                    subject.AdvancedDuration = req.AdvancedDuration;
-                    subject.BasicDuration = req.BasicDuration;
                     subject.ImageUrl = string.IsNullOrEmpty(imgPath) ? subject.ImageUrl: imgPath;
                     subject.UpdatedAt = DateTime.Now;
 
@@ -188,6 +182,32 @@ namespace CollegeManagement.Areas.Admin.Controllers
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
+        }
+
+        public List<SubjectSelectDTO> Select2(string search, int facultyID, List<int> subjectExist)
+        {
+            try
+            {
+                search = string.IsNullOrEmpty(search) ? "" : search.ToLower();
+                var subjects = _context.Subjects.Where(s => !subjectExist.Contains(s.ID)
+                        && s.Name.ToLower().Contains(search) && s.Deleted != 1);
+
+                if (facultyID > 0)
+                {
+                    return (from f in subjects
+                            join fs in _context.FacultySubjects on f.ID equals fs.SubjectID into m
+                            from fs in m.DefaultIfEmpty()
+                            where fs.FacultyID == facultyID
+                            select new SubjectSelectDTO { ID = f.ID, Name = f.Name }).ToList();
+                }
+
+                return (from s in subjects
+                        select new SubjectSelectDTO { ID = s.ID, Name = s.Name }).ToList();
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
         private bool SubjectExists(int? id)

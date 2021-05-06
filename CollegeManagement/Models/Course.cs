@@ -17,13 +17,18 @@ namespace CollegeManagement.Models
         public int? Evaluate { get; set; }
         [Range(0, int.MaxValue, ErrorMessage = "Price must be greater than or equal 0")]
         public int? Price { get; set; }
-        public byte? Focus { get; set; }
+        public Boolean Focus { get; set; }
         [ForeignKey("Department")]
         public int? DepartmentID { get; set; }
+        [Display(Name = "Start date")]
+        public DateTime? StartDate { get; set; }
+        [Display(Name = "End date")]
+        public DateTime? EndDate { get; set; }
         public Department Department { get; set; }
         [MaxLength(500, ErrorMessage = "The maximum length of the image url is 500")]
         public string? ImageURL { get; set; }
-        public ICollection<Class> Classes { get; set; }
+        public int? Status { get; set; }
+        public ICollection<Student> Students { get; set; }
         public ICollection<CourseSubject> CourseSubject { get; set; }
     }
 }

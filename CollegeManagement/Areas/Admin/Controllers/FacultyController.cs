@@ -271,6 +271,32 @@ namespace CollegeManagement.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        public List<FacultySelectDTO> Select2(string search, int subjectID, List<int> facultyExist)
+        {
+            try
+            {
+                search = string.IsNullOrEmpty(search) ? "" : search.ToLower();
+                var faculties = _context.Faculties.Where(f => !facultyExist.Contains(f.ID)
+                        && f.Name.ToLower().Contains(search) && f.Deleted != 1);
+
+                if (subjectID > 0)
+                {
+                    return (from f in faculties
+                            join fs in _context.FacultySubjects on f.ID equals fs.FacultyID into m
+                            from fs in m.DefaultIfEmpty()
+                            where fs.SubjectID == subjectID
+                            select new FacultySelectDTO { ID = f.ID, Name = f.Name }).ToList();
+                }
+
+                return (from f in faculties
+                        select new FacultySelectDTO { ID = f.ID, Name = f.Name }).ToList();
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
         private bool FacultyExists(int? id)
         {
             return _context.Faculties.Any(e => e.ID == id);

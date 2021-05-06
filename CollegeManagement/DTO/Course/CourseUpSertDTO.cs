@@ -20,7 +20,7 @@ namespace CollegeManagement.DTO.Course
         public string ImageURL { get; set; }
         [Range(0, int.MaxValue, ErrorMessage = "Price must be greater than or equal 0")]
         public int? Price { get; set; }
-        public byte? Focus { get; set; }
+        public Boolean Focus { get; set; }
         public List<int> SubjectIDs { get; set; }
         public IQueryable<SubjectSelectDTO> SubjectList { get; set; }
         [Required(ErrorMessage = "Department is required")]

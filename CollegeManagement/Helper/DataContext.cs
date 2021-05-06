@@ -15,7 +15,6 @@ namespace CollegeManagement.Helper
         }
 
         public DbSet<Department> Departments { get; set; }
-        public DbSet<Class> Classes { get; set; }
         public DbSet<ContactSupport> ContactSupports { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<CourseSubject> CourseSubjects { get; set; }
@@ -32,7 +31,6 @@ namespace CollegeManagement.Helper
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Department>().ToTable("Department");
-            modelBuilder.Entity<Class>().ToTable("Class");
             modelBuilder.Entity<ContactSupport>().ToTable("ContactSupport");
             modelBuilder.Entity<Course>().ToTable("Course");
             modelBuilder.Entity<CourseSubject>().ToTable("CourseSubject");

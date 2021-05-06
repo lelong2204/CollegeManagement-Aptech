@@ -10,6 +10,7 @@ using CollegeManagement.Models;
 using CollegeManagement.DTO.Course;
 using CollegeManagement.DTO.Subject;
 using CollegeManagement.DTO.Departments;
+using CollegeManagement.DTO.Faculty;
 
 namespace CollegeManagement.Areas.Admin.Controllers
 {

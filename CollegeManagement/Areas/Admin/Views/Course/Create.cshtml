@@ -9,7 +9,7 @@
 <h4>Course</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <form asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
@@ -29,9 +29,9 @@
                 <input asp-for="Price" class="form-control" />
                 <span asp-validation-for="Price" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Focus" class="control-label"></label>
-                <input asp-for="Focus" class="form-control" />
+            <div class="form-group form-switch" style="padding: 0">
+                <label asp-for="Focus" class="form-check-label" for="flexSwitchCheckChecked"></label>
+                <input asp-for="Focus" class="form-check-input" style="float:right" type="checkbox" id="flexSwitchCheckChecked" checked>
                 <span asp-validation-for="Focus" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -44,16 +44,13 @@
                 </select>
                 <span asp-validation-for="DepartmentID" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="SubjectIDs" class="control-label">Subject</label>
-                <select asp-for="SubjectIDs" class="select2-multiple form-control" multiple="multiple">
-                    @foreach (var subject in Model.SubjectList)
-                    {
-                        <option value="@subject.ID">@subject.Name</option>
-                    }
-                </select>
-                <span asp-validation-for="SubjectIDs" class="text-danger"></span>
-            </div>
+            <label>Add Subject</label>
+            <table class="row table table-hover">
+                <tbody id="course_subject" class="col-12">
+                </tbody>
+            </table>
+            <span id="subject_error" class="text-danger col-12"></span>
+            <button type="button" id="add_subject" class="btn btn-primary mb-2 col-12">Add Subject</button>
             <div class="form-group">
                 <label asp-for="Image" class="control-label"></label>
                 <button type="button" class="btn btn-info" id="img-select-btn">Choose Image...</button>
@@ -72,4 +69,121 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        var subjectIndex = 0;
+        var subjectData = [];
+        var subjectList = [];
+        var facultyList = [];
+
+        $(document).ready(function () {
+
+            $('#add_subject').on('click', function (e) {
+                $("#subject_error").text("")
+
+                subjectData.push({ subjectID: null, facultyID: null });
+                subjectList.push(null);
+                facultyList.push(null);
+
+                $('#course_subject').append(`
+                    <tr class="row" data-index="${subjectIndex}">
+                        <td class="col-md-5">
+                            <div class="form-group">
+                                <label class="control-label">Subject</label>
+                                <select class="select2 form-control subject_select subject_${subjectIndex}" data-index="${subjectIndex}">
+                                </select>
+                            </div>
+                        </td>
+                        <td class="col-md-5">
+                            <div class="form-group">
+                                <label class="control-label">Faculty</label>
+                                <select class="select2 form-control faculty_select faculty_${subjectIndex}" data-index="${subjectIndex}">
+                                </select>
+                            </div>
+                        </td>
+                        <td class="col-md-2" style="display: flex; align-items:center">
+                            <button type="button" data-index="${subjectIndex}" class="btn btn-danger remove-subject">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>`);
+
+
+                $(`.subject_${subjectIndex}`).select2({
+                    ajax: {
+                        url: '/Admin/Subject/Select2',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function (params) {
+                            var query = {
+                                search: params.term,
+                                facultyID: facultyList[$(this).data('index')],
+                                subjectExist: JSON.stringify(subjectList)
+                            }
+                            return query;
+                        },
+                        processResults: function (data) {
+                            return {
+                                results: $.map(data, function (obj) {
+                                    return { id: obj.id, text: obj.name };
+                                })
+                            };
+                        }
+                    },
+                    allowClear: true, placeholder: "Select subject"
+                }).on('change', function () {
+                    var index = $(this).data('index');
+                    subjectList[index] = $(this).val();
+                    subjectData[index].subjectID = $(this).val();
+                });
+
+                $(`.faculty_${subjectIndex}`).select2({
+                    ajax: {
+                        url: '/Admin/Faculty/Select2',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function (params) {
+                            console.log(params)
+                            console.log(subjectList[$(this).data('index')])
+                            console.log(JSON.stringify(facultyList))
+                            var query = {
+                                search: params.term,
+                                subjectID: subjectList[$(this).data('index')],
+                                facultyExist: JSON.stringify(facultyList)
+                            }
+                            return query;
+                        },
+                        processResults: function (data) {
+                            return {
+                                results: $.map(data, function (obj) {
+                                    return { id: obj.id, text: obj.name };
+                                })
+                            };
+                        }
+                    },
+                    allowClear: true, placeholder: "Select faculty"
+                }).on('change', function () {
+                    var index = $(this).data('index');
+                    facultyList[index] = $(this).val();
+                    subjectData[index].facultyID = $(this).val();
+                });
+
+                subjectIndex++;
+            })
+
+            $('#add_subject').trigger('click');
+        })
+
+        $(document).on('click', '.remove-subject', function () {
+            if ($('#course_subject').find('tr').length === 1) {
+                $("#subject_error").text("Need at least one subject")
+                return;
+            }
+
+            var index = $(this).data('index');
+            $('#course_subject').find(`tr[data-index='${index}']`).remove();
+            facultyList[index] = null;
+            subjectList[index] = null;
+            subjectData[index] = null;
+        })
+    </script>
 }

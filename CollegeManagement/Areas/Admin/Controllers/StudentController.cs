@@ -64,7 +64,8 @@ namespace CollegeManagement.Areas.Admin.Controllers
                 {
                     Name = req.Name,
                     Code = req.Code,
-                    Address = req.Address,
+                    PermanentAddress = req.PermanentAddress,
+                    ResidentialAddress = req.ResidentialAddress,
                     DOB = req.DOB,
                     Email = req.Email,
                     PhoneNumber = req.Phone,
@@ -100,7 +101,8 @@ namespace CollegeManagement.Areas.Admin.Controllers
             {
                 ID = student.ID,
                 Name = student.Name,
-                Address = student.Address,
+                PermanentAddress = student.PermanentAddress,
+                ResidentialAddress = student.ResidentialAddress,
                 DOB = student.DOB,
                 Email = student.Email,
                 Gender = student.Gender,
@@ -136,7 +138,8 @@ namespace CollegeManagement.Areas.Admin.Controllers
 
                     student.Name = req.Name;
                     student.Code = req.Code;
-                    student.Address = req.Address;
+                    student.ResidentialAddress = req.ResidentialAddress;
+                    student.PermanentAddress = req.PermanentAddress;
                     student.DOB = req.DOB;
                     student.Email = req.Email;
                     student.PhoneNumber = req.Phone;
