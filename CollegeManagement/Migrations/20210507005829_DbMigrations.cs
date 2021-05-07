@@ -156,7 +156,7 @@ namespace CollegeManagement.Migrations
                     Info = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Evaluate = table.Column<int>(type: "int", nullable: true),
                     Price = table.Column<int>(type: "int", nullable: true),
-                    Focus = table.Column<byte>(type: "tinyint", nullable: true),
+                    Focus = table.Column<bool>(type: "bit", nullable: false),
                     DepartmentID = table.Column<int>(type: "int", nullable: true),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),

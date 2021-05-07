@@ -1669,3 +1669,11 @@ img.img-detail {
     .select2-container--default .select2-selection--multiple .select2-selection__clear {
         margin: 0 10px 0 0 !important;
     }
+
+.dropdown-menu li {
+    cursor: pointer;
+}
+
+.dropdown-menu {
+    border: thin solid #cecece;
+}

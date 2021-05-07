@@ -11,6 +11,7 @@ using CollegeManagement.Models;
 namespace CollegeManagement.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize]
     public class FacilityController : BaseController
     {
         private readonly DataContext _context;

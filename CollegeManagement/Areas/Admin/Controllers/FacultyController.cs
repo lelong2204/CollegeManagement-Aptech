@@ -13,6 +13,7 @@ using System.Collections.Generic;
 namespace CollegeManagement.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize]
     public class FacultyController : BaseController
     {
         private readonly DataContext _context;

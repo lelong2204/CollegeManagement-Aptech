@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CollegeManagement.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20210506094311_DbMigrations")]
+    [Migration("20210507005829_DbMigrations")]
     partial class DbMigrations
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -156,8 +156,8 @@ namespace CollegeManagement.Migrations
                     b.Property<int?>("Evaluate")
                         .HasColumnType("int");
 
-                    b.Property<byte?>("Focus")
-                        .HasColumnType("tinyint");
+                    b.Property<bool>("Focus")
+                        .HasColumnType("bit");
 
                     b.Property<string>("ImageURL")
                         .HasMaxLength(500)

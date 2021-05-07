@@ -12,6 +12,7 @@ using CollegeManagement.Departments.DTO;
 namespace CollegeManagement.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize]
     public class DepartmentController : BaseController
     {
         private readonly DataContext _context;

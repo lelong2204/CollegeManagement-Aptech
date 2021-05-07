@@ -15,7 +15,8 @@ using CollegeManagement.DTO.Faculty;
 namespace CollegeManagement.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    public class CourseController : Controller
+    [Authorize]
+    public class CourseController : BaseController
     {
         private readonly DataContext _context;
 

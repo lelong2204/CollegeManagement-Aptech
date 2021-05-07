@@ -154,8 +154,8 @@ namespace CollegeManagement.Migrations
                     b.Property<int?>("Evaluate")
                         .HasColumnType("int");
 
-                    b.Property<byte?>("Focus")
-                        .HasColumnType("tinyint");
+                    b.Property<bool>("Focus")
+                        .HasColumnType("bit");
 
                     b.Property<string>("ImageURL")
                         .HasMaxLength(500)
