@@ -3,6 +3,17 @@
     if (defaultImgSrc === null || defaultImgSrc === undefined || defaultImgSrc === '') {
         $('.upload-img').attr('src', DEFAULT_IMG)
     }
+
+    var img_index = $('.img-index');
+
+    if (img_index && img_index.length) {
+        $.each(img_index, function (i, data) {
+            console.log
+            if (data.src == undefined || !data.src || data.src === '') {
+                data.src = DEFAULT_IMG
+            }
+        })
+    }
     
     $(document).on('error', '.upload-img', function () {
         $(this).attr('src', DEFAULT_IMG)
@@ -28,8 +39,6 @@
                 reader.readAsDataURL($(this).get(0).files[0]);
             }
         }
-
-        console.log($(this).val())
     })
 
     var url = window.location.pathname.toUpperCase(),

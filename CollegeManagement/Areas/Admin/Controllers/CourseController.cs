@@ -101,23 +101,21 @@ namespace CollegeManagement.Areas.Admin.Controllers
                 _context.Add(course);
                 await _context.SaveChangesAsync();
 
-                var courseSubjectList = new List<CourseSubject>();
+                foreach (var s in subjectList)
+                {
+                    if (s.SubjectID > 0)
+                    {
+                        s.CourseID = course.ID;
+                    }
+                }
 
-                //if (req.SubjectIDs != null && req.SubjectIDs.Count() > 0)
-                //{
-                //    var subjectIDs = req.SubjectIDs.Distinct<int>();
-                //    foreach (var subjectID in subjectIDs)
-                //    {
-                //        courseSubjectList.Add(new CourseSubject { SubjectID = subjectID, CourseID = (int)course.ID });
-                //    }
+                await _context.CourseSubjects.AddRangeAsync(subjectList);
+                await _context.SaveChangesAsync();
 
-                //    await _context.CourseSubjects.AddRangeAsync(courseSubjectList);
-                //    await _context.SaveChangesAsync();
-                //}
-
-                return RedirectToAction(nameof(Index));
+                return Json(new { status = true, msg = MESSAGE_SUCCESS });
             }
-            return View(req);
+
+            return Json(new { status = false, msg = MESSAGE_NOT_CREATE });
         }
 
         // GET: Admin/Course/Edit/5

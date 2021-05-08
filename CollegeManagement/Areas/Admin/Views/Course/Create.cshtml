@@ -69,13 +69,13 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    <script>var subjectIndex = 0;
+    <script>
+        var subjectIndex = 0;
         var subjectData = [];
         var subjectList = [];
         var facultyList = [];
 
         $(document).ready(function () {
-
             $('#add_subject').on('click', function (e) {
                 $("#subject_error").text("")
 
@@ -98,6 +98,7 @@
                                 <label class="control-label">Faculty</label>
                                 <select class="select2 form-control faculty_select faculty_${subjectIndex}" data-index="${subjectIndex}">
                                 </select>
+                                <span id='error_faculty_${subjectIndex}' class="text-danger"></span>
                             </div>
                         </td>
                         <td class="col-md-2" style="display: flex; align-items:center">
@@ -131,9 +132,20 @@
                     allowClear: true, placeholder: "Select subject"
                 }).on('change', function () {
                     var index = $(this).data('index');
-                    $(`#error_subject_${index}`).text("");
-                    subjectList[index] = $(this).val();
-                    subjectData[index].subjectID = $(this).val();
+                    var val = $(this).val();
+
+                    if (val && val !== undefined) {
+                        if (subjectList.includes(val)) {
+                            $(`#error_subject_${index}`).text("This subject was exist");
+                        } else {
+                            $(`#error_subject_${index}`).text("");
+                        }
+                    } else {
+                        $(`#error_subject_${index}`).text("This field is required");
+                    }
+
+                    subjectList[index] = val;
+                    subjectData[index].subjectID = val;
                 });
 
                 $(`.faculty_${subjectIndex}`).select2({
@@ -160,8 +172,15 @@
                     allowClear: true, placeholder: "Select faculty"
                 }).on('change', function () {
                     var index = $(this).data('index');
-                    facultyList[index] = $(this).val();
-                    subjectData[index].facultyID = $(this).val();
+                    var val = $(this).val();
+                    facultyList[index] = val;
+                    subjectData[index].facultyID = val;
+
+                    if (val && val !== undefined) {
+                        $(`#error_faculty_${index}`).text("");
+                    } else {
+                        $(`#error_faculty_${index}`).text("This field is required");
+                    }
                 });
 
                 subjectIndex++;
@@ -178,10 +197,19 @@
                             isValid = false;
                             $(`#error_subject_${i}`).text("This field is required");
 
-                        } else {
+                        }
+
+                        if (data.facultyID === undefined || !data.facultyID) {
+                            isValid = false;
+                            $(`#error_faculty_${i}`).text("This field is required");
+
+                        }
+
+                        if (data.facultyID !== undefined && data.facultyID &&
+                        data.subjectID !== undefined && !data.subjectID) {
                             subjects.push({
-                                'SubjectID': data.subjectID,
-                                'FacultyID': data.facultyID
+                                'SubjectID': parseInt(data.subjectID),
+                                'FacultyID': parseInt(data.facultyID)
                             })
 
                             $(`#error_subject_${i}`).text("");
@@ -191,8 +219,10 @@
 
                 if (!isValid) return;
 
+                if ($('.text-danger').text().length > 0) return;
+
                 $.validator.unobtrusive.parse($('#course_form'));
-                console.log($('#course_form').valid());
+
                 if (!$('#course_form').valid()) {
                     return;
                 }
@@ -203,9 +233,17 @@
                 $.ajax({
                     url: "/Admin/Course/Create",
                     method: "POST",
-                    data: form,
+                    data: $.param(form),
+                    processData: false,
+                    contentType: false,
                     success: function (res) {
-                        console.log(res);
+                        if (res.status) {
+                            window.location.href = "@Url.Action("Index","Course")";
+                            $("#backtolist").trigger("click");
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(xhr, status, error);
                     }
                 })
             });
