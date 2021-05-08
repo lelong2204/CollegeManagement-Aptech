@@ -12,6 +12,7 @@ using CollegeManagement.DTO.Subject;
 using CollegeManagement.DTO.Departments;
 using CollegeManagement.DTO.Faculty;
 using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CollegeManagement.Areas.Admin.Controllers
 {
