@@ -16,7 +16,7 @@ public class AuthorizeAttribute : Attribute, IAuthorizationFilter
 
         if (account == null)
         {
-            context.Result = new RedirectToActionResult("Auth", "Admin", null);
+            context.Result = new RedirectToActionResult("Index", "Auth", null);
         }
     }
 }

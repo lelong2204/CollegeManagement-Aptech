@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace CollegeManagement.Areas.Admin.Controllers
 {
+    [Route("Admin/{controller=Home}/{action=Index}/{id?}")]
     public class BaseController : Controller
     {
         protected const string MESSAGE_SUCCESS = "Successful";
