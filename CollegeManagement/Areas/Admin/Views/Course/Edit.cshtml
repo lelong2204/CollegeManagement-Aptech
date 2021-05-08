@@ -29,15 +29,10 @@
                 <input asp-for="Price" class="form-control" />
                 <span asp-validation-for="Price" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Focus" class="control-label"></label>
-                <input asp-for="Focus" class="form-control" />
+            <div class="form-group form-switch" style="padding: 0">
+                <label asp-for="Focus" class="form-check-label" for="flexSwitchCheckChecked"></label>
+                <input asp-for="Focus" class="form-check-input" style="float:right" type="checkbox" id="flexSwitchCheckChecked" checked>
                 <span asp-validation-for="Focus" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DepartmentID" class="control-label"></label>
-                <input asp-for="DepartmentID" class="form-control" />
-                <span asp-validation-for="DepartmentID" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="DepartmentID" class="control-label">Department</label>
@@ -49,6 +44,13 @@
                 </select>
                 <span asp-validation-for="DepartmentID" class="text-danger"></span>
             </div>
+            <label>Add Subject</label>
+            <table class="row table table-hover">
+                <tbody id="course_subject" class="col-12">
+                </tbody>
+            </table>
+            <span id="subject_error" class="text-danger col-12"></span>
+            <button type="button" id="add_subject" class="btn btn-primary mb-2 col-12">Add Subject</button>
             <div class="form-group">
                 <label asp-for="Image" class="control-label"></label>
                 <button type="button" class="btn btn-info" id="img-select-btn">Choose Image...</button>
@@ -68,4 +70,211 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        var subjectIndex = 0;
+        var subjectData = [];
+        var subjectList = [];
+        var facultyList = [];
+
+        $(document).ready(function () {
+            $('#add_subject').on('click', function (e) {
+                $("#subject_error").text("")
+
+                subjectData.push({ subjectID: null, facultyID: null });
+                subjectList.push(null);
+                facultyList.push(null);
+
+                $('#course_subject').append(`
+                    <tr class="row" data-index="${subjectIndex}">
+                        <td class="col-md-5">
+                            <div class="form-group">
+                                <label class="control-label">Subject</label>
+                                <select class="select2 form-control subject_select subject_${subjectIndex}" data-index="${subjectIndex}">
+                                </select>
+                                <span id='error_subject_${subjectIndex}' class="text-danger"></span>
+                            </div>
+                        </td>
+                        <td class="col-md-5">
+                            <div class="form-group">
+                                <label class="control-label">Faculty</label>
+                                <select class="select2 form-control faculty_select faculty_${subjectIndex}" data-index="${subjectIndex}">
+                                </select>
+                                <span id='error_faculty_${subjectIndex}' class="text-danger"></span>
+                            </div>
+                        </td>
+                        <td class="col-md-2" style="display: flex; align-items:center">
+                            <button type="button" data-index="${subjectIndex}" class="btn btn-danger remove-subject">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>`);
+
+                $(`.subject_${subjectIndex}`).select2({
+                    ajax: {
+                        url: '/Admin/Subject/Select2',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function (params) {
+                            var query = {
+                                search: params.term,
+                                facultyID: facultyList[$(this).data('index')],
+                                subjectExist: JSON.stringify(subjectList)
+                            }
+                            return query;
+                        },
+                        processResults: function (data) {
+                            return {
+                                results: $.map(data, function (obj) {
+                                    return { id: obj.id, text: obj.name };
+                                })
+                            };
+                        }
+                    },
+                    allowClear: true, placeholder: "Select subject"
+                }).on('change', function () {
+                    var index = $(this).data('index');
+                    var val = $(this).val();
+
+                    if (val && val !== undefined) {
+                        if (subjectList.includes(val)) {
+                            $(`#error_subject_${index}`).text("This subject was exist");
+                        } else {
+                            $(`#error_subject_${index}`).text("");
+                        }
+                    } else {
+                        $(`#error_subject_${index}`).text("This field is required");
+                    }
+
+                    subjectList[index] = val;
+                    subjectData[index].subjectID = val;
+                });
+
+                $(`.faculty_${subjectIndex}`).select2({
+                    ajax: {
+                        url: '/Admin/Faculty/Select2',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function (params) {
+                            var query = {
+                                search: params.term,
+                                subjectID: subjectList[$(this).data('index')],
+                                facultyExist: JSON.stringify(facultyList)
+                            }
+                            return query;
+                        },
+                        processResults: function (data) {
+                            return {
+                                results: $.map(data, function (obj) {
+                                    return { id: obj.id, text: obj.name };
+                                })
+                            };
+                        }
+                    },
+                    allowClear: true, placeholder: "Select faculty"
+                }).on('change', function () {
+                    var index = $(this).data('index');
+                    var val = $(this).val();
+                    facultyList[index] = val;
+                    subjectData[index].facultyID = val;
+
+                    if (val && val !== undefined) {
+                        $(`#error_faculty_${index}`).text("");
+                    } else {
+                        $(`#error_faculty_${index}`).text("This field is required");
+                    }
+                });
+
+                subjectIndex++;
+            })
+
+            $('#add_subject').trigger('click');
+
+            $('#btn_create').on('click', function () {
+                $("#subject_error").text("")
+                var subjects = [];
+                var isValid = true;
+                $.each(subjectData, function (i, data) {
+                    if (data !== undefined && data) {
+                        if (data.subjectID === undefined || !data.subjectID) {
+                            isValid = false;
+                            $(`#error_subject_${i}`).text("This field is required");
+
+                        }
+
+                        if (data.facultyID === undefined || !data.facultyID) {
+                            isValid = false;
+                            $(`#error_faculty_${i}`).text("This field is required");
+
+                        }
+
+                        if (data.facultyID !== undefined && data.facultyID &&
+                        data.subjectID !== undefined && !data.subjectID) {
+                            subjects.push({
+                                'SubjectID': parseInt(data.subjectID),
+                                'FacultyID': parseInt(data.facultyID)
+                            })
+
+                            $(`#error_subject_${i}`).text("");
+                        }
+                    }
+                });
+
+                courseIMG = $('#image-select');
+                var submitData = new FormData();
+
+                if (courseIMG.get(0) !== undefined
+                    && courseIMG.get(0)
+                    && courseIMG.get(0).files
+                    && courseIMG.get(0).files.length) {
+                    submitData.append('Image', courseIMG.get(0).files[0])
+                }
+
+                if (!isValid) return;
+
+                if ($('.text-danger').text().length > 0) return;
+
+                $.validator.unobtrusive.parse($('#course_form'));
+
+                if (!$('#course_form').valid()) {
+                    return;
+                }
+
+                var form = $('#course_form').serializeArray();
+                form.push({ name: "Subjects", value: JSON.stringify(subjects) });
+                $.each(form, function (i) {
+                    submitData.append($(this)[0].name, $(this)[0].value);
+                })
+
+                $.ajax({
+                    url: "/Admin/Course/Edit",
+                    type: "POST",
+                    data: submitData,
+                    processData: false,
+                    contentType: false,
+                    success: function (res) {
+                        if (res.status) {
+                            notificationSuccess(res.msg);
+                            window.location.href = "@Url.Action("Index","Course")";
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        notificationError(error);
+                    }
+                })
+            });
+        })
+
+        $(document).on('click', '.remove-subject', function () {
+            if ($('#course_subject').find('tr').length === 1) {
+                $("#subject_error").text("Need at least one subject")
+                return;
+            }
+
+            var index = $(this).data('index');
+            $('#course_subject').find(`tr[data-index='${index}']`).remove();
+            facultyList[index] = null;
+            subjectList[index] = null;
+            subjectData[index] = null;
+        })
+    </script>
 }

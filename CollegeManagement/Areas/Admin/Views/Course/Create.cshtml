@@ -189,6 +189,7 @@
             $('#add_subject').trigger('click');
 
             $('#btn_create').on('click', function () {
+                $("#subject_error").text("")
                 var subjects = [];
                 var isValid = true;
                 $.each(subjectData, function (i, data) {
@@ -217,6 +218,16 @@
                     }
                 });
 
+                courseIMG = $('#image-select');
+                var submitData = new FormData();
+
+                if (courseIMG.get(0) !== undefined
+                    && courseIMG.get(0)
+                    && courseIMG.get(0).files
+                    && courseIMG.get(0).files.length) {
+                    submitData.append('Image', courseIMG.get(0).files[0])
+                }
+
                 if (!isValid) return;
 
                 if ($('.text-danger').text().length > 0) return;
@@ -229,21 +240,24 @@
 
                 var form = $('#course_form').serializeArray();
                 form.push({ name: "Subjects", value: JSON.stringify(subjects) });
+                $.each(form, function (i) {
+                    submitData.append($(this)[0].name, $(this)[0].value);
+                })
 
                 $.ajax({
                     url: "/Admin/Course/Create",
-                    method: "POST",
-                    data: $.param(form),
+                    type: "POST",
+                    data: submitData,
                     processData: false,
                     contentType: false,
                     success: function (res) {
                         if (res.status) {
+                            notificationSuccess(res.msg);
                             window.location.href = "@Url.Action("Index","Course")";
-                            $("#backtolist").trigger("click");
                         }
                     },
                     error: function (xhr, status, error) {
-                        console.log(xhr, status, error);
+                        notificationError(error);
                     }
                 })
             });
@@ -260,5 +274,6 @@
             facultyList[index] = null;
             subjectList[index] = null;
             subjectData[index] = null;
-        })</script>
+        })
+    </script>
 }

@@ -92,6 +92,8 @@ namespace CollegeManagement.Areas.Admin.Controllers
                     Focus = req.Focus,
                     ImageURL = imgPath,
                     Name = req.Name,
+                    StartDate = req.StartDate,
+                    EndDate = req.EndDate,
                     Info = req.Info,
                     Price = req.Price,
                     UpdatedAt = DateTime.Now,
@@ -142,8 +144,10 @@ namespace CollegeManagement.Areas.Admin.Controllers
                 Info = course.Info,
                 Name = course.Name,
                 Price = course.Price,
-                //SubjectIDs = await _context.CourseSubjects
-                //    .Where(cs => cs.CourseID == course.ID).Select(cs => cs.SubjectID).ToListAsync()
+                EndDate = course.EndDate,
+                StartDate = course.StartDate,
+                SubjectList = _context.CourseSubjects
+                    .Where(cs => cs.CourseID == course.ID)
             };
 
             res.DepartmentList = _context.Departments.Where(d => d.Deleted != 1)
@@ -153,14 +157,6 @@ namespace CollegeManagement.Areas.Admin.Controllers
                     ID = (int)d.ID,
                     Name = d.Name
                 });
-
-            //res.SubjectList = _context.Subjects.Where(d => d.Deleted != 1)
-            //    .OrderByDescending(d => d.UpdatedAt)
-            //    .Select(d => new SubjectSelectDTO
-            //    {
-            //        ID = (int)d.ID,
-            //        Name = d.Name
-            //    });
 
             return View(res);
         }
@@ -192,6 +188,8 @@ namespace CollegeManagement.Areas.Admin.Controllers
                     course.Name = req.Name;
                     course.Info = req.Info;
                     course.Price = req.Price;
+                    course.EndDate = req.EndDate;
+                    course.StartDate = req.StartDate;
                     course.UpdatedAt = DateTime.Now;
 
                     var courseSubjectList = new List<CourseSubject>();

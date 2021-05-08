@@ -23,6 +23,13 @@ namespace CollegeManagement.DTO.Course
         [Range(0, int.MaxValue, ErrorMessage = "Price must be greater than or equal 0")]
         public int? Price { get; set; }
         public Boolean Focus { get; set; }
+
+        [Display(Name = "Start date")]
+        [DataType(DataType.Date)]
+        public DateTime? StartDate { get; set; }
+        [Display(Name = "End date")]
+        [DataType(DataType.Date)]
+        public DateTime? EndDate { get; set; }
         public IQueryable<CourseSubject> SubjectList { get; set; }
         [Required(ErrorMessage = "Department is required")]
         public int? DepartmentID { get; set; }

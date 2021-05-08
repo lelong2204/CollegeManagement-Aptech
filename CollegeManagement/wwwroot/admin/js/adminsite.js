@@ -55,4 +55,18 @@
     $('.select2-multiple').select2({ allowClear: true, placeholder: "Select option" })
 })
 
+function notificationSuccess(msg) {
+    iziToast.success({
+        title: 'Success',
+        message: msg,
+    });
+}
+
+function notificationError(msg) {
+    iziToast.error({
+        title: 'Error',
+        message: msg,
+    });
+}
+
 const DEFAULT_IMG = '/admin/assets/images/default-image.jpg';
