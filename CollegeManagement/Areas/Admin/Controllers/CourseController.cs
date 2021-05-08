@@ -11,6 +11,7 @@ using CollegeManagement.DTO.Course;
 using CollegeManagement.DTO.Subject;
 using CollegeManagement.DTO.Departments;
 using CollegeManagement.DTO.Faculty;
+using System.Text.Json;
 
 namespace CollegeManagement.Areas.Admin.Controllers
 {
@@ -62,13 +63,13 @@ namespace CollegeManagement.Areas.Admin.Controllers
                     Name = d.Name
                 });
 
-            res.SubjectList = _context.Subjects.Where(d => d.Deleted != 1)
-                .OrderByDescending(d => d.UpdatedAt)
-                .Select(d => new SubjectSelectDTO
-                {
-                    ID = (int)d.ID,
-                    Name = d.Name
-                });
+            //res.SubjectList = _context.Subjects.Where(d => d.Deleted != 1)
+            //    .OrderByDescending(d => d.UpdatedAt)
+            //    .Select(d => new SubjectSelectDTO
+            //    {
+            //        ID = (int)d.ID,
+            //        Name = d.Name
+            //    });
 
             return View(res);
         }
@@ -82,7 +83,8 @@ namespace CollegeManagement.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                var imgPath = await Utils.SaveFile(req.Image, "Course");
+                var imgPath  = await Utils.SaveFile(req.Image, "Course");
+                var subjectList = JsonSerializer.Deserialize<List<CourseSubject>>(req.Subjects);
 
                 var course = new Course
                 {
@@ -101,17 +103,17 @@ namespace CollegeManagement.Areas.Admin.Controllers
 
                 var courseSubjectList = new List<CourseSubject>();
 
-                if (req.SubjectIDs != null && req.SubjectIDs.Count() > 0)
-                {
-                    var subjectIDs = req.SubjectIDs.Distinct<int>();
-                    foreach (var subjectID in subjectIDs)
-                    {
-                        courseSubjectList.Add(new CourseSubject { SubjectID = subjectID, CourseID = (int)course.ID });
-                    }
+                //if (req.SubjectIDs != null && req.SubjectIDs.Count() > 0)
+                //{
+                //    var subjectIDs = req.SubjectIDs.Distinct<int>();
+                //    foreach (var subjectID in subjectIDs)
+                //    {
+                //        courseSubjectList.Add(new CourseSubject { SubjectID = subjectID, CourseID = (int)course.ID });
+                //    }
 
-                    await _context.CourseSubjects.AddRangeAsync(courseSubjectList);
-                    await _context.SaveChangesAsync();
-                }
+                //    await _context.CourseSubjects.AddRangeAsync(courseSubjectList);
+                //    await _context.SaveChangesAsync();
+                //}
 
                 return RedirectToAction(nameof(Index));
             }
@@ -142,8 +144,8 @@ namespace CollegeManagement.Areas.Admin.Controllers
                 Info = course.Info,
                 Name = course.Name,
                 Price = course.Price,
-                SubjectIDs = await _context.CourseSubjects
-                    .Where(cs => cs.CourseID == course.ID).Select(cs => cs.SubjectID).ToListAsync()
+                //SubjectIDs = await _context.CourseSubjects
+                //    .Where(cs => cs.CourseID == course.ID).Select(cs => cs.SubjectID).ToListAsync()
             };
 
             res.DepartmentList = _context.Departments.Where(d => d.Deleted != 1)
@@ -154,13 +156,13 @@ namespace CollegeManagement.Areas.Admin.Controllers
                     Name = d.Name
                 });
 
-            res.SubjectList = _context.Subjects.Where(d => d.Deleted != 1)
-                .OrderByDescending(d => d.UpdatedAt)
-                .Select(d => new SubjectSelectDTO
-                {
-                    ID = (int)d.ID,
-                    Name = d.Name
-                });
+            //res.SubjectList = _context.Subjects.Where(d => d.Deleted != 1)
+            //    .OrderByDescending(d => d.UpdatedAt)
+            //    .Select(d => new SubjectSelectDTO
+            //    {
+            //        ID = (int)d.ID,
+            //        Name = d.Name
+            //    });
 
             return View(res);
         }
@@ -199,19 +201,19 @@ namespace CollegeManagement.Areas.Admin.Controllers
                         .Where(cs => cs.CourseID == course.ID).ToListAsync();
 
                     var courseSubjectIDExistList = courseSubjectExistList.Select(cs => cs.SubjectID).ToList();
-                    var subjectIDs = req.SubjectIDs.Distinct<int>();
+                    //var subjectIDs = req.SubjectIDs.Distinct<int>();
 
-                    foreach (var subjectID in subjectIDs)
-                    {
-                        if (courseSubjectIDExistList.Contains(subjectID))
-                        {
-                            courseSubjectExistList = courseSubjectExistList
-                                .Where(fs => fs.SubjectID != subjectID).ToList();
-                            continue;
-                        }
+                    //foreach (var subjectID in subjectIDs)
+                    //{
+                    //    if (courseSubjectIDExistList.Contains(subjectID))
+                    //    {
+                    //        courseSubjectExistList = courseSubjectExistList
+                    //            .Where(fs => fs.SubjectID != subjectID).ToList();
+                    //        continue;
+                    //    }
 
-                        courseSubjectList.Add(new CourseSubject { SubjectID = subjectID, CourseID = id });
-                    }
+                    //    courseSubjectList.Add(new CourseSubject { SubjectID = subjectID, CourseID = id });
+                    //}
 
                     if (courseSubjectExistList.Count > 0)
                     {

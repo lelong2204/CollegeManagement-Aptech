@@ -1,5 +1,6 @@
 ﻿using CollegeManagement.DTO.Departments;
 using CollegeManagement.DTO.Subject;
+using CollegeManagement.Models;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -18,11 +19,11 @@ namespace CollegeManagement.DTO.Course
         public string? Info { get; set; }
         public IFormFile Image { get; set; }
         public string ImageURL { get; set; }
+        public string Subjects { get; set; }
         [Range(0, int.MaxValue, ErrorMessage = "Price must be greater than or equal 0")]
         public int? Price { get; set; }
         public Boolean Focus { get; set; }
-        public List<int> SubjectIDs { get; set; }
-        public IQueryable<SubjectSelectDTO> SubjectList { get; set; }
+        public IQueryable<CourseSubject> SubjectList { get; set; }
         [Required(ErrorMessage = "Department is required")]
         public int? DepartmentID { get; set; }
         public IQueryable<DepartmentSelectDTO> DepartmentList { get; set; }

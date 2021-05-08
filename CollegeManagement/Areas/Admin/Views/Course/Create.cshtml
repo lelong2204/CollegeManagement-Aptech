@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-6">
-        <form asp-action="Create" enctype="multipart/form-data">
+        <form asp-action="Create" id="course_form" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
@@ -60,7 +60,7 @@
                 <img class="upload-img" />
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-success mr-2" />
+                <button id="btn_create" class="btn btn-success mr-2" type="button">Create</button>
                 <a asp-action="Index" class="btn btn-secondary">Back to List</a>
             </div>
         </form>
@@ -69,8 +69,7 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    <script>
-        var subjectIndex = 0;
+    <script>var subjectIndex = 0;
         var subjectData = [];
         var subjectList = [];
         var facultyList = [];
@@ -91,6 +90,7 @@
                                 <label class="control-label">Subject</label>
                                 <select class="select2 form-control subject_select subject_${subjectIndex}" data-index="${subjectIndex}">
                                 </select>
+                                <span id='error_subject_${subjectIndex}' class="text-danger"></span>
                             </div>
                         </td>
                         <td class="col-md-5">
@@ -106,7 +106,6 @@
                             </button>
                         </td>
                     </tr>`);
-
 
                 $(`.subject_${subjectIndex}`).select2({
                     ajax: {
@@ -132,6 +131,7 @@
                     allowClear: true, placeholder: "Select subject"
                 }).on('change', function () {
                     var index = $(this).data('index');
+                    $(`#error_subject_${index}`).text("");
                     subjectList[index] = $(this).val();
                     subjectData[index].subjectID = $(this).val();
                 });
@@ -142,9 +142,6 @@
                         dataType: 'json',
                         delay: 250,
                         data: function (params) {
-                            console.log(params)
-                            console.log(subjectList[$(this).data('index')])
-                            console.log(JSON.stringify(facultyList))
                             var query = {
                                 search: params.term,
                                 subjectID: subjectList[$(this).data('index')],
@@ -171,6 +168,47 @@
             })
 
             $('#add_subject').trigger('click');
+
+            $('#btn_create').on('click', function () {
+                var subjects = [];
+                var isValid = true;
+                $.each(subjectData, function (i, data) {
+                    if (data !== undefined && data) {
+                        if (data.subjectID === undefined || !data.subjectID) {
+                            isValid = false;
+                            $(`#error_subject_${i}`).text("This field is required");
+
+                        } else {
+                            subjects.push({
+                                'SubjectID': data.subjectID,
+                                'FacultyID': data.facultyID
+                            })
+
+                            $(`#error_subject_${i}`).text("");
+                        }
+                    }
+                });
+
+                if (!isValid) return;
+
+                $.validator.unobtrusive.parse($('#course_form'));
+                console.log($('#course_form').valid());
+                if (!$('#course_form').valid()) {
+                    return;
+                }
+
+                var form = $('#course_form').serializeArray();
+                form.push({ name: "Subjects", value: JSON.stringify(subjects) });
+
+                $.ajax({
+                    url: "/Admin/Course/Create",
+                    method: "POST",
+                    data: form,
+                    success: function (res) {
+                        console.log(res);
+                    }
+                })
+            });
         })
 
         $(document).on('click', '.remove-subject', function () {
@@ -184,6 +222,5 @@
             facultyList[index] = null;
             subjectList[index] = null;
             subjectData[index] = null;
-        })
-    </script>
+        })</script>
 }

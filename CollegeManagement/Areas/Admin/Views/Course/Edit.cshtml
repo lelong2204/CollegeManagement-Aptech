@@ -50,16 +50,6 @@
                 <span asp-validation-for="DepartmentID" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="SubjectIDs" class="control-label">Subject</label>
-                <select asp-for="SubjectIDs" class="select2-multiple form-control" multiple="multiple">
-                    @foreach (var subject in Model.SubjectList)
-                    {
-                        <option value="@subject.ID">@subject.Name</option>
-                    }
-                </select>
-                <span asp-validation-for="SubjectIDs" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="Image" class="control-label"></label>
                 <button type="button" class="btn btn-info" id="img-select-btn">Choose Image...</button>
                 <input asp-for="Image" type="file" class="form-control" id="image-select" hidden accept="image/*" />
