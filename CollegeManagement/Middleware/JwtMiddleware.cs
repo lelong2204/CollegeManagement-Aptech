@@ -37,8 +37,8 @@ namespace CollegeManagement.Middleware
 
         private async Task attachAccountToContext(HttpContext context, DataContext dataContext, string token)
         {
-            //try
-            //{
+            try
+            {
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var key = Encoding.ASCII.GetBytes(SECRET_KEY);
                 tokenHandler.ValidateToken(token, new TokenValidationParameters
@@ -61,14 +61,14 @@ namespace CollegeManagement.Middleware
                 }
 
                 context.Items["UserLogin"] = accountLogin;
-            //}
-            //catch (Exception ex)
-            //{
-            //    // do nothing if jwt validation fails
-            //    // account is not attached to context so request won't have access to secure routes
-            //    // throw new AppException(ex.Message);
-            //    context.Items["UserLogin"] = null;
-            //}
+            }
+            catch (Exception ex)
+            {
+                // do nothing if jwt validation fails
+                // account is not attached to context so request won't have access to secure routes
+                // throw new AppException(ex.Message);
+                context.Items["UserLogin"] = null;
+            }
         }
     }
 }

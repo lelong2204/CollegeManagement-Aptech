@@ -20,13 +20,13 @@ namespace CollegeManagement.Models
         [MaxLength(255, ErrorMessage = "The maximum length of the name is 255")]
         public string? Name { get; set; }
 
-        [Required(ErrorMessage = "Father name is required")]
-        [MaxLength(255, ErrorMessage = "The maximum length of the name is 255")]
-        public string? FatherName { get; set; }
+        [Required(ErrorMessage = "Responsible person name is required")]
+        [MaxLength(255, ErrorMessage = "The maximum length of the responsible person name is 255")]
+        public string? ResponsiblePersonName { get; set; }
 
-        [Required(ErrorMessage = "Mother name is required")]
-        [MaxLength(255, ErrorMessage = "The maximum length of the name is 255")]
-        public string? MotherName { get; set; }
+        [Required(ErrorMessage = "Responsible person phone is required")]
+        [MaxLength(11, ErrorMessage = "The maximum length of the responsible person phone is 255")]
+        public string? ResponsiblePersonPhone { get; set; }
         [Required(ErrorMessage = "Student code is required")]
         [MaxLength(20, ErrorMessage = "The maximum length of the code is 20")]
         public string? Code { get; set; }

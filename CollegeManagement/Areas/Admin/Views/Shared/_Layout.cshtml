@@ -17,8 +17,9 @@
     <link rel="stylesheet" href="~/admin/assets/css/app.css">
     <link rel="stylesheet" href="~/admin/css/adminsite.css">
     <link rel="stylesheet" href="~/lib/fontawesome/css/all.min.css">
-    <link rel="shortcut icon" href="~/admin/assets/images/favicon.svg" type="image/x-icon">
-    <link rel="shortcut icon" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.min.css" type="image/x-icon">
+    <link rel="stylesheet" href="~/lib/izitoast/dist/css/iziToast.min.css">
+    <link rel="shortcut icon" href="~/admin/assets/images/logo/logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     @await RenderSectionAsync("CSS", required: false)
 </head>
@@ -216,10 +217,27 @@
     <script src="~/admin/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
+    <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+    <script src="~/lib/izitoast/dist/js/iziToast.min.js"></script>
+    <script src="~/lib/moment.js"></script>
     <script src="~/admin/assets/js/main.js"></script>
     <script src="~/admin/js/adminsite.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script>
+    @if (TempData["Error"] != null)
+    {
+        <script>
+            $(document).ready(function () {
+                notificationError("@TempData["Error"]")
+            })
+        </script>
+    }
+    @if (TempData["Success"] != null)
+    {
+        <script>
+            $(document).ready(function () {
+                notificationSuccess("@TempData["Success"]")
+            })
+        </script>
+    }
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 

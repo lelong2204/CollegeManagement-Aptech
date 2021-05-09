@@ -24,9 +24,32 @@ namespace CollegeManagement.Areas.Admin.Controllers
         }
 
         // GET: Faculties
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.Faculties.ToListAsync());
+            return View();
+        }
+        
+        public async Task<IActionResult> List()
+        {
+            try
+            {
+                return Json(new
+                {
+                    status = true,
+                    msg = MESSAGE_SUCCESS,
+                    data = await _context.Faculties.Where(d => d.Deleted != 1)
+                        .OrderByDescending(d => d.UpdatedAt).ToListAsync()
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    status = false,
+                    msg = ex.Message,
+                    data = new List<Faculty>()
+                });
+            }
         }
 
         // GET: Faculties/Details/5

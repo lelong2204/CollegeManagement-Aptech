@@ -8,11 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using CollegeManagement.Helper;
 using CollegeManagement.Models;
 using CollegeManagement.DTO.Student;
+using CollegeManagement.DTO.Departments;
 
 namespace CollegeManagement.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize]
     public class StudentController : BaseController
     {
         private readonly DataContext _context;
@@ -22,13 +22,19 @@ namespace CollegeManagement.Areas.Admin.Controllers
             _context = context;
         }
 
-        // GET: Students
+        // GET: Admin/Student
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Students.Where(s => s.Deleted != 1).ToListAsync());
+            return View(await _context.Students.ToListAsync());
         }
 
-        // GET: Students/Details/5
+        // GET: Admin/Student
+        public async Task<IActionResult> List()
+        {
+            return View(await _context.Students.ToListAsync());
+        }
+
+        // GET: Admin/Student/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -46,43 +52,39 @@ namespace CollegeManagement.Areas.Admin.Controllers
             return View(student);
         }
 
-        // GET: Students/Create
+        // GET: Admin/Student/Create
         public IActionResult Create()
         {
-            return View();
+            var res = new StudentUpsertDTO();
+
+            res.CourseList = _context.Courses.Where(d => d.Deleted != 1)
+                .OrderByDescending(d => d.UpdatedAt)
+                .Select(d => new DepartmentSelectDTO
+                {
+                    ID = (int)d.ID,
+                    Name = d.Name
+                });
+
+            return View(res);
         }
 
-        // POST: Students/Create
+        // POST: Admin/Student/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(StudentUpsertDTO req)
+        public async Task<IActionResult> Create([Bind("Name,FatherName,MotherName,Code,Email,PhoneNumber,ResidentialAddress,PermanentAddress,ImageURL,Gender,DOB,Status,CourseID,Admission,TestScore,ID,Deleted,CreatedAt,UpdatedAt")] Student student)
         {
             if (ModelState.IsValid)
             {
-                var student = new Student
-                {
-                    Name = req.Name,
-                    Code = req.Code,
-                    PermanentAddress = req.PermanentAddress,
-                    ResidentialAddress = req.ResidentialAddress,
-                    DOB = req.DOB,
-                    Email = req.Email,
-                    PhoneNumber = req.Phone,
-                    Gender = req.Gender,
-                    ImageURL = await Utils.SaveFile(req.Image, "Student"),
-                    CreatedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now
-                };
                 _context.Add(student);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(req);
+            return View(student);
         }
 
-        // GET: Students/Edit/5
+        // GET: Admin/Student/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -90,39 +92,48 @@ namespace CollegeManagement.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var student = await _context.Students
-                .FirstOrDefaultAsync(s => s.ID == id && s.Deleted != 1);
-
+            var student = await _context.Students.FindAsync(id);
             if (student == null)
             {
                 return NotFound();
             }
-
             var res = new StudentUpsertDTO
             {
+                CourseList = _context.Courses.Where(d => d.Deleted != 1)
+                    .OrderByDescending(d => d.UpdatedAt)
+                    .Select(d => new DepartmentSelectDTO
+                    {
+                        ID = (int)d.ID,
+                        Name = d.Name
+                    }),
+                CourseID = student.CourseID,
                 ID = student.ID,
-                Name = student.Name,
-                PermanentAddress = student.PermanentAddress,
-                ResidentialAddress = student.ResidentialAddress,
+                Admission = student.Admission,
+                Status = student.Status,
+                Code = student.Code,
                 DOB = student.DOB,
                 Email = student.Email,
                 Gender = student.Gender,
-                Code = student.Code,
                 ImageURL = student.ImageURL,
-                Phone = student.PhoneNumber,
+                Name = student.Name,
+                PermanentAddress = student.PermanentAddress,
+                PhoneNumber = student.PhoneNumber,
+                ResidentialAddress = student.ResidentialAddress,
+                ResponsiblePersonName = student.ResponsiblePersonName,
+                ResponsiblePersonPhone = student.ResponsiblePersonPhone,
+                TestScore = student.TestScore
             };
-
             return View(res);
         }
 
-        // POST: Students/Edit/5
+        // POST: Admin/Student/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int? id, StudentUpsertDTO req)
+        public async Task<IActionResult> Edit(int id, [Bind("Name,FatherName,MotherName,Code,Email,PhoneNumber,ResidentialAddress,PermanentAddress,ImageURL,Gender,DOB,Status,CourseID,Admission,TestScore,ID,Deleted,CreatedAt,UpdatedAt")] Student student)
         {
-            if (id != req.ID)
+            if (id != student.ID)
             {
                 return NotFound();
             }
@@ -131,36 +142,26 @@ namespace CollegeManagement.Areas.Admin.Controllers
             {
                 try
                 {
-                    var imgPath = await Utils.SaveFile(req.Image, "Student");
-                    var student = await _context.Students
-                                    .FirstOrDefaultAsync(s => s.ID == id && s.Deleted != 1);
-
-                    if (student == null) return NotFound();
-
-                    student.Name = req.Name;
-                    student.Code = req.Code;
-                    student.ResidentialAddress = req.ResidentialAddress;
-                    student.PermanentAddress = req.PermanentAddress;
-                    student.DOB = req.DOB;
-                    student.Email = req.Email;
-                    student.PhoneNumber = req.Phone;
-                    student.Gender = req.Gender;
-                    student.ImageURL = string.IsNullOrWhiteSpace(imgPath) ? student.ImageURL: imgPath;
-                    student.UpdatedAt = DateTime.Now;
-
                     _context.Update(student);
                     await _context.SaveChangesAsync();
                 }
-                catch (Exception)
+                catch (DbUpdateConcurrencyException)
                 {
-                    throw;
+                    if (!StudentExists(student.ID))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(req);
+            return View(student);
         }
 
-        // GET: Students/Delete/5
+        // GET: Admin/Student/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -178,22 +179,20 @@ namespace CollegeManagement.Areas.Admin.Controllers
             return View(student);
         }
 
-        // POST: Students/Delete/5
+        // POST: Admin/Student/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int? id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var student = await _context.Students.FindAsync(id);
-            student.Deleted = 1;
-            student.UpdatedAt = DateTime.Now;
-            _context.Students.Update(student);
+            _context.Students.Remove(student);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool StudentExists(int? id)
+        private bool StudentExists(int id)
         {
-            return _context.Students.Any(e => e.ID == id && e.Deleted != 1);
+            return _context.Students.Any(e => e.ID == id);
         }
     }
 }

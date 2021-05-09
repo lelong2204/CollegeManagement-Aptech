@@ -1655,11 +1655,11 @@ img.img-detail {
     appearance: none !important;
     border-radius: .25rem !important;
     transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out !important;
-    height: 38px !important;
+    min-height: 38px !important;
 }
 
     .select2-container--default .select2-selection--single .select2-selection__arrow {
-        height: 38px !important;
+        min-height: 38px !important;
     }
 
     .select2-container--default .select2-selection--multiple .select2-selection__choice {
@@ -1676,4 +1676,34 @@ img.img-detail {
 
 .dropdown-menu {
     border: thin solid #cecece;
+}
+
+.dataTable {
+    width: 100% !important;
+}
+
+#datatable_filter {
+    margin-bottom: 0.7rem;
+}
+
+#datatable_previous, #datatable_next {
+    background: linear-gradient(118deg,#7367f0,rgba(115,103,240,.7));
+    color: white !important;
+    border-radius: 0.42rem;
+}
+
+#datatable_previous.disabled, #datatable_next.disabled{
+    opacity: 0.65;
+}
+
+.paginate_button {
+    background: darkgray !important;
+    border-radius: 0.42rem !important;
+    color: white !important;
+}
+
+.paginate_button.current {
+    background: khaki !important;
+    border-radius: 0.42rem !important;
+    color: white !important;
 }

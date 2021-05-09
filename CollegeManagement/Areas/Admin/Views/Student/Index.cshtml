@@ -7,7 +7,7 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create" class="btn btn-success">Create New</a>
+    <a asp-action="Create">Create New</a>
 </p>
 <table class="table">
     <thead>
@@ -22,19 +22,31 @@
                 @Html.DisplayNameFor(model => model.Email)
             </th>
             <th>
-                Phone Number
+                @Html.DisplayNameFor(model => model.PhoneNumber)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PermanentAddress)
+                @Html.DisplayNameFor(model => model.ResponsiblePersonName)
             </th>
             <th>
-                Image
+                @Html.DisplayNameFor(model => model.ResponsiblePersonPhone)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ImageURL)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Gender)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.DOB)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Admission)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TestScore)
             </th>
             <th></th>
         </tr>
@@ -55,24 +67,36 @@
                 @Html.DisplayFor(modelItem => item.PhoneNumber)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.PermanentAddress)
+                @Html.DisplayFor(modelItem => item.ResponsiblePersonName)
             </td>
             <td>
-                <img src="@item.ImageURL" class="img-index" />
+                @Html.DisplayFor(modelItem => item.ResponsiblePersonPhone)
             </td>
             <td>
-                @(item.Gender == 1? "Male": item.Gender == 0 ? "Female": "Other" )
+                @Html.DisplayFor(modelItem => item.ImageURL)
             </td>
-            @if (item.DOB != null)
-            {
-                <td>
-                    @(((DateTime)item.DOB).ToString("MM/dd/yyyy"))
-                </td>
-            }
             <td>
-                <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-action btn-warning"><i class="fa fa-edit"></i></a>
-                <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-action btn-info"><i class="fa fa-eye"></i></a>
-                <a asp-action="Delete" asp-route-id="@item.ID" class="btn btn-action btn-danger"><i class="fa fa-trash"></i></a>
+                @Html.DisplayFor(modelItem => item.Gender)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DOB)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Admission)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TestScore)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Deleted)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
             </td>
         </tr>
 }

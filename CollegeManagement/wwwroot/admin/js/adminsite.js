@@ -57,16 +57,20 @@
 
 function notificationSuccess(msg) {
     iziToast.success({
+        timeout: 3000,
         title: 'Success',
         message: msg,
-    });
+        position: 'topRight'
+    })
 }
 
 function notificationError(msg) {
     iziToast.error({
+        timeout: 3000,
         title: 'Error',
         message: msg,
-    });
+        position: 'topRight'
+    })
 }
 
 const DEFAULT_IMG = '/admin/assets/images/default-image.jpg';

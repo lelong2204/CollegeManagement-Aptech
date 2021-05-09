@@ -38,32 +38,49 @@ namespace CollegeManagement.Areas.Admin.Controllers
         [HttpPost, ActionName("Login")]
         public async Task<IActionResult> Login(AuthenticateRequest req)
         {
-            var user = await _context.Users
+            try
+            {
+                var user = await _context.Users
                 .FirstOrDefaultAsync(u => u.UserName.ToLower().Equals(req.UserName.ToLower()) && u.Deleted != 1);
 
-            if (user == null)
+                if (user == null)
+                {
+                    TempData["Error"] = "Wrong username or password";
+                    return RedirectToAction("Index");
+                }
+
+                if (!verifyPassword(req.Password, user.Password))
+                {
+                    TempData["Error"] = "Wrong username or password";
+                    return RedirectToAction("Index");
+                }
+
+                var jwtToken = generateJwtToken(user);
+
+                var response = new AuthenticateResponse
+                {
+                    FullName = user.FullName,
+                    Id = user.ID,
+                    UserName = user.UserName,
+                    Token = jwtToken,
+                };
+
+                if (response != null)
+                {
+                    setTokenCookie(response.Token);
+                    TempData["Success"] = MESSAGE_SUCCESS;
+                    return RedirectToAction("Index", "Home");
+                }
+
+                TempData["Error"] = "Something wrong";
                 return RedirectToAction("Index");
-
-            if (!verifyPassword(req.Password, user.Password))
-                return RedirectToAction("Index");
-
-            var jwtToken = generateJwtToken(user);
-
-            var response = new AuthenticateResponse
-            {
-                FullName = user.FullName,
-                Id = user.ID,
-                UserName = user.UserName,
-                Token = jwtToken,
-            };
-
-            if (response != null)
-            {
-                setTokenCookie(response.Token);
-                return RedirectToAction("Index", "Home");
             }
-
-            return RedirectToAction("Index");
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+                return RedirectToAction("Index");
+            }
+            
         }
 
         private void setTokenCookie(string token)

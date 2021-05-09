@@ -28,9 +28,52 @@ namespace CollegeManagement.Areas.Admin.Controllers
         }
 
         // GET: Admin/Course
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.Courses.ToListAsync());
+            return View();
+        }
+
+        // GET: Admin/Course
+        public async Task<IActionResult> List()
+        {
+            try
+            {
+                var data = await (from c in _context.Courses
+                            join d in _context.Departments on c.DepartmentID equals d.ID
+                            into d
+                            from ds in d.DefaultIfEmpty()
+                            where c.Deleted != 1
+                            orderby c.UpdatedAt descending
+                            select new
+                            {
+                                ID = c.ID,
+                                Name = c.Name,
+                                Info = c.Info,
+                                Price = c.Price,
+                                Focus = c.Focus,
+                                DepartmentName = ds.Name,
+                                StartDate = c.StartDate,
+                                EndDate = c.EndDate,
+                                ImageURL = c.ImageURL,
+                                CreatedAt = c.CreatedAt,
+                                UpdatedAt = c.UpdatedAt,
+                            }).ToListAsync();
+                return Json(new
+                {
+                    status = true,
+                    msg = MESSAGE_SUCCESS,
+                    data = data
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    status = false,
+                    msg = ex.Message,
+                    data = new List<Course>()
+                });
+            }
         }
 
         // GET: Admin/Course/Details/5
@@ -64,14 +107,6 @@ namespace CollegeManagement.Areas.Admin.Controllers
                     Name = d.Name
                 });
 
-            //res.SubjectList = _context.Subjects.Where(d => d.Deleted != 1)
-            //    .OrderByDescending(d => d.UpdatedAt)
-            //    .Select(d => new SubjectSelectDTO
-            //    {
-            //        ID = (int)d.ID,
-            //        Name = d.Name
-            //    });
-
             return View(res);
         }
 
@@ -85,7 +120,6 @@ namespace CollegeManagement.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 var imgPath  = await Utils.SaveFile(req.Image, "Course");
-                var subjectList = JsonSerializer.Deserialize<List<CourseSubject>>(req.Subjects);
 
                 var course = new Course
                 {
@@ -104,6 +138,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
                 _context.Add(course);
                 await _context.SaveChangesAsync();
 
+                var subjectList = JsonSerializer.Deserialize<List<CourseSubject>>(req.Subjects);
                 foreach (var s in subjectList)
                 {
                     if (s.SubjectID > 0)
@@ -147,9 +182,25 @@ namespace CollegeManagement.Areas.Admin.Controllers
                 Price = course.Price,
                 EndDate = course.EndDate,
                 StartDate = course.StartDate,
-                SubjectList = _context.CourseSubjects
-                    .Where(cs => cs.CourseID == course.ID)
             };
+
+            res.SubjectList = from cs in _context.CourseSubjects
+                              join s in _context.Subjects on cs.SubjectID equals s.ID
+                              into s
+                              from ms in s.DefaultIfEmpty()
+                              join f in _context.Faculties on cs.FacultyID equals f.ID
+                              into f
+                              from cf in f.DefaultIfEmpty()
+                              where cs.CourseID == course.ID
+                              select new CourseSubject
+                              {
+                                  ID = cs.ID,
+                                  SubjectID = cs.SubjectID,
+                                  FacultyID = cs.FacultyID,
+                                  Subject = ms,
+                                  Faculty = cf,
+                                  CourseID = cs.CourseID
+                              };
 
             res.DepartmentList = _context.Departments.Where(d => d.Deleted != 1)
                 .OrderByDescending(d => d.UpdatedAt)
@@ -198,19 +249,33 @@ namespace CollegeManagement.Areas.Admin.Controllers
                         .Where(cs => cs.CourseID == course.ID).ToListAsync();
 
                     var courseSubjectIDExistList = courseSubjectExistList.Select(cs => cs.SubjectID).ToList();
-                    //var subjectIDs = req.SubjectIDs.Distinct<int>();
+                    var subjectList = JsonSerializer.Deserialize<List<CourseSubject>>(req.Subjects);
 
-                    //foreach (var subjectID in subjectIDs)
-                    //{
-                    //    if (courseSubjectIDExistList.Contains(subjectID))
-                    //    {
-                    //        courseSubjectExistList = courseSubjectExistList
-                    //            .Where(fs => fs.SubjectID != subjectID).ToList();
-                    //        continue;
-                    //    }
+                    foreach (var s in subjectList)
+                    {
+                        if (s.SubjectID > 0 && courseSubjectIDExistList.Contains(s.SubjectID))
+                        {
+                            var subject = courseSubjectExistList
+                                .FirstOrDefault(cs => cs.SubjectID == s.SubjectID);
 
-                    //    courseSubjectList.Add(new CourseSubject { SubjectID = subjectID, CourseID = id });
-                    //}
+                            if (subject.FacultyID != s.FacultyID)
+                            {
+                                subject.FacultyID = s.FacultyID;
+                                _context.CourseSubjects.Update(subject);
+                            }
+
+                            courseSubjectExistList = courseSubjectExistList
+                                .Where(cs => cs.SubjectID != s.SubjectID).ToList();
+                        }
+                        else if (s.SubjectID > 0)
+                        {
+                            courseSubjectList.Add(new CourseSubject {
+                                SubjectID = s.SubjectID,
+                                FacultyID = s.FacultyID,
+                                CourseID = course.ID
+                            });
+                        }
+                    }
 
                     if (courseSubjectExistList.Count > 0)
                     {
@@ -220,21 +285,24 @@ namespace CollegeManagement.Areas.Admin.Controllers
                     await _context.CourseSubjects.AddRangeAsync(courseSubjectList);
                     _context.Update(course);
                     await _context.SaveChangesAsync();
+                    return Json(new { status = true, msg = MESSAGE_SUCCESS });
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception ex)
                 {
                     if (!CourseExists(id))
                     {
-                        return NotFound();
+                        return Json(new { status = false, msg = "This course is not exist"});
                     }
                     else
                     {
+                        return Json(new { status = false, msg = ex.Message });
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return Json(new { status = false, msg = MESSAGE_NOT_UPDATE });
             }
-            return View(req);
+
+            return Json(new { status = false, msg = MESSAGE_NOT_UPDATE });
         }
 
         // GET: Admin/Course/Delete/5

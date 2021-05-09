@@ -112,7 +112,7 @@
                     ajax: {
                         url: '/Admin/Subject/Select2',
                         dataType: 'json',
-                        delay: 250,
+                        delay: 100,
                         data: function (params) {
                             var query = {
                                 search: params.term,
@@ -152,7 +152,7 @@
                     ajax: {
                         url: '/Admin/Faculty/Select2',
                         dataType: 'json',
-                        delay: 250,
+                        delay: 100,
                         data: function (params) {
                             var query = {
                                 search: params.term,
@@ -207,7 +207,7 @@
                         }
 
                         if (data.facultyID !== undefined && data.facultyID &&
-                        data.subjectID !== undefined && !data.subjectID) {
+                        data.subjectID !== undefined && data.subjectID) {
                             subjects.push({
                                 'SubjectID': parseInt(data.subjectID),
                                 'FacultyID': parseInt(data.facultyID)
@@ -239,10 +239,10 @@
                 }
 
                 var form = $('#course_form').serializeArray();
-                form.push({ name: "Subjects", value: JSON.stringify(subjects) });
                 $.each(form, function (i) {
                     submitData.append($(this)[0].name, $(this)[0].value);
                 })
+                submitData.append("Subjects", JSON.stringify(subjects));
 
                 $.ajax({
                     url: "/Admin/Course/Create",

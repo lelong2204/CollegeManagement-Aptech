@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create" enctype="multipart/form-data">
+        <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
@@ -18,9 +18,14 @@
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Code" class="control-label"></label>
-                <input asp-for="Code" class="form-control" />
-                <span asp-validation-for="Code" class="text-danger"></span>
+                <label asp-for="ResponsiblePersonName" class="control-label"></label>
+                <input asp-for="ResponsiblePersonName" class="form-control" />
+                <span asp-validation-for="ResponsiblePersonName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ResponsiblePersonPhone" class="control-label"></label>
+                <input asp-for="ResponsiblePersonPhone" class="form-control" />
+                <span asp-validation-for="ResponsiblePersonPhone" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Email" class="control-label"></label>
@@ -28,14 +33,9 @@
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Phone" class="control-label"></label>
-                <input asp-for="Phone" class="form-control" />
-                <span asp-validation-for="Phone" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PermanentAddress" class="control-label"></label>
-                <input asp-for="PermanentAddress" class="form-control" />
-                <span asp-validation-for="PermanentAddress" class="text-danger"></span>
+                <label asp-for="PhoneNumber" class="control-label"></label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="ResidentialAddress" class="control-label"></label>
@@ -43,12 +43,18 @@
                 <span asp-validation-for="ResidentialAddress" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="PermanentAddress" class="control-label"></label>
+                <input asp-for="PermanentAddress" class="form-control" />
+                <span asp-validation-for="PermanentAddress" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ImageURL" class="control-label"></label>
+                <input asp-for="ImageURL" class="form-control" />
+                <span asp-validation-for="ImageURL" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="Gender" class="control-label"></label>
-                <select class="select2 form-control" asp-for="Gender">
-                    <option value="1">Male</option>
-                    <option value="0">Female</option>
-                    <option>Other</option>
-                </select>
+                <input asp-for="Gender" class="form-control" />
                 <span asp-validation-for="Gender" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -57,19 +63,39 @@
                 <span asp-validation-for="DOB" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Image" class="control-label"></label>
-                <button type="button" class="btn btn-info" id="img-select-btn">Choose Image...</button>
-                <input asp-for="Image" type="file" class="form-control" id="image-select" hidden accept="image/*" />
+                <label asp-for="Status" class="control-label"></label>
+                <input asp-for="Status" class="form-control" />
+                <span asp-validation-for="Status" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <img class="upload-img" />
+                <label asp-for="CourseID" class="control-label">Course</label>
+                <select asp-for="CourseID" class="select2 form-control">
+                    @foreach (var c in Model.CourseList)
+                    {
+                        <option value="@c.ID">@c.Name</option>
+                    }
+                </select>
+                <span asp-validation-for="CourseID" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-success mr-2" />
-                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                <label asp-for="Admission" class="control-label"></label>
+                <input asp-for="Admission" class="form-control" />
+                <span asp-validation-for="Admission" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TestScore" class="control-label"></label>
+                <input asp-for="TestScore" class="form-control" />
+                <span asp-validation-for="TestScore" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
     </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {
