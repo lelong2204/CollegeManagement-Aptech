@@ -3280,10 +3280,13 @@ span.m_1 {
 }
 
 
-
+.textTimeline{
+    color:black
+}
 .img-bg-01{
-	background: url('images/img-01.jpg') no-repeat center;
+	background: url('/images/img-01.jpg') no-repeat center;
 	background-size: cover;
+   
 }
 .img-bg-02{
 	background: url('images/img-02.jpg') no-repeat center;

@@ -8,17 +8,36 @@ namespace CollegeManagement.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        public IActionResult Index() //
         {
             return View();
         }
-        public IActionResult AboutUs()
+        
+        public IActionResult ContactUs()
         {
             return View();
         }
-        public IActionResult Contact()
+        public IActionResult FeedBack()
         {
             return View();
         }
+        public IActionResult Teacher()
+        {
+            return View();
+        }
+        public IActionResult Courses()
+        {
+            return View();
+        }
+        public IActionResult Departments()
+        {
+            return View();
+        }
+        public IActionResult Facilities()
+        {
+            return View();
+        }
+
+
     }
 }
