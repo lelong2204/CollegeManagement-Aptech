@@ -29,6 +29,18 @@
                 <input asp-for="Price" class="form-control" />
                 <span asp-validation-for="Price" class="text-danger"></span>
             </div>
+            <div class="form-group">
+                <label asp-for="StudentNumber" class="control-label"></label>
+                @if (Model.EndDate != null && Model.EndDate <= DateTime.Now)
+                {
+                    <input asp-for="StudentNumber" class="form-control" disabled />
+                }
+                else
+                {
+                    <input asp-for="StudentNumber" class="form-control" />
+                }
+                <span asp-validation-for="StudentNumber" class="text-danger"></span>
+            </div>
             <div class="form-group form-switch" style="padding: 0">
                 <label asp-for="Focus" class="form-check-label" for="flexSwitchCheckChecked"></label>
                 <input asp-for="Focus" class="form-check-input" style="float:right" type="checkbox" id="flexSwitchCheckChecked">
@@ -36,12 +48,26 @@
             </div>
             <div class="form-group">
                 <label asp-for="StartDate" class="control-label"></label>
-                <input asp-for="StartDate" class="form-control" />
+                @if (Model.EndDate != null && Model.EndDate <= DateTime.Now)
+                {
+                    <input asp-for="StartDate" class="form-control" disabled />
+                }
+                else
+                {
+                    <input asp-for="StartDate" class="form-control" />
+                }
                 <span asp-validation-for="StartDate" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="EndDate" class="control-label"></label>
-                <input asp-for="EndDate" class="form-control" />
+                @if (Model.EndDate != null && Model.EndDate <= DateTime.Now)
+                {
+                    <input asp-for="EndDate" class="form-control" disabled />
+                }
+                else
+                {
+                    <input asp-for="EndDate" class="form-control" />
+                }
                 <span asp-validation-for="EndDate" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -89,6 +115,15 @@
         var facultyList = [];
 
         $(document).ready(function () {
+            $("#StartDate").attr("min", moment(Date.now()).format("yyyy-MM-DD"));
+            $("#StartDate").on('change', function () {
+                $("#EndDate").attr("min", $(this).val());
+            })
+
+            $("#EndDate").on('change', function () {
+                $("#StartDate").attr("max", $(this).val());
+            })
+
             $('#add_subject').on('click', function (e) {
                 $("#subject_error").text("")
 

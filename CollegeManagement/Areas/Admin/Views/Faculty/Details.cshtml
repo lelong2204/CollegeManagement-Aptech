@@ -26,13 +26,13 @@
             @Html.DisplayNameFor(model => model.Gender)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Gender)
+            @(Model.Gender == 1? "Male": Model.Gender == 2 ? "Female":"")
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.ImageUrl)
+            Image
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.ImageUrl)
+            <img class="img-detail" src="@Model.ImageUrl" />
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.DOB)

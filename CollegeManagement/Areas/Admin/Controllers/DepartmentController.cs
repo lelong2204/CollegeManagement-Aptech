@@ -54,20 +54,31 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // GET: Department/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
+            try
             {
-                return NotFound();
+
+                if (id == null)
+                {
+                    TempData["Error"] = MESSAGE_NOT_FOUND;
+                    return RedirectToAction(nameof(Index));
+                }
+
+                var department = await _context.Departments
+                    .FirstOrDefaultAsync(m => m.ID == id && m.Deleted != 1);
+
+                if (department == null)
+                {
+                    TempData["Error"] = MESSAGE_NOT_FOUND;
+                    return RedirectToAction(nameof(Index));
+                }
+
+                return View(department);
             }
-
-            var department = await _context.Departments
-                .FirstOrDefaultAsync(m => m.ID == id && m.Deleted != 1);
-
-            if (department == null)
+            catch (Exception ex)
             {
-                return NotFound();
+                TempData["Error"] = ex.Message;
+                return View(new Department());
             }
-
-            return View(department);
         }
 
         // GET: Department/Create
@@ -81,33 +92,53 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Info,DeanID,ID,Deleted,CreatedAt,UpdatedAt")] Department department)
+        public async Task<IActionResult> Create(Department department)
         {
-            if (ModelState.IsValid)
+            try
             {
-                department.CreatedAt = DateTime.Now;
-                department.UpdatedAt = DateTime.Now;
-                _context.Add(department);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    department.CreatedAt = DateTime.Now;
+                    department.UpdatedAt = DateTime.Now;
+                    _context.Add(department);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                TempData["Success"] = MESSAGE_SUCCESS;
+                return View(department);
             }
-            return View(department);
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+                return View(department);
+            }
         }
 
         // GET: Department/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
+            try
             {
-                return NotFound();
-            }
+                if (id == null)
+                {
+                    TempData["Error"] = MESSAGE_NOT_FOUND;
+                    return RedirectToAction(nameof(Index));
+                }
 
-            var department = await _context.Departments.FindAsync(id);
-            if (department == null)
-            {
-                return NotFound();
+                var department = await _context.Departments
+                    .FirstOrDefaultAsync(d => d.Deleted != 1 && d.ID == id);
+                if (department == null)
+                {
+                    TempData["Error"] = MESSAGE_NOT_FOUND;
+                    return RedirectToAction(nameof(Index));
+                }
+                return View(department); ;
             }
-            return View(department);
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+                return View(new Department());
+            }
         }
 
         // POST: Department/Edit/5
@@ -119,7 +150,8 @@ namespace CollegeManagement.Areas.Admin.Controllers
         {
             if (id != req.ID)
             {
-                return NotFound();
+                TempData["Error"] = MESSAGE_NOT_FOUND;
+                return RedirectToAction(nameof(Index));
             }
 
             if (ModelState.IsValid)
@@ -136,17 +168,20 @@ namespace CollegeManagement.Areas.Admin.Controllers
                     _context.Update(department);
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception ex)
                 {
                     if (!DepartmentExists(req.ID))
                     {
-                        return NotFound();
+                        TempData["Error"] = MESSAGE_NOT_FOUND;
+                        return RedirectToAction(nameof(Index));
                     }
                     else
                     {
-                        throw;
+                        TempData["Error"] = ex.Message;
+                        return View(req);
                     }
                 }
+                TempData["Success"] = MESSAGE_SUCCESS;
                 return RedirectToAction(nameof(Index));
             }
             return View(req);
@@ -155,19 +190,28 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // GET: Department/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
+            try
             {
-                return NotFound();
-            }
+                if (id == null)
+                {
+                    TempData["Error"] = MESSAGE_NOT_FOUND;
+                    return RedirectToAction(nameof(Index));
+                }
 
-            var department = await _context.Departments
-                .FirstOrDefaultAsync(m => m.ID == id);
-            if (department == null)
+                var department = await _context.Departments
+                    .FirstOrDefaultAsync(d => d.Deleted != 1 && d.ID == id);
+                if (department == null)
+                {
+                    TempData["Error"] = MESSAGE_NOT_FOUND;
+                    return RedirectToAction(nameof(Index));
+                }
+                return View(department); ;
+            }
+            catch (Exception ex)
             {
-                return NotFound();
+                TempData["Error"] = ex.Message;
+                return View(new Department());
             }
-
-            return View(department);
         }
 
         // POST: Department/Delete/5
@@ -175,24 +219,35 @@ namespace CollegeManagement.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int? id)
         {
-            var department = await _context.Departments
-                .FirstOrDefaultAsync(d => d.ID == id && d.Deleted != 1);
-
-            if (department == null)
+            try
             {
-                return NotFound();
+                var department = await _context.Departments
+                    .FirstOrDefaultAsync(d => d.ID == id && d.Deleted != 1);
+
+                if (department == null)
+                {
+                    TempData["Error"] = MESSAGE_NOT_FOUND;
+                    return RedirectToAction(nameof(Index));
+                }
+
+                department.Deleted = 1;
+
+                _context.Departments.Update(department);
+                await _context.SaveChangesAsync();
+
+                TempData["Success"] = MESSAGE_DELETE_SUCCESS;
+                return RedirectToAction(nameof(Index));
             }
-
-            department.Deleted = 1;
-
-            _context.Departments.Update(department);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         private bool DepartmentExists(int? id)
         {
-            return _context.Departments.Any(e => e.ID == id);
+            return _context.Departments.Any(e => e.ID == id && e.Deleted != 1);
         }
     }
 }

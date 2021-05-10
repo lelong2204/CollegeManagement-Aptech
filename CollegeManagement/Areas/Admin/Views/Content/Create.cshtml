@@ -9,43 +9,37 @@
 <h4>Content</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
+    <div class="col-12">
+        <form asp-action="Create" id="content_form" class="row">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
+            <div class="form-group col-4">
                 <label asp-for="Title" class="control-label"></label>
                 <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
+            <div class="form-group col-4">
                 <label asp-for="Type" class="control-label"></label>
-                <input asp-for="Type" class="form-control" />
+                <select class="select2 form-control" asp-for="Type">
+                    <option value="2">Event</option>
+                    <option value="0">About Us</option>
+                    <option value="1">History</option>
+                </select>
                 <span asp-validation-for="Type" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="ExpiredDate" class="control-label"></label>
-                <input asp-for="ExpiredDate" class="form-control" />
-                <span asp-validation-for="ExpiredDate" class="text-danger"></span>
+            <div class="col-4 form-group" id="year_select">
+                <label asp-for="Year" class="control-label"></label>
+                <select class="select2 form-control" asp-for="Year">
+                    @for (var i = DateTime.Now.Year; i >= 1900; i--)
+                    {
+                        <option value="@i">@i</option>
+                    }
+                </select>
+                <span asp-validation-for="Year" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Deleted" class="control-label"></label>
-                <input asp-for="Deleted" class="form-control" />
-                <span asp-validation-for="Deleted" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreatedAt" class="control-label"></label>
-                <input asp-for="CreatedAt" class="form-control" />
-                <span asp-validation-for="CreatedAt" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UpdatedAt" class="control-label"></label>
-                <input asp-for="UpdatedAt" class="form-control" />
-                <span asp-validation-for="UpdatedAt" class="text-danger"></span>
+            <div class="col-12 form-group">
+                <label>Content Body</label>
+                @Html.TextAreaFor(model => model.Description, new { @class = "form-control content-editor" })
+                <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-success mr-2" />
@@ -55,7 +49,54 @@
     </div>
 </div>
 
-
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function () {
+            $("#year_select").hide()
+            $(".content-editor").summernote({
+                height: 500,
+                callbacks: {
+                    onImageUpload: function (image) {
+                        uploadFile(image[0]);
+                    }
+                }
+            });
+
+            $("#content_form").on('submit', function () {
+                $.validator.unobtrusive.parse($(this));
+                if ($(this).valid()) {
+                    addIndicator();
+                }
+            })
+
+            $("#Type").on("change", function () {
+                if ($(this).val() === "1") {
+                    $("#year_select").show()
+                } else {
+                    $("#year_select").hide()
+                }
+            })
+        })
+
+        function uploadFile(file, editor, welEditable) {
+            data = new FormData();
+            data.append("file", file);
+            $.ajax({
+                data: data,
+                type: "POST",
+                url: "/Admin/Content/UploadImg",
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (url) {
+                    var image = $('<img>').attr('src', url);
+                    $('.content-editor ').summernote("insertNode", image[0]);
+                },
+                error: function (data) {
+                    notificationError(data)
+                }
+            });
+        }
+    </script>
 }

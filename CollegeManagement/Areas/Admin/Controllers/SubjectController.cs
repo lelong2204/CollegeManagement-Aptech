@@ -54,19 +54,29 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // GET: Subjects/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
+            try
             {
-                return NotFound();
-            }
+                if (id == null)
+                {
+                    TempData["Error"] = MESSAGE_NOT_FOUND;
+                    return RedirectToAction(nameof(Index));
+                }
 
-            var subject = await _context.Subjects
-                .FirstOrDefaultAsync(m => m.ID == id);
-            if (subject == null)
+                var subject = await _context.Subjects
+                    .FirstOrDefaultAsync(m => m.ID == id);
+                if (subject == null)
+                {
+                    TempData["Error"] = MESSAGE_NOT_FOUND;
+                    return RedirectToAction(nameof(Index));
+                }
+
+                return View(subject);
+            }
+            catch (Exception ex)
             {
-                return NotFound();
+                TempData["Error"] = ex.Message;
+                return View(new Subject());
             }
-
-            return View(subject);
         }
 
         // GET: Subjects/Create
@@ -104,28 +114,38 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // GET: Subjects/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
+            try
             {
-                return NotFound();
+                if (id == null)
+                {
+                    TempData["Error"] = MESSAGE_NOT_FOUND;
+                    return RedirectToAction(nameof(Index));
+                }
+
+                var subject = await _context.Subjects
+                    .FirstOrDefaultAsync(s => s.ID == id && s.Deleted != 1);
+
+                if (subject == null)
+                {
+                    TempData["Error"] = MESSAGE_NOT_FOUND;
+                    return RedirectToAction(nameof(Index));
+                }
+
+                var res = new SubjectUpSertDTO
+                {
+                    ID = subject.ID,
+                    ImageUrl = subject.ImageUrl,
+                    Info = subject.Info,
+                    Name = subject.Name
+                };
+
+                return View(res);
             }
-
-            var subject = await _context.Subjects
-                .FirstOrDefaultAsync(s => s.ID == id && s.Deleted != 1);
-
-            if (subject == null)
+            catch (Exception ex)
             {
-                return NotFound();
+                TempData["Error"] = ex.Message;
+                return View(new Subject());
             }
-
-            var res = new SubjectUpSertDTO
-            {
-                ID = subject.ID,
-                ImageUrl = subject.ImageUrl,
-                Info = subject.Info,
-                Name = subject.Name
-            };
-
-            return View(res);
         }
 
         // POST: Subjects/Edit/5
@@ -144,7 +164,8 @@ namespace CollegeManagement.Areas.Admin.Controllers
 
                     if (subject == null)
                     {
-                        return NotFound();
+                        TempData["Error"] = MESSAGE_NOT_FOUND;
+                        return RedirectToAction(nameof(Index));
                     }
 
                     var imgPath = await Utils.SaveFile(req.Image, "Subject");
@@ -157,17 +178,13 @@ namespace CollegeManagement.Areas.Admin.Controllers
                     _context.Update(subject);
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception ex)
                 {
-                    if (!SubjectExists(req.ID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    TempData["Error"] = ex.Message;
+                    return View(new Subject());
                 }
+
+                TempData["Success"] = MESSAGE_SUCCESS;
                 return RedirectToAction(nameof(Index));
             }
 
@@ -177,20 +194,29 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // GET: Subjects/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
+            try
             {
-                return NotFound();
+                if (id == null)
+                {
+                    TempData["Error"] = MESSAGE_NOT_FOUND;
+                    return RedirectToAction(nameof(Index));
+                }
+
+                var subject = await _context.Subjects
+                    .FirstOrDefaultAsync(m => m.ID == id);
+                if (subject == null)
+                {
+                    TempData["Error"] = MESSAGE_NOT_FOUND;
+                    return RedirectToAction(nameof(Index));
+                }
+
+                return View(subject);
             }
-
-            var subject = await _context.Subjects
-                .FirstOrDefaultAsync(m => m.ID == id && m.Deleted != 1);
-
-            if (subject == null)
+            catch (Exception ex)
             {
-                return NotFound();
+                TempData["Error"] = ex.Message;
+                return View(new Subject());
             }
-
-            return View(subject);
         }
 
         // POST: Subjects/Delete/5
@@ -198,14 +224,27 @@ namespace CollegeManagement.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int? id)
         {
-            var subject = await _context.Subjects
-                .FirstOrDefaultAsync(m => m.ID == id && m.Deleted != 1);
-            subject.Deleted = 1;
+            try
+            {
+                var subject = await _context.Subjects
+                    .FirstOrDefaultAsync(m => m.ID == id && m.Deleted != 1);
+                if (subject == null)
+                {
+                    TempData["Error"] = MESSAGE_NOT_FOUND;
+                    return RedirectToAction(nameof(Index));
+                }
+                subject.Deleted = 1;
 
-            _context.Subjects.Update(subject);
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Index));
+                _context.Subjects.Update(subject);
+                await _context.SaveChangesAsync();
+                TempData["Success"] = MESSAGE_DELETE_SUCCESS;
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         public List<SubjectSelectDTO> Select2(string search, int facultyID, List<int> subjectExist)

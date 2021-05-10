@@ -1707,3 +1707,7 @@ img.img-detail {
     border-radius: 0.42rem !important;
     color: white !important;
 }
+
+.note-editor.note-airframe.fullscreen, .note-editor.note-frame.fullscreen {
+    background: whitesmoke !important;
+}

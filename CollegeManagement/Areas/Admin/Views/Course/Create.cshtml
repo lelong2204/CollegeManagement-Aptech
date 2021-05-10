@@ -29,6 +29,11 @@
                 <input asp-for="Price" class="form-control" />
                 <span asp-validation-for="Price" class="text-danger"></span>
             </div>
+            <div class="form-group">
+                <label asp-for="StudentNumber" class="control-label"></label>
+                <input asp-for="StudentNumber" class="form-control" />
+                <span asp-validation-for="StudentNumber" class="text-danger"></span>
+            </div>
             <div class="form-group form-switch" style="padding: 0">
                 <label asp-for="Focus" class="form-check-label" for="flexSwitchCheckChecked"></label>
                 <input asp-for="Focus" class="form-check-input" style="float:right" type="checkbox" id="flexSwitchCheckChecked" checked>
@@ -253,7 +258,7 @@
                     submitData.append($(this)[0].name, $(this)[0].value);
                 })
                 submitData.append("Subjects", JSON.stringify(subjects));
-
+                addIndicator()
                 $.ajax({
                     url: "/Admin/Course/Create",
                     type: "POST",
@@ -262,15 +267,27 @@
                     contentType: false,
                     success: function (res) {
                         if (res.status) {
+                            removeIndicator()
                             notificationSuccess(res.msg);
                             window.location.href = "@Url.Action("Index","Course")";
                         }
                     },
                     error: function (xhr, status, error) {
+                        removeIndicator()
                         notificationError(error);
                     }
                 })
             });
+
+            $("#StartDate").attr("min", moment(Date.now()).format("yyyy-MM-DD"));
+
+            $("#StartDate").on('change', function () {
+                $("#EndDate").attr("min", $(this).val());
+            })
+
+            $("#EndDate").on('change', function () {
+                $("#StartDate").attr("max", $(this).val());
+            })
         })
 
         $(document).on('click', '.remove-subject', function () {

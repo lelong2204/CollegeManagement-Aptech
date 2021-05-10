@@ -19,6 +19,9 @@ namespace CollegeManagement.DTO.Course
         public string? Info { get; set; }
         public IFormFile Image { get; set; }
         public string ImageURL { get; set; }
+        [Required()]
+        [Display(Name = "Student Number")]
+        public int? StudentNumber { get; set; }
         public string Subjects { get; set; }
         [Range(0, int.MaxValue, ErrorMessage = "Price must be greater than or equal 0")]
         public int? Price { get; set; }

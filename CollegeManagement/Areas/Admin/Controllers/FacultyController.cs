@@ -55,19 +55,29 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // GET: Faculties/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
+            try
             {
-                return NotFound();
-            }
+                if (id == null)
+                {
+                    TempData["Error"] = MESSAGE_NOT_FOUND;
+                    return RedirectToAction(nameof(Index));
+                }
 
-            var faculty = await _context.Faculties
-                .FirstOrDefaultAsync(m => m.ID == id);
-            if (faculty == null)
+                var faculty = await _context.Faculties
+                    .FirstOrDefaultAsync(m => m.ID == id && m.Deleted != 1);
+                if (faculty == null)
+                {
+                    TempData["Error"] = MESSAGE_NOT_FOUND;
+                    return RedirectToAction(nameof(Index));
+                }
+
+                return View(faculty);
+            }
+            catch (Exception ex)
             {
-                return NotFound();
+                TempData["Error"] = ex.Message;
+                return View(new Faculty());
             }
-
-            return View(faculty);
         }
 
         // GET: Faculties/Create
@@ -75,21 +85,28 @@ namespace CollegeManagement.Areas.Admin.Controllers
         {
             var res = new FacultyUpSertDTO();
 
-            res.DepartmentList = _context.Departments.Where(d => d.Deleted != 1)
-                .OrderByDescending(d => d.UpdatedAt)
-                .Select(d => new DepartmentSelectDTO
-                {
-                    ID = (int) d.ID,
-                    Name = d.Name
-                });
+            try
+            {
+                res.DepartmentList = _context.Departments.Where(d => d.Deleted != 1)
+                    .OrderByDescending(d => d.UpdatedAt)
+                    .Select(d => new DepartmentSelectDTO
+                    {
+                        ID = (int)d.ID,
+                        Name = d.Name
+                    });
 
-            res.SubjectList = _context.Subjects.Where(d => d.Deleted != 1)
-                .OrderByDescending(d => d.UpdatedAt)
-                .Select(d => new SubjectSelectDTO
-                {
-                    ID = (int) d.ID,
-                    Name = d.Name
-                });
+                res.SubjectList = _context.Subjects.Where(d => d.Deleted != 1)
+                    .OrderByDescending(d => d.UpdatedAt)
+                    .Select(d => new SubjectSelectDTO
+                    {
+                        ID = (int)d.ID,
+                        Name = d.Name
+                    });
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+            }
 
             return View(res);
         }
@@ -101,93 +118,82 @@ namespace CollegeManagement.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(FacultyUpSertDTO req)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var imgPath = await Utils.SaveFile(req.Image, "Faculty");
-
-                var faculty = new Faculty
+                if (ModelState.IsValid)
                 {
-                    Address = req.Address,
-                    CreatedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now,
-                    DepartmentID = req.DepartmentID,
-                    DOB = req.DOB,
-                    Email = req.Email,
-                    ExperienceYear = req.ExperienceYear,
-                    Gender = req.Gender,
-                    ImageUrl = imgPath,
-                    Info = req.Info,
-                    Name = req.Name,
-                    PhoneNumber = req.PhoneNumber
-                };
-                _context.Add(faculty);
-                await _context.SaveChangesAsync();
+                    var imgPath = await Utils.SaveFile(req.Image, "Faculty");
 
-                var facultySubjectList = new List<FacultySubject>();
-
-                if (req.SubjectIDs != null && req.SubjectIDs.Count() > 0)
-                {
-                    var subjectIDs = req.SubjectIDs.Distinct<int>();
-                    foreach (var subjectID in subjectIDs)
+                    var faculty = new Faculty
                     {
-                        facultySubjectList.Add(new FacultySubject { SubjectID = subjectID, FacultyID = (int) faculty.ID });
+                        Address = req.Address,
+                        CreatedAt = DateTime.Now,
+                        UpdatedAt = DateTime.Now,
+                        DepartmentID = req.DepartmentID,
+                        DOB = req.DOB,
+                        Email = req.Email,
+                        ExperienceYear = req.ExperienceYear,
+                        Gender = req.Gender,
+                        ImageUrl = imgPath,
+                        Info = req.Info,
+                        Name = req.Name,
+                        PhoneNumber = req.PhoneNumber
+                    };
+                    _context.Add(faculty);
+                    await _context.SaveChangesAsync();
+
+                    var facultySubjectList = new List<FacultySubject>();
+
+                    if (req.SubjectIDs != null && req.SubjectIDs.Count() > 0)
+                    {
+                        var subjectIDs = req.SubjectIDs.Distinct<int>();
+                        foreach (var subjectID in subjectIDs)
+                        {
+                            facultySubjectList.Add(new FacultySubject { SubjectID = subjectID, FacultyID = (int)faculty.ID });
+                        }
+
+                        await _context.FacultySubjects.AddRangeAsync(facultySubjectList);
+                        await _context.SaveChangesAsync();
                     }
 
-                    await _context.FacultySubjects.AddRangeAsync(facultySubjectList);
-                    await _context.SaveChangesAsync();
+                    TempData["Success"] = MESSAGE_SUCCESS;
+                    return RedirectToAction(nameof(Index));
                 }
-
+                return View(req);
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
                 return RedirectToAction(nameof(Index));
             }
-            return View(req);
         }
 
         // GET: Faculties/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
+            try
             {
-                return NotFound();
+                if (id == null)
+                {
+                    TempData["Error"] = MESSAGE_NOT_FOUND;
+                    return RedirectToAction(nameof(Index));
+                }
+
+                var faculty = await _context.Faculties
+                    .FirstOrDefaultAsync(m => m.ID == id && m.Deleted != 1);
+                if (faculty == null)
+                {
+                    TempData["Error"] = MESSAGE_NOT_FOUND;
+                    return RedirectToAction(nameof(Index));
+                }
+
+                return View(faculty);
             }
-
-            var faculty = await _context.Faculties.
-                FirstOrDefaultAsync(d => d.ID == id && d.Deleted != 1);
-
-            if (faculty == null)
+            catch (Exception ex)
             {
-                return NotFound();
+                TempData["Error"] = ex.Message;
+                return View(new Faculty());
             }
-
-            var res = new FacultyUpSertDTO
-            {
-                ID = faculty.ID,
-                Name = faculty.Name,
-                Info = faculty.Info,
-                Gender = faculty.Gender,
-                PhoneNumber = faculty.PhoneNumber,
-                ExperienceYear = faculty.ExperienceYear,
-                DepartmentID = faculty.DepartmentID,
-                DOB = faculty.DOB,
-                Address = faculty.Address,
-                Email = faculty.Email,
-                ImageUrl = faculty.ImageUrl,
-                SubjectIDs = await _context.FacultySubjects
-                    .Where(fs => fs.FacultyID == faculty.ID).Select(fs => fs.SubjectID).ToListAsync(),
-                DepartmentList = _context.Departments.Where(d => d.Deleted != 1)
-                    .OrderByDescending(d => d.UpdatedAt).Select(d => new DepartmentSelectDTO
-                    {
-                        ID = (int)d.ID,
-                        Name = d.Name
-                    }),
-                SubjectList = _context.Subjects.Where(d => d.Deleted != 1)
-                    .OrderByDescending(d => d.UpdatedAt).Select(d => new SubjectSelectDTO
-                    {
-                        ID = (int)d.ID,
-                        Name = d.Name
-                    })
-            };
-
-            return View(res);
         }
 
         // POST: Faculties/Edit/5
@@ -199,7 +205,8 @@ namespace CollegeManagement.Areas.Admin.Controllers
         {
             if (id != req.ID)
             {
-                return NotFound();
+                TempData["Error"] = MESSAGE_NOT_FOUND;
+                return RedirectToAction(nameof(Index));
             }
 
             if (ModelState.IsValid)
@@ -250,17 +257,12 @@ namespace CollegeManagement.Areas.Admin.Controllers
                     _context.Update(faculty);
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception ex)
                 {
-                    if (!FacultyExists(req.ID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    TempData["Error"] = ex.Message;
+                    return RedirectToAction(nameof(Index));
                 }
+                TempData["Success"] = MESSAGE_SUCCESS;
                 return RedirectToAction(nameof(Index));
             }
             return View(req);
@@ -269,19 +271,29 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // GET: Faculties/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
+            try
             {
-                return NotFound();
-            }
+                if (id == null)
+                {
+                    TempData["Error"] = MESSAGE_NOT_FOUND;
+                    return RedirectToAction(nameof(Index));
+                }
 
-            var faculty = await _context.Faculties
-                .FirstOrDefaultAsync(m => m.ID == id);
-            if (faculty == null)
+                var faculty = await _context.Faculties
+                    .FirstOrDefaultAsync(m => m.ID == id && m.Deleted != 1);
+                if (faculty == null)
+                {
+                    TempData["Error"] = MESSAGE_NOT_FOUND;
+                    return RedirectToAction(nameof(Index));
+                }
+
+                return View(faculty);
+            }
+            catch (Exception ex)
             {
-                return NotFound();
+                TempData["Error"] = ex.Message;
+                return View(new Faculty());
             }
-
-            return View(faculty);
         }
 
         // POST: Faculties/Delete/5
@@ -289,10 +301,22 @@ namespace CollegeManagement.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int? id)
         {
-            var faculty = await _context.Faculties.FindAsync(id);
-            _context.Faculties.Remove(faculty);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                var faculty = await _context.Faculties
+                           .FirstOrDefaultAsync(m => m.ID == id && m.Deleted != 1);
+                faculty.Deleted = 1;
+                _context.Faculties.Update(faculty);
+                await _context.SaveChangesAsync();
+
+                TempData["Success"] = MESSAGE_SUCCESS;
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         public List<FacultySelectDTO> Select2(string search, int subjectID, List<int> facultyExist)

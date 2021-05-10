@@ -79,35 +79,52 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // GET: Admin/Course/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
+            try
             {
-                return NotFound();
-            }
+                if (id == null)
+                {
+                    TempData["Error"] = MESSAGE_NOT_FOUND;
+                    return RedirectToAction(nameof(Index));
+                }
 
-            var course = await _context.Courses
-                .FirstOrDefaultAsync(m => m.ID == id);
-            if (course == null)
+                var course = await _context.Courses
+                    .FirstOrDefaultAsync(m => m.ID == id && m.Deleted != 1);
+                if (course == null)
+                {
+                    TempData["Error"] = MESSAGE_NOT_FOUND;
+                    return RedirectToAction(nameof(Index));
+                }
+
+                return View(course);
+            }
+            catch (Exception ex)
             {
-                return NotFound();
+                TempData["Error"] = ex.Message;
+                return RedirectToAction(nameof(Index));
             }
-
-            return View(course);
         }
 
         // GET: Admin/Course/Create
         public IActionResult Create()
         {
             var res = new CourseUpSertDTO();
+            try
+            {
+                res.DepartmentList = _context.Departments.Where(d => d.Deleted != 1)
+                    .OrderByDescending(d => d.UpdatedAt)
+                    .Select(d => new DepartmentSelectDTO
+                    {
+                        ID = (int)d.ID,
+                        Name = d.Name
+                    });
 
-            res.DepartmentList = _context.Departments.Where(d => d.Deleted != 1)
-                .OrderByDescending(d => d.UpdatedAt)
-                .Select(d => new DepartmentSelectDTO
-                {
-                    ID = (int)d.ID,
-                    Name = d.Name
-                });
-
-            return View(res);
+                return View(res);
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+                return View(res);
+            }
         }
 
         // POST: Admin/Course/Create
@@ -117,100 +134,119 @@ namespace CollegeManagement.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CourseUpSertDTO req)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var imgPath  = await Utils.SaveFile(req.Image, "Course");
-
-                var course = new Course
+                if (ModelState.IsValid)
                 {
-                    DepartmentID = req.DepartmentID,
-                    Focus = req.Focus,
-                    ImageURL = imgPath,
-                    Name = req.Name,
-                    StartDate = req.StartDate,
-                    EndDate = req.EndDate,
-                    Info = req.Info,
-                    Price = req.Price,
-                    UpdatedAt = DateTime.Now,
-                    CreatedAt = DateTime.Now
-                };
+                    var imgPath = await Utils.SaveFile(req.Image, "Course");
 
-                _context.Add(course);
-                await _context.SaveChangesAsync();
-
-                var subjectList = JsonSerializer.Deserialize<List<CourseSubject>>(req.Subjects);
-                foreach (var s in subjectList)
-                {
-                    if (s.SubjectID > 0)
+                    var course = new Course
                     {
-                        s.CourseID = course.ID;
+                        DepartmentID = req.DepartmentID,
+                        Focus = req.Focus,
+                        ImageURL = imgPath,
+                        Name = req.Name,
+                        StartDate = req.StartDate,
+                        EndDate = req.EndDate,
+                        Info = req.Info,
+                        StudentNumber = req.StudentNumber,
+                        Price = req.Price,
+                        UpdatedAt = DateTime.Now,
+                        CreatedAt = DateTime.Now
+                    };
+
+                    _context.Add(course);
+                    await _context.SaveChangesAsync();
+
+                    var subjectList = JsonSerializer.Deserialize<List<CourseSubject>>(req.Subjects);
+                    foreach (var s in subjectList)
+                    {
+                        if (s.SubjectID > 0)
+                        {
+                            s.CourseID = course.ID;
+                        }
                     }
+
+                    await _context.CourseSubjects.AddRangeAsync(subjectList);
+                    await _context.SaveChangesAsync();
+
+                    return Json(new { status = true, msg = MESSAGE_SUCCESS });
                 }
 
-                await _context.CourseSubjects.AddRangeAsync(subjectList);
-                await _context.SaveChangesAsync();
-
-                return Json(new { status = true, msg = MESSAGE_SUCCESS });
+                return Json(new { status = false, msg = MESSAGE_NOT_CREATE });
             }
-
-            return Json(new { status = false, msg = MESSAGE_NOT_CREATE });
+            catch (Exception ex)
+            {
+                return Json(new { status = false, msg = ex.Message });
+            }
         }
 
         // GET: Admin/Course/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
+            try
             {
-                return NotFound();
-            }
-
-            var course = await _context.Courses
-                .FirstOrDefaultAsync(d => d.ID == id && d.Deleted != 1);
-            if (course == null)
-            {
-                return NotFound();
-            }
-
-            var res = new CourseUpSertDTO 
-            {
-                ID = course.ID,
-                DepartmentID = course.DepartmentID,
-                Focus = course.Focus,
-                ImageURL = course.ImageURL,
-                Info = course.Info,
-                Name = course.Name,
-                Price = course.Price,
-                EndDate = course.EndDate,
-                StartDate = course.StartDate,
-            };
-
-            res.SubjectList = from cs in _context.CourseSubjects
-                              join s in _context.Subjects on cs.SubjectID equals s.ID
-                              into s
-                              from ms in s.DefaultIfEmpty()
-                              join f in _context.Faculties on cs.FacultyID equals f.ID
-                              into f
-                              from cf in f.DefaultIfEmpty()
-                              where cs.CourseID == course.ID
-                              select new CourseSubject
-                              {
-                                  ID = cs.ID,
-                                  SubjectID = cs.SubjectID,
-                                  FacultyID = cs.FacultyID,
-                                  Subject = ms,
-                                  Faculty = cf,
-                                  CourseID = cs.CourseID
-                              };
-
-            res.DepartmentList = _context.Departments.Where(d => d.Deleted != 1)
-                .OrderByDescending(d => d.UpdatedAt)
-                .Select(d => new DepartmentSelectDTO
+                if (id == null)
                 {
-                    ID = (int)d.ID,
-                    Name = d.Name
-                });
+                    TempData["Error"] = "Course not found";
+                    return RedirectToAction(nameof(Index));
+                }
 
-            return View(res);
+                var course = await _context.Courses
+                    .FirstOrDefaultAsync(d => d.ID == id && d.Deleted != 1);
+                if (course == null)
+                {
+                    TempData["Error"] = "Course not found";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                var res = new CourseUpSertDTO
+                {
+                    ID = course.ID,
+                    DepartmentID = course.DepartmentID,
+                    Focus = course.Focus,
+                    ImageURL = course.ImageURL,
+                    Info = course.Info,
+                    StudentNumber = course.StudentNumber,
+                    Name = course.Name,
+                    Price = course.Price,
+                    EndDate = course.EndDate,
+                    StartDate = course.StartDate,
+                };
+
+                res.SubjectList = from cs in _context.CourseSubjects
+                                  join s in _context.Subjects on cs.SubjectID equals s.ID
+                                  into s
+                                  from ms in s.DefaultIfEmpty()
+                                  join f in _context.Faculties on cs.FacultyID equals f.ID
+                                  into f
+                                  from cf in f.DefaultIfEmpty()
+                                  where cs.CourseID == course.ID
+                                  select new CourseSubject
+                                  {
+                                      ID = cs.ID,
+                                      SubjectID = cs.SubjectID,
+                                      FacultyID = cs.FacultyID,
+                                      Subject = ms,
+                                      Faculty = cf,
+                                      CourseID = cs.CourseID
+                                  };
+
+                res.DepartmentList = _context.Departments.Where(d => d.Deleted != 1)
+                    .OrderByDescending(d => d.UpdatedAt)
+                    .Select(d => new DepartmentSelectDTO
+                    {
+                        ID = (int)d.ID,
+                        Name = d.Name
+                    });
+
+                return View(res);
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         // POST: Admin/Course/Edit/5
@@ -220,11 +256,6 @@ namespace CollegeManagement.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, CourseUpSertDTO req)
         {
-            if (id != req.ID)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
                 try
@@ -241,6 +272,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
                     course.Info = req.Info;
                     course.Price = req.Price;
                     course.EndDate = req.EndDate;
+                    course.StudentNumber = req.StudentNumber;
                     course.StartDate = req.StartDate;
                     course.UpdatedAt = DateTime.Now;
 
@@ -299,7 +331,6 @@ namespace CollegeManagement.Areas.Admin.Controllers
                         throw;
                     }
                 }
-                return Json(new { status = false, msg = MESSAGE_NOT_UPDATE });
             }
 
             return Json(new { status = false, msg = MESSAGE_NOT_UPDATE });
@@ -308,19 +339,29 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // GET: Admin/Course/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
+            try
             {
-                return NotFound();
-            }
+                if (id == null)
+                {
+                    TempData["Error"] = "Course not found";
+                    return RedirectToAction(nameof(Index));
+                }
 
-            var course = await _context.Courses
-                .FirstOrDefaultAsync(m => m.ID == id);
-            if (course == null)
+                var course = await _context.Courses
+                    .FirstOrDefaultAsync(m => m.ID == id && m.Deleted != 1);
+                if (course == null)
+                {
+                    TempData["Error"] = "Course not found";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                return View(course);
+            }
+            catch (Exception ex)
             {
-                return NotFound();
+                TempData["Error"] = ex.Message;
+                return RedirectToAction(nameof(Index));
             }
-
-            return View(course);
         }
 
         // POST: Admin/Course/Delete/5
@@ -328,15 +369,30 @@ namespace CollegeManagement.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var course = await _context.Courses.FindAsync(id);
-            _context.Courses.Remove(course);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                var course = await _context.Courses.FirstOrDefaultAsync(c => c.ID == id && c.Deleted != 1);
+                if (course == null)
+                {
+                    TempData["Error"] = "Course not found";
+                    return RedirectToAction(nameof(Index));
+                }
+                course.Deleted = 1;
+                _context.Courses.Update(course);
+                await _context.SaveChangesAsync();
+                TempData["Error"] = MESSAGE_DELETE_SUCCESS;
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         private bool CourseExists(int id)
         {
-            return _context.Courses.Any(e => e.ID == id);
+            return _context.Courses.Any(e => e.ID == id && e.Deleted != 1);
         }
     }
 }

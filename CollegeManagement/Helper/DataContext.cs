@@ -23,7 +23,6 @@ namespace CollegeManagement.Helper
         public DbSet<Subject> Subjects { get; set; }
         public DbSet<FacultySubject> FacultySubjects { get; set; }
         public DbSet<Content> Contents { get; set; }
-        public DbSet<ContentBody> ContentBodys { get; set; }
         public DbSet<Marks> Markses { get; set; }
         public DbSet<Student> Students { get; set; }
         public DbSet<User> Users { get; set; }
@@ -39,7 +38,6 @@ namespace CollegeManagement.Helper
             modelBuilder.Entity<Subject>().ToTable("Subject");
             modelBuilder.Entity<FacultySubject>().ToTable("FacultySubject");
             modelBuilder.Entity<Content>().ToTable("Content");
-            modelBuilder.Entity<ContentBody>().ToTable("ContentBody");
             modelBuilder.Entity<Marks>().ToTable("Marks");
             modelBuilder.Entity<Student>().ToTable("Student");
             modelBuilder.Entity<User>().ToTable("User");

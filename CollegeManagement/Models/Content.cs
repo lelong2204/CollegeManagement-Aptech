@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web.Mvc;
 
 namespace CollegeManagement.Models
 {
@@ -10,19 +11,19 @@ namespace CollegeManagement.Models
     {
         public enum HomeType
         {
-            HomeScreen,
             AboutUs,
             History,
             Event
         }
 
+        [Required()]
         [MaxLength(200, ErrorMessage = "Title max length is 200")]
         public string? Title { get; set; }
-
-        [MaxLength(2000, ErrorMessage = "Description max length is 2000")]
-        public string? Description { get; set; }
         public int? Type { get; set; }
-        public DateTime? ExpiredDate { get; set; }
-        public ICollection<ContentBody> ContentBody { get; set; }
+        [Range(1900, int.MaxValue, ErrorMessage = "Year must be larger than 1900")]
+        public int? Year { get; set; }
+        [Required()]
+        [AllowHtml]
+        public string Description { get; set; }
     }
 }

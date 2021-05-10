@@ -73,19 +73,29 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // GET: Admin/Student/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
+            try
             {
-                return NotFound();
-            }
+                if (id == null)
+                {
+                    TempData["Error"] = MESSAGE_NOT_FOUND;
+                    return RedirectToAction(nameof(Index));
+                }
 
-            var student = await _context.Students
-                .FirstOrDefaultAsync(m => m.ID == id);
-            if (student == null)
+                var student = await _context.Students
+                    .FirstOrDefaultAsync(m => m.ID == id && m.Deleted != 1);
+                if (student == null)
+                {
+                    TempData["Error"] = MESSAGE_NOT_FOUND;
+                    return RedirectToAction(nameof(Index));
+                }
+
+                return View(student);
+            }
+            catch (Exception ex)
             {
-                return NotFound();
+                TempData["Error"] = ex.Message;
+                return View(new Student());
             }
-
-            return View(student);
         }
 
         // GET: Admin/Student/Create
@@ -93,14 +103,21 @@ namespace CollegeManagement.Areas.Admin.Controllers
         {
             var res = new StudentUpsertDTO();
 
-            res.CourseList = _context.Courses
-                .Where(d => d.Deleted != 1 && d.StartDate <= DateTime.Now && d.EndDate >= DateTime.Now)
-                .OrderByDescending(d => d.UpdatedAt)
-                .Select(d => new DepartmentSelectDTO
-                {
-                    ID = (int)d.ID,
-                    Name = d.Name
-                }).ToList();
+            try
+            {
+                res.CourseList = _context.Courses
+                    .Where(d => d.Deleted != 1 && d.StartDate <= DateTime.Now && d.EndDate >= DateTime.Now)
+                    .OrderByDescending(d => d.UpdatedAt)
+                    .Select(d => new DepartmentSelectDTO
+                    {
+                        ID = (int)d.ID,
+                        Name = d.Name
+                    }).ToList();
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+            }
 
             return View(res);
         }
@@ -112,45 +129,54 @@ namespace CollegeManagement.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(StudentUpsertDTO req)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var imgPath = await Utils.SaveFile(req.Image, "Student");
-                var code = await CreateCode();
-
-                var student = new Student
+                if (ModelState.IsValid)
                 {
-                    CourseID = req.CourseID,
-                    Admission = req.Admission,
-                    Status = req.Status,
-                    Code = code,
-                    DOB = req.DOB,
-                    Email = req.Email,
-                    Gender = req.Gender,
-                    ImageURL = imgPath,
-                    Name = req.Name,
-                    PermanentAddress = req.PermanentAddress,
-                    PhoneNumber = req.PhoneNumber,
-                    ResidentialAddress = req.ResidentialAddress,
-                    ResponsiblePersonName = req.ResponsiblePersonName,
-                    ResponsiblePersonPhone = req.ResponsiblePersonPhone,
-                    TestScore = req.TestScore,
-                    CreatedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now
-                };
-                _context.Add(student);
-                await _context.SaveChangesAsync();
+                    var imgPath = await Utils.SaveFile(req.Image, "Student");
+                    var code = await CreateCode();
+
+                    var student = new Student
+                    {
+                        CourseID = req.CourseID,
+                        Admission = req.Admission,
+                        Status = (int?)StudentUpsertDTO.StudentStatus.Processing,
+                        Code = code,
+                        DOB = req.DOB,
+                        Email = req.Email,
+                        Gender = req.Gender,
+                        ImageURL = imgPath,
+                        Name = req.Name,
+                        PermanentAddress = req.PermanentAddress,
+                        PhoneNumber = req.PhoneNumber,
+                        ResidentialAddress = req.ResidentialAddress,
+                        ResponsiblePersonName = req.ResponsiblePersonName,
+                        ResponsiblePersonPhone = req.ResponsiblePersonPhone,
+                        TestScore = req.TestScore,
+                        CreatedAt = DateTime.Now,
+                        UpdatedAt = DateTime.Now
+                    };
+                    _context.Add(student);
+                    await _context.SaveChangesAsync();
+                    TempData["Success"] = MESSAGE_SUCCESS;
+                    return RedirectToAction(nameof(Index));
+                }
+
+                req.CourseList = _context.Courses
+                    .Where(d => d.Deleted != 1 && d.StartDate <= DateTime.Now && d.EndDate >= DateTime.Now)
+                    .OrderByDescending(d => d.UpdatedAt)
+                    .Select(d => new DepartmentSelectDTO
+                    {
+                        ID = (int)d.ID,
+                        Name = d.Name
+                    }).ToList();
+                return View(req);
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
                 return RedirectToAction(nameof(Index));
             }
-
-            req.CourseList = _context.Courses
-                .Where(d => d.Deleted != 1 && d.StartDate <= DateTime.Now && d.EndDate >= DateTime.Now)
-                .OrderByDescending(d => d.UpdatedAt)
-                .Select(d => new DepartmentSelectDTO
-                {
-                    ID = (int)d.ID,
-                    Name = d.Name
-                }).ToList();
-            return View(req);
         }
 
         private async Task<string> CreateCode()
@@ -168,44 +194,54 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // GET: Admin/Student/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
+            try
             {
-                return NotFound();
-            }
+                if (id == null)
+                {
+                    TempData["Error"] = MESSAGE_NOT_FOUND;
+                    return RedirectToAction(nameof(Index));
+                }
 
-            var student = await _context.Students.FindAsync(id);
-            if (student == null)
-            {
-                return NotFound();
+                var student = await _context.Students.FirstOrDefaultAsync(c => c.ID == id && c.Deleted != 1);
+                if (student == null)
+                {
+                    TempData["Error"] = MESSAGE_NOT_FOUND;
+                    return RedirectToAction(nameof(Index));
+                }
+                var res = new StudentUpsertDTO
+                {
+                    CourseList = _context.Courses
+                    .Where(d => d.Deleted != 1 && d.StartDate <= DateTime.Now && d.EndDate >= DateTime.Now)
+                        .OrderByDescending(d => d.UpdatedAt)
+                        .Select(d => new DepartmentSelectDTO
+                        {
+                            ID = (int)d.ID,
+                            Name = d.Name
+                        }).ToList(),
+                    CourseID = student.CourseID,
+                    ID = student.ID,
+                    Admission = student.Admission,
+                    Status = student.Status,
+                    Code = student.Code,
+                    DOB = student.DOB,
+                    Email = student.Email,
+                    Gender = student.Gender,
+                    ImageURL = student.ImageURL,
+                    Name = student.Name,
+                    PermanentAddress = student.PermanentAddress,
+                    PhoneNumber = student.PhoneNumber,
+                    ResidentialAddress = student.ResidentialAddress,
+                    ResponsiblePersonName = student.ResponsiblePersonName,
+                    ResponsiblePersonPhone = student.ResponsiblePersonPhone,
+                    TestScore = student.TestScore
+                };
+                return View(res);
             }
-            var res = new StudentUpsertDTO
+            catch (Exception ex)
             {
-                CourseList = _context.Courses
-                .Where(d => d.Deleted != 1 && d.StartDate <= DateTime.Now && d.EndDate >= DateTime.Now)
-                    .OrderByDescending(d => d.UpdatedAt)
-                    .Select(d => new DepartmentSelectDTO
-                    {
-                        ID = (int)d.ID,
-                        Name = d.Name
-                    }).ToList(),
-                CourseID = student.CourseID,
-                ID = student.ID,
-                Admission = student.Admission,
-                Status = student.Status,
-                Code = student.Code,
-                DOB = student.DOB,
-                Email = student.Email,
-                Gender = student.Gender,
-                ImageURL = student.ImageURL,
-                Name = student.Name,
-                PermanentAddress = student.PermanentAddress,
-                PhoneNumber = student.PhoneNumber,
-                ResidentialAddress = student.ResidentialAddress,
-                ResponsiblePersonName = student.ResponsiblePersonName,
-                ResponsiblePersonPhone = student.ResponsiblePersonPhone,
-                TestScore = student.TestScore
-            };
-            return View(res);
+                TempData["Error"] = ex.Message;
+                return View(new Student());
+            }
         }
 
         // POST: Admin/Student/Edit/5
@@ -217,7 +253,8 @@ namespace CollegeManagement.Areas.Admin.Controllers
         {
             if (id != req.ID)
             {
-                return NotFound();
+                TempData["Error"] = MESSAGE_NOT_FOUND;
+                return RedirectToAction(nameof(Index));
             }
 
             if (ModelState.IsValid)
@@ -253,17 +290,12 @@ namespace CollegeManagement.Areas.Admin.Controllers
                     _context.Update(req);
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception ex)
                 {
-                    if (!StudentExists(id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    TempData["Error"] = ex.Message;
+                    return RedirectToAction(nameof(Index));
                 }
+                TempData["Success"] = MESSAGE_SUCCESS;
                 return RedirectToAction(nameof(Index));
             }
             return View(req);
@@ -272,19 +304,29 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // GET: Admin/Student/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
+            try
             {
-                return NotFound();
-            }
+                if (id == null)
+                {
+                    TempData["Error"] = MESSAGE_NOT_FOUND;
+                    return RedirectToAction(nameof(Index));
+                }
 
-            var student = await _context.Students
-                .FirstOrDefaultAsync(m => m.ID == id);
-            if (student == null)
+                var student = await _context.Students
+                    .FirstOrDefaultAsync(m => m.ID == id && m.Deleted != 1);
+                if (student == null)
+                {
+                    TempData["Error"] = MESSAGE_NOT_FOUND;
+                    return RedirectToAction(nameof(Index));
+                }
+
+                return View(student);
+            }
+            catch (Exception ex)
             {
-                return NotFound();
+                TempData["Error"] = ex.Message;
+                return View(new Student());
             }
-
-            return View(student);
         }
 
         // POST: Admin/Student/Delete/5
@@ -292,15 +334,31 @@ namespace CollegeManagement.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var student = await _context.Students.FindAsync(id);
-            _context.Students.Remove(student);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                var student = await _context.Students
+                          .FirstOrDefaultAsync(m => m.ID == id && m.Deleted != 1);
+                if (student == null)
+                {
+                    TempData["Error"] = MESSAGE_NOT_FOUND;
+                    return RedirectToAction(nameof(Index));
+                }
+                student.Deleted = 1;
+                _context.Students.Update(student);
+                await _context.SaveChangesAsync();
+                TempData["Success"] = MESSAGE_SUCCESS;
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         private bool StudentExists(int id)
         {
-            return _context.Students.Any(e => e.ID == id);
+            return _context.Students.Any(e => e.ID == id && e.Deleted != 1);
         }
     }
 }
