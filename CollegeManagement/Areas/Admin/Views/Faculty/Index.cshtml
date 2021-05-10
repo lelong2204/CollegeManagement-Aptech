@@ -28,7 +28,12 @@
                 },
                 columns: [
                     { data: 'name' },
-                    { data: 'gender' },
+                    {
+                        data: 'gender',
+                        render: (data, type, row, meta) => {
+                            return `<p>${data === 1 ? "Male" : data === 0 ? "Female" : "Other"}</p>`
+                        }
+                    },
                     {
                         data: 'dob',
                         render: (data, type, row, meta) => {

@@ -1,4 +1,4 @@
-﻿@model CollegeManagement.Models.Student
+﻿@model StudentUpsertDTO
 
 @{
     ViewData["Title"] = "Edit";
@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
@@ -53,15 +53,27 @@
                 <span asp-validation-for="PermanentAddress" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ImageURL" class="control-label"></label>
-                <input asp-for="ImageURL" class="form-control" />
-                <span asp-validation-for="ImageURL" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="Gender" class="control-label"></label>
-                <input asp-for="Gender" class="form-control" />
+                <select class="select2 form-control" asp-for="Gender">
+                    <option value="1">Male</option>
+                    <option value="0">Female</option>
+                    <option>Other</option>
+                </select>
                 <span asp-validation-for="Gender" class="text-danger"></span>
             </div>
+            @if (Model.Status != 0)
+            {
+                <div class="form-group">
+                    <label asp-for="Status" class="control-label"></label>
+                    <select class="select2 form-control" asp-for="Status">
+                        <option value="1">Admission</option>
+                        <option value="2">Expelled</option>
+                        <option value="3">Graduating</option>
+                        <option>Other</option>
+                    </select>
+                    <span asp-validation-for="Status" class="text-danger"></span>
+                </div>
+            }
             <div class="form-group">
                 <label asp-for="DOB" class="control-label"></label>
                 <input asp-for="DOB" class="form-control" />
@@ -73,30 +85,35 @@
                 <span asp-validation-for="Status" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="CourseID" class="control-label"></label>
-                <select asp-for="CourseID" class="form-control" asp-items="ViewBag.CourseID"></select>
+                <label asp-for="CourseID" class="control-label">Course</label>
+                <select asp-for="CourseID" class="select2 form-control">
+                    @foreach (var c in Model.CourseList)
+                    {
+                        <option value="@c.ID">@c.Name</option>
+                    }
+                </select>
                 <span asp-validation-for="CourseID" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Admission" class="control-label"></label>
-                <input asp-for="Admission" class="form-control" />
-                <span asp-validation-for="Admission" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="TestScore" class="control-label"></label>
                 <input asp-for="TestScore" class="form-control" />
                 <span asp-validation-for="TestScore" class="text-danger"></span>
             </div>
+            <div class="form-group">
+                <label asp-for="Image" class="control-label"></label>
+                <button type="button" class="btn btn-info" id="img-select-btn">Choose Image...</button>
+                <input asp-for="Image" type="file" class="form-control" id="image-select" hidden accept="image/*" />
+            </div>
+            <div class="form-group">
+                <img src="@Model.ImageURL" class="upload-img" />
+            </div>
             <input type="hidden" asp-for="ID" />
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Save" class="btn btn-warning mr-2" />
+                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

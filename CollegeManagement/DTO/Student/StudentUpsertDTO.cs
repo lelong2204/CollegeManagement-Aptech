@@ -1,6 +1,7 @@
 ﻿using CollegeManagement.DTO.Departments;
 using Microsoft.AspNetCore.Http;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
@@ -28,9 +29,9 @@ namespace CollegeManagement.DTO.Student
         [Required(ErrorMessage = "Responsible person phone is required")]
         [MaxLength(11, ErrorMessage = "The maximum length of the responsible person phone is 255")]
         [Display(Name = "Responsible person phone")]
+        [RegularExpression(@"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$", ErrorMessage = "Wrong responsible person phone number format")]
+
         public string? ResponsiblePersonPhone { get; set; }
-        [Required(ErrorMessage = "Student code is required")]
-        [MaxLength(20, ErrorMessage = "The maximum length of the code is 20")]
         public string? Code { get; set; }
         [MaxLength(500)]
         [EmailAddress(ErrorMessage = "Wrong email format")]
@@ -59,6 +60,6 @@ namespace CollegeManagement.DTO.Student
         [Required()]
         [Display(Name = "Test Score")]
         public int? TestScore { get; set; }
-        public IQueryable<DepartmentSelectDTO> CourseList { get; set; }
+        public List<DepartmentSelectDTO> CourseList { get; set; }
     }
 }
