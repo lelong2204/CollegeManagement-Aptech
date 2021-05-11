@@ -86,6 +86,7 @@ namespace CollegeManagement
             app.UseMiddleware<JwtMiddleware>();
 
             app.UseAuthorization();
+            app.UseStatusCodePagesWithReExecute("/MyStatusCode2", "?code={0}");
 
             app.UseEndpoints(endpoints =>
             {

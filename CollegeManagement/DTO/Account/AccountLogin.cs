@@ -13,6 +13,7 @@ namespace CollegeManagement.DTO.Account
         public string Email { get; set; }
         public string Address { get; set; }
         public string ImageURL { get; set; }
+        public string? Role { get; set; }
 
         public AccountLogin()
         {
@@ -31,6 +32,7 @@ namespace CollegeManagement.DTO.Account
                 Email = user.Email;
                 Address = user.Address;
                 ImageURL = user.ImageURL;
+                Role = user.Role;
             }
         }
     }

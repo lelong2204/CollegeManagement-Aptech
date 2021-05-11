@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Mazer Admin Dashboard</title>
+    <title>@(ViewData["Title"])</title>
 
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
@@ -48,56 +48,78 @@
                 <div class="sidebar-menu">
                     <ul class="menu">
                         <li class="sidebar-title">Menu</li>
-
                         <li class="sidebar-item">
                             <a href="/Admin" class='sidebar-link'>
                                 <i class="bi bi-grid-fill"></i>
                                 <span>Dashboard</span>
                             </a>
                         </li>
+                        @{
+                            if (userInfo != null)
+                            {
+                                if (userInfo.Role.Contains("Admin") || userInfo.Role.Contains("SuperAdmin"))
+                                {
 
-                        <li class="sidebar-item">
-                            <a href="/Admin/Department" class='sidebar-link'>
-                                <i class="bi bi-building"></i>
-                                <span>Department</span>
-                            </a>
-                        </li>
+                                    <li class="sidebar-item">
+                                        <a href="/Admin/Department" class='sidebar-link'>
+                                            <i class="bi bi-building"></i>
+                                            <span>Department</span>
+                                        </a>
+                                    </li>
+                                    <li class="sidebar-item">
+                                        <a href="/Admin/Faculty" class='sidebar-link'>
+                                            <i class="fas fa-chalkboard-teacher"></i>
+                                            <span>Faculty</span>
+                                        </a>
+                                    </li>
+                                }
+                                if (userInfo.Role.Contains("Admin") || userInfo.Role.Contains("SuperAdmin")
+                                    || userInfo.Role.Contains("Faculty"))
+                                {
 
-                        <li class="sidebar-item">
-                            <a href="/Admin/Faculty" class='sidebar-link'>
-                                <i class="fas fa-chalkboard-teacher"></i>
-                                <span>Faculty</span>
-                            </a>
-                        </li>
+                                    <li class="sidebar-item">
+                                        <a href="/Admin/Subject" class='sidebar-link'>
+                                            <i class="bi bi-book"></i>
+                                            <span>Subject</span>
+                                        </a>
+                                    </li>
 
-                        <li class="sidebar-item">
-                            <a href="/Admin/Subject" class='sidebar-link'>
-                                <i class="bi bi-book"></i>
-                                <span>Subject</span>
-                            </a>
-                        </li>
+                                    <li class="sidebar-item">
+                                        <a href="/Admin/Course" class='sidebar-link'>
+                                            <i class="fa fa-graduation-cap"></i>
+                                            <span>Courses</span>
+                                        </a>
+                                    </li>
+                                }
+                                if (userInfo.Role.Contains("Admin") || userInfo.Role.Contains("SuperAdmin")
+                                    || userInfo.Role.Contains("Faculty") || userInfo.Role.Contains("Student"))
+                                {
+                                    <li class="sidebar-item">
+                                        <a href="/Admin/Student" class='sidebar-link'>
+                                            <i class="fa fa-user-graduate"></i>
+                                            <span>Student</span>
+                                        </a>
+                                    </li>
+                                }
 
-                        <li class="sidebar-item">
-                            <a href="/Admin/Course" class='sidebar-link'>
-                                <i class="fa fa-graduation-cap"></i>
-                                <span>Courses</span>
-                            </a>
-                        </li>
+                                if (userInfo.Role.Contains("Admin") || userInfo.Role.Contains("SuperAdmin"))
+                                {
+                                    <li class="sidebar-item">
+                                        <a href="/Admin/Content" class='sidebar-link'>
+                                            <i class="fas fa-sticky-note"></i>
+                                            <span>Content</span>
+                                        </a>
+                                    </li>
 
-                        <li class="sidebar-item">
-                            <a href="/Admin/Student" class='sidebar-link'>
-                                <i class="fa fa-user-graduate"></i>
-                                <span>Student</span>
-                            </a>
-                        </li>
-
-                        <li class="sidebar-item">
-                            <a href="/Admin/Content" class='sidebar-link'>
-                                <i class="fas fa-sticky-note"></i>
-                                <span>Content</span>
-                            </a>
-                        </li>
-
+                                    <li class="sidebar-item">
+                                        <a href="/Admin/Auth/List" class='sidebar-link'>
+                                            <i class="fas fa-user-plus"></i>
+                                            <span>Account</span>
+                                        </a>
+                                    </li>
+                                }
+                            }
+                        }
                     </ul>
                 </div>
                 <button class="sidebar-toggler btn x"><i data-feather="x"></i></button>
@@ -124,30 +146,29 @@
                                    data-toggle="dropdown" aria-haspopup="true">
                                     <div class="user-menu d-flex">
                                         <div class="user-name text-end me-3">
-                                            <h6 class="mb-0 text-gray-600">@($"{userInfo.FullName}")</h6>
-                                            <p class="mb-0 text-sm text-gray-600">Administrator</p>
+                                            <h6 class="mb-0 text-gray-600">@(userInfo != null ? $"{userInfo.FullName}":"")</h6>
+                                            <p class="mb-0 text-sm text-gray-600">@(userInfo != null ? $"{userInfo.Role}":"")</p>
                                         </div>
                                         <div class="user-img d-flex align-items-center">
                                             <div class="avatar avatar-md">
-                                                <img src="@(string.IsNullOrEmpty(userInfo.ImageURL) ? "/admin/assets/images/faces/1.jpg": userInfo.ImageURL)">
+                                                <img src="@(userInfo == null || string.IsNullOrEmpty(userInfo.ImageURL) ? "/admin/assets/images/faces/1.jpg": userInfo.ImageURL)">
                                             </div>
                                         </div>
                                     </div>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
                                     <li>
-                                        <h6 class="dropdown-header">Hello, @($"{userInfo.FullName}")</h6>
+                                        <h6 class="dropdown-header">Hello, @(userInfo != null ? $"{userInfo.FullName}":"")</h6>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="#">
+                                        <a class="dropdown-item" href="/Admin/Auth/MyProfile">
                                             <i class="icon-mid bi bi-person me-2"></i> My
                                             Profile
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="#">
-                                            <i class="icon-mid bi bi-gear me-2"></i>
-                                            Settings
+                                        <a class="dropdown-item" href="/Admin/Auth/ChangePassword">
+                                            <i class="icon-mid bi bi-gear me-2"></i>Change Password
                                         </a>
                                     </li>
                                     <li>

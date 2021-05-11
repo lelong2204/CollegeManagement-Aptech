@@ -1,39 +1,24 @@
-﻿@model IEnumerable<Subject>
+@model IEnumerable<CollegeManagement.Models.User>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "List";
     var userInfo = (AccountLogin)Context.Items["UserLogin"];
 }
 
 <h1>Index</h1>
 
-@if (userInfo.Role != "Faculty")
-{
-    <p>
-        <a asp-action="Create" class="btn btn-success">Create New</a>
-    </p>
-}
+<p>
+    <a asp-action="Create" class="btn btn-success">Create New</a>
+</p>
 <table class="table table-striped table-bordered" id="datatable">
 </table>
 
 @section Scripts {
-    @if (userInfo.Role == "Faculty")
-    {
-        <script>
-            var isFaculty = true
-        </script>
-    }
-    else
-    {
-        <script>
-            var isFaculty = false
-        </script>
-    }
     <script>
         $(document).ready(function () {
             $('#datatable').DataTable({
                 ajax: {
-                    url: '/Admin/Subject/List',
+                    url: '/Admin/Auth/GetList',
                     dataSrc: function (res) {
                         return res.data
                     }
@@ -45,20 +30,19 @@
                     }
                 },
                 columns: [
-                    { data: 'name' },
-                    { data: 'info' },
+                    { data: 'fullName' },
                     {
-                        data: 'imageUrl',
-                        render: (data, type, row, meta) => {
-                            return `<img
-                                    src="${row.imageUrl !== undefined && row.imageUrl && row.imageUrl != "" ? row.imageUrl : DEFAULT_IMG}"
-                                class="img-index" />`
-                        }
+                        data: 'role'
                     },
                     {
-                        data: 'createdAt',
+                        data: 'userName'
+                    },
+                    {
+                        data: 'imageURL',
                         render: (data, type, row, meta) => {
-                            return `<p>${data ? moment(data).format("DD/MM/YYYY HH:mm:ss") : ""}</p>`
+                            return `<img
+                                src="${row.imageURL !== undefined && row.imageURL && row.imageURL != "" ? row.imageURL : DEFAULT_IMG}"
+                            class="img-index" />`
                         }
                     },
                     {
@@ -70,38 +54,31 @@
                     {
                         data: 'id',
                         render: (data, type, row, meta) => {
-                            if (isFaculty) {
-                                return `<div>
-                                    <a href="/Admin/Subject/Details/${row.id}" class="btn btn-action btn-info"><i class="fa fa-eye"></i></a>
-                                </div>`
-                            }
-                            return `<div>
-                                    <a href="/Admin/Subject/Edit/${row.id}" class="btn btn-action btn-warning"><i class="fa fa-edit"></i></a>
-                                    <a href="/Admin/Subject/Details/${row.id}" class="btn btn-action btn-info"><i class="fa fa-eye"></i></a>
-                                    <a href="/Admin/Subject/Delete/${row.id}" class="btn btn-action btn-danger"><i class="fa fa-trash"></i></a>
-                                </div>`
+                            return `<div class="action">
+                                <a data-id="${row.id}" class="delete btn btn-action btn-danger"><i class="fa fa-trash"></i></a>
+                            </div>`
                         }
                     },
                 ],
                 columnDefs: [
                     {
                         targets: 0,
-                        title: "Name",
-                        className: "text-center",
+                        title: "Full Name",
+                        className: "td-word_break",
                     },
                     {
                         targets: 1,
-                        title: 'Information',
+                        title: 'Role',
                         className: "td-word_break"
                     },
                     {
                         targets: 2,
-                        title: 'Image',
+                        title: 'User Name',
                         className: "td-word_break"
                     },
                     {
                         targets: 3,
-                        title: 'Created At',
+                        title: 'Image',
                         className: "td-word_break"
                     },
                     {
@@ -111,7 +88,8 @@
                     },
                     {
                         targets: 5,
-                        title: 'Action'
+                        title: 'Action',
+                        className: "action"
                     }
                 ],
                 select: {

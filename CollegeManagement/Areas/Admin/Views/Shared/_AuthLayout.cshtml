@@ -34,6 +34,29 @@
         </div>
 
     </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+    <script src="~/lib/sweetalert2/dist/sweetalert2.all.min.js"></script>
+    <script src="~/lib/izitoast/dist/js/iziToast.min.js"></script>
+    <script src="~/admin/js/adminsite.js"></script>
+    @if (TempData["Error"] != null)
+    {
+        <script>
+            $(document).ready(function () {
+                notificationError("@TempData["Error"]")
+            })
+        </script>
+    }
+    @if (TempData["Success"] != null)
+    {
+        <script>
+            $(document).ready(function () {
+                notificationSuccess("@TempData["Success"]")
+            })
+        </script>
+    }
 </body>
 
 </html>

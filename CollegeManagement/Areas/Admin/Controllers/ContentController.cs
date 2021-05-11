@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Http;
 namespace CollegeManagement.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize]
+    [Authorize(RoleType = "Admin, SuperAdmin")]
     public class ContentController : BaseController
     {
         private readonly DataContext _context;

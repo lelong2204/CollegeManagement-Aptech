@@ -17,7 +17,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace CollegeManagement.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize]
+    [Authorize(RoleType = "Admin, SuperAdmin, Faculty")]
     public class CourseController : BaseController
     {
         private readonly DataContext _context;
@@ -38,32 +38,73 @@ namespace CollegeManagement.Areas.Admin.Controllers
         {
             try
             {
-                var data = await (from c in _context.Courses
-                            join d in _context.Departments on c.DepartmentID equals d.ID
-                            into d
-                            from ds in d.DefaultIfEmpty()
-                            where c.Deleted != 1
-                            orderby c.UpdatedAt descending
-                            select new
-                            {
-                                ID = c.ID,
-                                Name = c.Name,
-                                Info = c.Info,
-                                Price = c.Price,
-                                Focus = c.Focus,
-                                DepartmentName = ds.Name,
-                                StartDate = c.StartDate,
-                                EndDate = c.EndDate,
-                                ImageURL = c.ImageURL,
-                                CreatedAt = c.CreatedAt,
-                                UpdatedAt = c.UpdatedAt,
-                            }).ToListAsync();
-                return Json(new
+                if (UserLogin.Role == "Faculty")
                 {
-                    status = true,
-                    msg = MESSAGE_SUCCESS,
-                    data = data
-                });
+                    var data = await (from c in _context.Courses
+                                      join cs in _context.CourseSubjects on c.ID equals cs.CourseID
+                                      into p
+                                      from cs in p.DefaultIfEmpty()
+                                      join f in _context.Faculties on cs.FacultyID equals f.ID
+                                      into q
+                                      from f in q.DefaultIfEmpty()
+                                      join d in _context.Departments on c.DepartmentID equals d.ID
+                                      into d
+                                      from ds in d.DefaultIfEmpty()
+                                      where c.Deleted != 1 && f.UserID == UserLogin.ID && f.Deleted != 1
+                                      orderby c.UpdatedAt descending
+                                      select new
+                                      {
+                                          ID = c.ID,
+                                          Name = c.Name,
+                                          Info = c.Info,
+                                          Price = c.Price,
+                                          Focus = c.Focus,
+                                          DepartmentName = ds.Name,
+                                          StartDate = c.StartDate,
+                                          EndDate = c.EndDate,
+                                          ImageURL = c.ImageURL,
+                                          CreatedAt = c.CreatedAt,
+                                          UpdatedAt = c.UpdatedAt,
+                                      }).ToListAsync();
+
+                    return Json(new
+                    {
+                        status = true,
+                        msg = MESSAGE_SUCCESS,
+                        data = data
+                    });
+                }
+                else
+                {
+
+                    var data = await (from c in _context.Courses
+                                      join d in _context.Departments on c.DepartmentID equals d.ID
+                                      into d
+                                      from ds in d.DefaultIfEmpty()
+                                      where c.Deleted != 1
+                                      orderby c.UpdatedAt descending
+                                      select new
+                                      {
+                                          ID = c.ID,
+                                          Name = c.Name,
+                                          Info = c.Info,
+                                          Price = c.Price,
+                                          Focus = c.Focus,
+                                          DepartmentName = ds.Name,
+                                          StartDate = c.StartDate,
+                                          EndDate = c.EndDate,
+                                          ImageURL = c.ImageURL,
+                                          CreatedAt = c.CreatedAt,
+                                          UpdatedAt = c.UpdatedAt,
+                                      }).ToListAsync();
+
+                    return Json(new
+                    {
+                        status = true,
+                        msg = MESSAGE_SUCCESS,
+                        data = data
+                    });
+                }
             }
             catch (Exception ex)
             {
@@ -87,8 +128,26 @@ namespace CollegeManagement.Areas.Admin.Controllers
                     return RedirectToAction(nameof(Index));
                 }
 
-                var course = await _context.Courses
-                    .FirstOrDefaultAsync(m => m.ID == id && m.Deleted != 1);
+                var course = new Course();
+
+                if (UserLogin.Role == "Faculty")
+                {
+                    course = await(from c in _context.Courses
+                           join cs in _context.CourseSubjects on c.ID equals cs.CourseID
+                           into q
+                           from cs in q.DefaultIfEmpty()
+                           join f in _context.Faculties on cs.FacultyID equals f.ID
+                           into p
+                           from f in p.DefaultIfEmpty()
+                           where f.Deleted != 1 && f.UserID == UserLogin.ID
+                           select c).FirstOrDefaultAsync(m => m.ID == id && m.Deleted != 1);
+                }
+                else
+                {
+                    course = await _context.Courses
+                        .FirstOrDefaultAsync(m => m.ID == id && m.Deleted != 1);
+                }
+
                 if (course == null)
                 {
                     TempData["Error"] = MESSAGE_NOT_FOUND;
@@ -105,6 +164,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
         }
 
         // GET: Admin/Course/Create
+        [Authorize(RoleType = "Admin, SuperAdmin")]
         public IActionResult Create()
         {
             var res = new CourseUpSertDTO();
@@ -132,6 +192,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(RoleType = "Admin, SuperAdmin")]
         public async Task<IActionResult> Create(CourseUpSertDTO req)
         {
             try
@@ -182,6 +243,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
         }
 
         // GET: Admin/Course/Edit/5
+        [Authorize(RoleType = "Admin, SuperAdmin")]
         public async Task<IActionResult> Edit(int? id)
         {
             try
@@ -254,6 +316,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(RoleType = "Admin, SuperAdmin")]
         public async Task<IActionResult> Edit(int id, CourseUpSertDTO req)
         {
             if (ModelState.IsValid)
@@ -337,6 +400,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
         }
 
         // GET: Admin/Course/Delete/5
+        [Authorize(RoleType = "Admin, SuperAdmin")]
         public async Task<IActionResult> Delete(int? id)
         {
             try
@@ -367,6 +431,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // POST: Admin/Course/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(RoleType = "Admin, SuperAdmin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             try
@@ -390,6 +455,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
             }
         }
 
+        [Authorize(RoleType = "Admin, SuperAdmin")]
         private bool CourseExists(int id)
         {
             return _context.Courses.Any(e => e.ID == id && e.Deleted != 1);

@@ -6,6 +6,12 @@ namespace CollegeManagement.Models
 {
     public class Marks: BaseModel
     {
+        public enum MarksStatus
+        {
+            Pass,
+            Failed
+        }
+
         [ForeignKey("Subject")]
         public int? SubjectID { get; set; }
         [ForeignKey("Student")]

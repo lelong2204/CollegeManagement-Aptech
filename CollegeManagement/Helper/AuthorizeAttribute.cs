@@ -6,6 +6,16 @@ using System;
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public class AuthorizeAttribute : Attribute, IAuthorizationFilter
 {
+    private string _RoleType;
+    public string RoleType
+    {
+        get { return _RoleType; }
+        set
+        {
+            _RoleType = value;
+        }
+    }
+
     public AuthorizeAttribute()
     {
     }
@@ -16,7 +26,12 @@ public class AuthorizeAttribute : Attribute, IAuthorizationFilter
 
         if (account == null)
         {
-            context.Result = new RedirectToActionResult("Index", "Auth", null);
+            context.HttpContext.Response.Redirect("/Admin/Auth");
+        }
+
+        if (_RoleType != null && _RoleType.Length > 0 && !_RoleType.Contains(account.Role))
+        {
+            context.HttpContext.Response.Redirect("/Admin/NotFound");
         }
     }
 }

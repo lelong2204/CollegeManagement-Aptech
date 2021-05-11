@@ -59,6 +59,10 @@ namespace CollegeManagement.Middleware
                 {
                     accountLogin = new AccountLogin(user);
                 }
+                else
+                {
+                    context.Response.Redirect("/Admin/Auth/Logout");
+                }
 
                 context.Items["UserLogin"] = accountLogin;
             }

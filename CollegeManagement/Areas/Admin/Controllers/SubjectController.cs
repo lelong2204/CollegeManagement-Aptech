@@ -12,7 +12,7 @@ using CollegeManagement.DTO.Subject;
 namespace CollegeManagement.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize]
+    [Authorize(RoleType = "Admin, SuperAdmin, Faculty")]
     public class SubjectController : BaseController
     {
         private readonly DataContext _context;
@@ -32,12 +32,30 @@ namespace CollegeManagement.Areas.Admin.Controllers
         {
             try
             {
+                var data = new List<Subject>();
+
+                if (UserLogin.Role == "Faculty")
+                {
+                    data = await (from s in _context.Subjects
+                           join fs in _context.FacultySubjects on s.ID equals fs.SubjectID
+                           into m from fs in m.DefaultIfEmpty()
+                           join f in _context.Faculties on fs.FacultyID equals f.ID
+                           into p
+                           from f in p.DefaultIfEmpty()
+                           where f.UserID == UserLogin.ID && s.Deleted != 1 && f.Deleted !=1
+                           orderby s.UpdatedAt descending
+                           select s).ToListAsync();
+                }
+                else
+                {
+                    data = await _context.Subjects.Where(d => d.Deleted != 1)
+                        .OrderByDescending(d => d.UpdatedAt).ToListAsync();
+                }
                 return Json(new
                 {
                     status = true,
                     msg = MESSAGE_SUCCESS,
-                    data = await _context.Subjects.Where(d => d.Deleted != 1)
-                        .OrderByDescending(d => d.UpdatedAt).ToListAsync()
+                    data = data
                 });
             }
             catch (Exception ex)
@@ -46,7 +64,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
                 {
                     status = false,
                     msg = ex.Message,
-                    data = new List<Faculty>()
+                    data = new List<Subject>()
                 });
             }
         }
@@ -61,9 +79,27 @@ namespace CollegeManagement.Areas.Admin.Controllers
                     TempData["Error"] = MESSAGE_NOT_FOUND;
                     return RedirectToAction(nameof(Index));
                 }
+                var subject = new Subject();
 
-                var subject = await _context.Subjects
-                    .FirstOrDefaultAsync(m => m.ID == id);
+                if (UserLogin.Role == "Faculty")
+                {
+                    subject = await (from s in _context.Subjects
+                                  join fs in _context.FacultySubjects on s.ID equals fs.SubjectID
+                                  into m
+                                  from fs in m.DefaultIfEmpty()
+                                  join f in _context.Faculties on fs.FacultyID equals f.ID
+                                  into p
+                                  from f in p.DefaultIfEmpty()
+                                  where f.UserID == UserLogin.ID && s.Deleted != 1 && f.Deleted != 1 && s.ID == id
+                                  orderby s.UpdatedAt descending
+                                  select s).FirstOrDefaultAsync();
+                }
+                else
+                {
+                    subject = await _context.Subjects
+                        .FirstOrDefaultAsync(m => m.ID == id);
+                }
+
                 if (subject == null)
                 {
                     TempData["Error"] = MESSAGE_NOT_FOUND;
@@ -80,6 +116,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
         }
 
         // GET: Subjects/Create
+        [Authorize(RoleType = "Admin, SuperAdmin")]
         public IActionResult Create()
         {
             return View();
@@ -90,6 +127,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(RoleType = "Admin, SuperAdmin")]
         public async Task<IActionResult> Create(SubjectUpSertDTO req)
         {
             if (ModelState.IsValid)
@@ -112,6 +150,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
         }
 
         // GET: Subjects/Edit/5
+        [Authorize(RoleType = "Admin, SuperAdmin")]
         public async Task<IActionResult> Edit(int? id)
         {
             try
@@ -153,6 +192,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(RoleType = "Admin, SuperAdmin")]
         public async Task<IActionResult> Edit(int? id, SubjectUpSertDTO req)
         {
             if (ModelState.IsValid)
@@ -192,6 +232,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
         }
 
         // GET: Subjects/Delete/5
+        [Authorize(RoleType = "Admin, SuperAdmin")]
         public async Task<IActionResult> Delete(int? id)
         {
             try
@@ -222,6 +263,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // POST: Subjects/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(RoleType = "Admin, SuperAdmin")]
         public async Task<IActionResult> DeleteConfirmed(int? id)
         {
             try
@@ -247,6 +289,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
             }
         }
 
+        [Authorize(RoleType = "Admin, SuperAdmin")]
         public List<SubjectSelectDTO> Select2(string search, int facultyID, List<int> subjectExist)
         {
             try
@@ -273,6 +316,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
             }
         }
 
+        [Authorize(RoleType = "Admin, SuperAdmin")]
         private bool SubjectExists(int? id)
         {
             return _context.Subjects.Any(e => e.ID == id && e.Deleted != 1);

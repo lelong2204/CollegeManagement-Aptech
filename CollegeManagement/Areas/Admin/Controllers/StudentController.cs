@@ -9,6 +9,7 @@ using CollegeManagement.Helper;
 using CollegeManagement.Models;
 using CollegeManagement.DTO.Student;
 using CollegeManagement.DTO.Departments;
+using CollegeManagement.DTO.Faculty;
 
 namespace CollegeManagement.Areas.Admin.Controllers
 {
@@ -48,7 +49,6 @@ namespace CollegeManagement.Areas.Admin.Controllers
                                       Gender = s.Gender,
                                       DOB = s.DOB,
                                       Status = s.Status,
-                                      Admission = s.Admission,
                                       ImageURL = s.ImageURL,
                                       TestScore = s.TestScore
                                   }).ToListAsync();
@@ -139,7 +139,6 @@ namespace CollegeManagement.Areas.Admin.Controllers
                     var student = new Student
                     {
                         CourseID = req.CourseID,
-                        Admission = req.Admission,
                         Status = (int?)StudentUpsertDTO.StudentStatus.Processing,
                         Code = code,
                         DOB = req.DOB,
@@ -220,7 +219,6 @@ namespace CollegeManagement.Areas.Admin.Controllers
                         }).ToList(),
                     CourseID = student.CourseID,
                     ID = student.ID,
-                    Admission = student.Admission,
                     Status = student.Status,
                     Code = student.Code,
                     DOB = student.DOB,
@@ -271,7 +269,6 @@ namespace CollegeManagement.Areas.Admin.Controllers
 
                     var imgPath = await Utils.SaveFile(req.Image, "Student");
                     student.CourseID = req.CourseID;
-                    student.Admission = req.Admission;
                     student.Status = req.Status;
                     student.Code = req.Code;
                     student.DOB = req.DOB;
@@ -359,6 +356,25 @@ namespace CollegeManagement.Areas.Admin.Controllers
         private bool StudentExists(int id)
         {
             return _context.Students.Any(e => e.ID == id && e.Deleted != 1);
+        }
+
+        public List<FacultySelectDTO> Select2(string search)
+        {
+            try
+            {
+                search = string.IsNullOrEmpty(search) ? "" : search.ToLower();
+                var students = _context.Students
+                    .Where(f => f.Name.ToLower().Contains(search) && 
+                        f.Deleted != 1 && f.Status == 1 && (f.UserID == null || f.UserID == 0)
+                    );
+
+                return (from s in students
+                        select new FacultySelectDTO { ID = s.ID, Name = s.Name }).ToList();
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
     }
 }

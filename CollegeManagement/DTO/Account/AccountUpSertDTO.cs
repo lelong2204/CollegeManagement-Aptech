@@ -1,14 +1,16 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CollegeManagement.Models
+namespace CollegeManagement.DTO.Account
 {
-    public class User : BaseModel
+    public class AccountUpSertDTO
     {
-        public List<string> UserRole = new List<string>() { "SuperAdmin", "Admin", "Employee", "Faculty", "Student" };
+        public List<string> UserRole = new List<string>() { "Admin", "Faculty", "Student" };
+        [Required(ErrorMessage = "Full name is required")]
         public string? FullName { get; set; }
         [MaxLength(500)]
         [EmailAddress(ErrorMessage = "Wrong email address format")]
@@ -18,6 +20,7 @@ namespace CollegeManagement.Models
         public string? PhoneNumber { get; set; }
         [MaxLength(500)]
         public string? ImageURL { get; set; }
+        public IFormFile Image { get; set; }
         public string? Address { get; set; }
         [Required(ErrorMessage = "User name is required")]
         [MaxLength(64, ErrorMessage = "The maximum length of the user name is 64")]
@@ -26,7 +29,7 @@ namespace CollegeManagement.Models
         [MaxLength(255, ErrorMessage = "The maximum length of the password is 255")]
         public string Password { get; set; }
         [Required(ErrorMessage = "Role is required")]
-        [MaxLength(20)]
-        public string? Role { get; set; }
+        public string Role { get; set; }
+        public int? TargetID { get; set; }
     }
 }

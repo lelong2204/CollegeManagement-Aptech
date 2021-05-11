@@ -1,0 +1,222 @@
+@model AccountUpSertDTO
+
+@{
+    ViewData["Title"] = "Add Account";
+    var userInfo = (AccountLogin)Context.Items["UserLogin"];
+}
+
+<h1>Add Account</h1>
+
+<h4>User</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" id="create_form" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="FullName" class="control-label">Full Name</label>
+                <input asp-for="FullName" class="form-control" />
+                <span asp-validation-for="FullName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Role" class="control-label">Role</label>
+                <select asp-for="Role" class="select2 form-control">
+                    @foreach (var role in Model.UserRole)
+                    {
+                        <option value="@role">@role</option>
+                    }
+                </select>
+                <span asp-validation-for="Role" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserName" class="control-label">User Name</label>
+                <input asp-for="UserName" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Password" class="control-label">Password</label>
+                <input asp-for="Password" type="password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Confirm Password</label>
+                <input id="ConfirmPassword" type="password" class="form-control" />
+                <span id="ConfirmPasswordError" class="text-danger"></span>
+            </div>
+            <div class="form-group employee">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group employee">
+                <label asp-for="Address" class="control-label"></label>
+                <input asp-for="Address" class="form-control" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+            <div class="form-group employee">
+                <label asp-for="PhoneNumber" class="control-label">
+                    Phone Number
+                </label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group" id="SelectTargetID" style="display: none">
+                <label asp-for="TargetID" class="control-label"></label>
+                <select asp-for="TargetID" class="form-control">
+                </select>
+                <span asp-validation-for="TargetID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Image" class="control-label"></label>
+                <button type="button" class="btn btn-info" id="img-select-btn">Change Image</button>
+                <input asp-for="Image" type="file" class="form-control" id="image-select" hidden accept="image/*" />
+            </div>
+            <div class="form-group">
+                <img class="upload-img" />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Add new account" class="btn btn-success mr-2" />
+                <a asp-action="List" class="btn btn-secondary">Back to list</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function () {
+            switch ($("#Role").val()) {
+                case "Faculty":
+                    $("#SelectTargetID").show()
+                    $(".employee").hide()
+                    $("#TargetID").val(null).trigger("change")
+                    $("#TargetID").select2({
+                        ajax: {
+                            url: '/Admin/Faculty/NewSelect2',
+                            dataType: 'json',
+                            delay: 100,
+                            data: function (params) {
+                                var query = {
+                                    search: params.term
+                                }
+                                return query;
+                            },
+                            processResults: function (data) {
+                                return {
+                                    results: $.map(data, function (obj) {
+                                        return { id: obj.id, text: obj.name };
+                                    })
+                                };
+                            }
+                        },
+                        allowClear: true, placeholder: "Select faculty"
+                    })
+                    break;
+                case "Student":
+                    $("#SelectTargetID").show()
+                    $(".employee").hide()
+                    $("#TargetID").val(null).trigger("change")
+                    $("#TargetID").select2({
+                        ajax: {
+                            url: '/Admin/Student/Select2',
+                            dataType: 'json',
+                            delay: 100,
+                            data: function (params) {
+                                var query = {
+                                    search: params.term
+                                }
+                                return query;
+                            },
+                            processResults: function (data) {
+                                return {
+                                    results: $.map(data, function (obj) {
+                                        return { id: obj.id, text: obj.name };
+                                    })
+                                };
+                            }
+                        },
+                        allowClear: true, placeholder: "Select student"
+                    })
+                    break;
+                default:
+                    $("#SelectTargetID").hide()
+                    $(".employee").show()
+            }
+
+            $("#ConfirmPassword, #Password").on("change", function () {
+                if ($("#ConfirmPassword").val() !== $("#Password").val()) {
+                    $("#ConfirmPasswordError").text("New password and confirm password doesn't match")
+                } else {
+                    $("#ConfirmPasswordError").text("")
+                }
+            })
+
+            $("#create_form").on("submit", function () {
+                if ($("#ConfirmPassword").val() !== $("#Password").val()) {
+                    $("#ConfirmPasswordError").text("New password and confirm password doesn't match")
+                    return false;
+                }
+            })
+
+            $("#Role").on("change", function () {
+                switch ($(this).val()) {
+                    case "Faculty":
+                        $("#SelectTargetID").show()
+                        $(".employee").hide()
+                        $("#TargetID").val(null).trigger("change")
+                        $("#TargetID").select2({
+                            ajax: {
+                                url: '/Admin/Faculty/NewSelect2',
+                                dataType: 'json',
+                                delay: 100,
+                                data: function (params) {
+                                    var query = {
+                                        search: params.term
+                                    }
+                                    return query;
+                                },
+                                processResults: function (data) {
+                                    return {
+                                        results: $.map(data, function (obj) {
+                                            return { id: obj.id, text: obj.name };
+                                        })
+                                    };
+                                }
+                            },
+                            allowClear: true, placeholder: "Select faculty"
+                        })
+                        break;
+                    case "Student":
+                        $("#SelectTargetID").show()
+                        $(".employee").hide()
+                        $("#TargetID").val(null).trigger("change")
+                        $("#TargetID").select2({
+                            ajax: {
+                                url: '/Admin/Student/Select2',
+                                dataType: 'json',
+                                delay: 100,
+                                data: function (params) {
+                                    var query = {
+                                        search: params.term
+                                    }
+                                    return query;
+                                },
+                                processResults: function (data) {
+                                    return {
+                                        results: $.map(data, function (obj) {
+                                            return { id: obj.id, text: obj.name };
+                                        })
+                                    };
+                                }
+                            },
+                            allowClear: true, placeholder: "Select student"
+                        })
+                        break;
+                    default:
+                        $("#SelectTargetID").hide()
+                        $(".employee").show()
+                }
+            })
+        })
+    </script>
+}

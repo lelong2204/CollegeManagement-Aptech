@@ -13,7 +13,7 @@ using System.Collections.Generic;
 namespace CollegeManagement.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize]
+    [Authorize(RoleType = "Admin, SuperAdmin")]
     public class FacultyController : BaseController
     {
         private readonly DataContext _context;
@@ -33,12 +33,23 @@ namespace CollegeManagement.Areas.Admin.Controllers
         {
             try
             {
+                var data = new List<Faculty>();
+
+                if (UserLogin.Role == "Faculty")
+                {
+                    data = await _context.Faculties.Where(d => d.Deleted != 1 && d.UserID == UserLogin.ID).ToListAsync();
+                }
+                else
+                {
+                    data = await _context.Faculties.Where(d => d.Deleted != 1)
+                        .OrderByDescending(d => d.UpdatedAt).ToListAsync();
+                }
+
                 return Json(new
                 {
                     status = true,
                     msg = MESSAGE_SUCCESS,
-                    data = await _context.Faculties.Where(d => d.Deleted != 1)
-                        .OrderByDescending(d => d.UpdatedAt).ToListAsync()
+                    data = data
                 });
             }
             catch (Exception ex)
@@ -63,15 +74,30 @@ namespace CollegeManagement.Areas.Admin.Controllers
                     return RedirectToAction(nameof(Index));
                 }
 
-                var faculty = await _context.Faculties
-                    .FirstOrDefaultAsync(m => m.ID == id && m.Deleted != 1);
-                if (faculty == null)
+                if (UserLogin.Role == "Faculty")
                 {
-                    TempData["Error"] = MESSAGE_NOT_FOUND;
-                    return RedirectToAction(nameof(Index));
-                }
+                    var faculty = await _context.Faculties
+                        .FirstOrDefaultAsync(m => m.ID == id && m.Deleted != 1 && m.UserID == UserLogin.ID);
+                    if (faculty == null)
+                    {
+                        TempData["Error"] = MESSAGE_NOT_FOUND;
+                        return RedirectToAction(nameof(Index));
+                    }
 
-                return View(faculty);
+                    return View(faculty);
+                }
+                else
+                {
+                    var faculty = await _context.Faculties
+                        .FirstOrDefaultAsync(m => m.ID == id && m.Deleted != 1);
+                    if (faculty == null)
+                    {
+                        TempData["Error"] = MESSAGE_NOT_FOUND;
+                        return RedirectToAction(nameof(Index));
+                    }
+
+                    return View(faculty);
+                }
             }
             catch (Exception ex)
             {
@@ -180,19 +206,50 @@ namespace CollegeManagement.Areas.Admin.Controllers
                 }
 
                 var faculty = await _context.Faculties
-                    .FirstOrDefaultAsync(m => m.ID == id && m.Deleted != 1);
+                        .FirstOrDefaultAsync(m => m.ID == id && m.Deleted != 1);
                 if (faculty == null)
                 {
                     TempData["Error"] = MESSAGE_NOT_FOUND;
                     return RedirectToAction(nameof(Index));
                 }
 
-                return View(faculty);
+                var res = new FacultyUpSertDTO
+                {
+                    ID = faculty.ID,
+                    Address = faculty.Address,
+                    DepartmentID = faculty.DepartmentID,
+                    DOB = faculty.DOB,
+                    Email = faculty.Email,
+                    ExperienceYear = faculty.ExperienceYear,
+                    Gender = faculty.Gender,
+                    ImageUrl = faculty.ImageUrl,
+                    Info = faculty.Info,
+                    PhoneNumber = faculty.PhoneNumber,
+                    Name = faculty.Name
+                };
+
+                res.DepartmentList = _context.Departments.Where(d => d.Deleted != 1)
+                .OrderByDescending(d => d.UpdatedAt)
+                .Select(d => new DepartmentSelectDTO
+                {
+                    ID = (int)d.ID,
+                    Name = d.Name
+                });
+
+                res.SubjectList = _context.Subjects.Where(d => d.Deleted != 1)
+                    .OrderByDescending(d => d.UpdatedAt)
+                    .Select(d => new SubjectSelectDTO
+                    {
+                        ID = (int)d.ID,
+                        Name = d.Name
+                    });
+
+                return View(res);
             }
             catch (Exception ex)
             {
                 TempData["Error"] = ex.Message;
-                return View(new Faculty());
+                return View(new FacultyUpSertDTO());
             }
         }
 
@@ -213,6 +270,16 @@ namespace CollegeManagement.Areas.Admin.Controllers
             {
                 try
                 {
+                    if (UserLogin.Role == "Faculty")
+                    {
+                        if (await _context.Faculties
+                            .FirstOrDefaultAsync(m => m.ID == id && m.Deleted != 1 && m.UserID == UserLogin.ID) == null)
+                        {
+                            TempData["Error"] = MESSAGE_NOT_FOUND;
+                            return RedirectToAction(nameof(Index));
+                        }
+                    }
+
                     var imgPath = await Utils.SaveFile(req.Image, "Faculty");
 
                     var faculty = await _context.Faculties
@@ -335,6 +402,23 @@ namespace CollegeManagement.Areas.Admin.Controllers
                             where fs.SubjectID == subjectID
                             select new FacultySelectDTO { ID = f.ID, Name = f.Name }).ToList();
                 }
+
+                return (from f in faculties
+                        select new FacultySelectDTO { ID = f.ID, Name = f.Name }).ToList();
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public List<FacultySelectDTO> NewSelect2(string search)
+        {
+            try
+            {
+                search = string.IsNullOrEmpty(search) ? "" : search.ToLower();
+                var faculties = _context.Faculties.Where(f => f.Name.ToLower().Contains(search) && f.Deleted != 1
+                    && (f.UserID == null || f.UserID == 0));
 
                 return (from f in faculties
                         select new FacultySelectDTO { ID = f.ID, Name = f.Name }).ToList();

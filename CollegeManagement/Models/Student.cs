@@ -45,7 +45,8 @@ namespace CollegeManagement.Models
         public int? Status { get; set; }
         [Required(ErrorMessage = "The course is required")]
         public int? CourseID { get; set; }
-        public int? Admission { get; set; }
+        public int? UserID { get; set; }
+        public User User { get; set; }
         [Range(0, int.MaxValue, ErrorMessage = "The test score must be larger than 0")]
         public int? TestScore { get; set; }
         public ICollection<Marks> Marks { get; set; }
