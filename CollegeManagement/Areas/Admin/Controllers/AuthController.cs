@@ -142,16 +142,15 @@ namespace CollegeManagement.Areas.Admin.Controllers
             {
                 if (UserLogin.ID > 0)
                 {
-                    var user = _context.Users.FirstOrDefault(u => u.Deleted != 1 && u.ID == UserLogin.ID);
                     var res = new AccountUpSertDTO
                     {
-                        Address = user.Address,
-                        Email = user.Email,
-                        FullName = user.FullName,
-                        ImageURL = user.ImageURL,
-                        Password = user.Password,
-                        PhoneNumber = user.PhoneNumber,
-                        UserName = user.UserName,
+                        Address = UserLogin.Address,
+                        Email = UserLogin.Email,
+                        FullName = UserLogin.FullName,
+                        ImageURL = UserLogin.ImageURL,
+                        Password = UserLogin.Password,
+                        PhoneNumber = UserLogin.Phone,
+                        UserName = UserLogin.UserName,
                     };
                     return View(res);
                 }
@@ -227,7 +226,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
                         {
                             status = true,
                             msg = MESSAGE_SUCCESS,
-                            data = await _context.Users.Where(d => d.Deleted != 1)
+                            data = await _context.Users.Where(d => d.Deleted != 1 && d.ID != UserLogin.ID)
                                 .OrderByDescending(d => d.UpdatedAt).ToListAsync()
                         });
                     case "Admin":
@@ -235,7 +234,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
                         {
                             status = true,
                             msg = MESSAGE_SUCCESS,
-                            data = await _context.Users.Where(d => d.Deleted != 1 && !d.Role.Equals("SuperAdmin"))
+                            data = await _context.Users.Where(d => d.Deleted != 1 && !d.Role.Equals("SuperAdmin") && d.ID != UserLogin.ID)
                                 .OrderByDescending(d => d.UpdatedAt).ToListAsync()
                         });
                     default:
@@ -331,7 +330,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
                         _context.Add(user);
                         await _context.SaveChangesAsync();
 
-                        if (req.Role == req.UserRole[2])
+                        if (req.Role == req.UserRole[1])
                         {
                             var faculty = await _context.Faculties
                                 .FirstOrDefaultAsync(f => f.ID == req.TargetID && f.Deleted != 1
@@ -347,7 +346,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
                             _context.Faculties.Update(faculty);
                             await _context.SaveChangesAsync();
                         }
-                        else if (req.Role == req.UserRole[3])
+                        else if (req.Role == req.UserRole[2])
                         {
                             var student = await _context.Students
                                 .FirstOrDefaultAsync(f => f.ID == req.TargetID && f.Deleted != 1
@@ -380,6 +379,48 @@ namespace CollegeManagement.Areas.Admin.Controllers
                 transaction.Rollback();
                 TempData["Error"] = ex.Message;
                 return View(req);
+            }
+        }
+
+        [Authorize(RoleType = "SuperAdmin, Admin")]
+        public async Task<IActionResult> Delete(int? id)
+        {
+            try
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.ID == id && u.Deleted != 1);
+                if (user == null)
+                {
+                    return Json(new { status = false, message = MESSAGE_NOT_DELETE });
+                }
+                else
+                {
+                    if (user.Role == "Faculty")
+                    {
+                        var faculty = await _context.Faculties.FirstOrDefaultAsync(f => f.Deleted != 1 && f.UserID == user.ID );
+                        if (faculty != null)
+                        {
+                            faculty.UserID = null;
+                            _context.Update(faculty);
+                        }
+                    }
+                    else if (user.Role == "Student")
+                    {
+                        var student = await _context.Students.FirstOrDefaultAsync(f => f.Deleted != 1 && f.UserID == user.ID);
+                        if (student != null)
+                        {
+                            student.UserID = null;
+                            _context.Update(student);
+                        }
+                    }
+                    user.Deleted = 1;
+                    _context.Update(user);
+                    _context.SaveChanges();
+                    return Json(new { status = true, message = MESSAGE_DELETE_SUCCESS });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { status = false, message = ex.Message });
             }
         }
     }

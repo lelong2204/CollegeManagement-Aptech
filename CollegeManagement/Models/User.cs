@@ -8,7 +8,7 @@ namespace CollegeManagement.Models
 {
     public class User : BaseModel
     {
-        public List<string> UserRole = new List<string>() { "SuperAdmin", "Admin", "Employee", "Faculty", "Student" };
+        public List<string> UserRole = new List<string>() { "SuperAdmin", "Admin", "Faculty", "Student" };
         public string? FullName { get; set; }
         [MaxLength(500)]
         [EmailAddress(ErrorMessage = "Wrong email address format")]

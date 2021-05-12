@@ -10,7 +10,6 @@ namespace CollegeManagement.DTO.Account
     public class AccountUpSertDTO
     {
         public List<string> UserRole = new List<string>() { "Admin", "Faculty", "Student" };
-        [Required(ErrorMessage = "Full name is required")]
         public string? FullName { get; set; }
         [MaxLength(500)]
         [EmailAddress(ErrorMessage = "Wrong email address format")]

@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <title>@(ViewData["Title"])</title>
 
     <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -48,8 +49,8 @@
                 <div class="sidebar-menu">
                     <ul class="menu">
                         <li class="sidebar-title">Menu</li>
-                        <li class="sidebar-item">
-                            <a href="/Admin" class='sidebar-link'>
+                        <li class="sidebar-item" id="home_page">
+                            <a href="/Admin/Home" class='sidebar-link'>
                                 <i class="bi bi-grid-fill"></i>
                                 <span>Dashboard</span>
                             </a>
@@ -57,15 +58,16 @@
                         @{
                             if (userInfo != null)
                             {
+
+                                <li class="sidebar-item">
+                                    <a href="/Admin/Department" class='sidebar-link'>
+                                        <i class="bi bi-building"></i>
+                                        <span>Department</span>
+                                    </a>
+                                </li>
+
                                 if (userInfo.Role.Contains("Admin") || userInfo.Role.Contains("SuperAdmin"))
                                 {
-
-                                    <li class="sidebar-item">
-                                        <a href="/Admin/Department" class='sidebar-link'>
-                                            <i class="bi bi-building"></i>
-                                            <span>Department</span>
-                                        </a>
-                                    </li>
                                     <li class="sidebar-item">
                                         <a href="/Admin/Faculty" class='sidebar-link'>
                                             <i class="fas fa-chalkboard-teacher"></i>
@@ -91,8 +93,7 @@
                                         </a>
                                     </li>
                                 }
-                                if (userInfo.Role.Contains("Admin") || userInfo.Role.Contains("SuperAdmin")
-                                    || userInfo.Role.Contains("Faculty") || userInfo.Role.Contains("Student"))
+                                if (userInfo.Role.Contains("Admin") || userInfo.Role.Contains("SuperAdmin"))
                                 {
                                     <li class="sidebar-item">
                                         <a href="/Admin/Student" class='sidebar-link'>
@@ -100,10 +101,7 @@
                                             <span>Student</span>
                                         </a>
                                     </li>
-                                }
 
-                                if (userInfo.Role.Contains("Admin") || userInfo.Role.Contains("SuperAdmin"))
-                                {
                                     <li class="sidebar-item">
                                         <a href="/Admin/Content" class='sidebar-link'>
                                             <i class="fas fa-sticky-note"></i>
@@ -118,6 +116,12 @@
                                         </a>
                                     </li>
                                 }
+                                <li class="sidebar-item">
+                                    <a href="/Admin/Marks" class='sidebar-link'>
+                                        <i class="fas fa-markdown"></i>
+                                        <span>Marks</span>
+                                    </a>
+                                </li>
                             }
                         }
                     </ul>
@@ -198,12 +202,12 @@
             <footer>
                 <div class="footer clearfix">
                     <div class="float-start">
-                        <p>2021 &copy; Mazer</p>
+                        <p>2021 &copy; Aptech</p>
                     </div>
                     <div class="float-end">
                         <p>
                             Crafted with <span class="text-danger"><i class="bi bi-heart-fill icon-mid"></i></span>
-                            by <a href="https://ahmadsaugi.com">Saugi</a>
+                            by <a href="https://ahmadsaugi.com">Aptech</a>
                         </p>
                     </div>
                 </div>

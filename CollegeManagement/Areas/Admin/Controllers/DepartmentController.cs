@@ -32,13 +32,14 @@ namespace CollegeManagement.Areas.Admin.Controllers
         {
             try
             {
-                return Json(new
+                var res = Json(new
                 {
                     status = true,
                     msg = MESSAGE_SUCCESS,
                     data = await _context.Departments.Where(d => d.Deleted != 1)
                         .OrderByDescending(d => d.UpdatedAt).ToListAsync()
                 });
+                return res;
             }
             catch (Exception ex)
             {
@@ -52,6 +53,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
         }
 
         // GET: Department/Details/5
+        [Authorize(RoleType = "Admin, SuperAdmin")]
         public async Task<IActionResult> Details(int? id)
         {
             try
@@ -82,6 +84,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
         }
 
         // GET: Department/Create
+        [Authorize(RoleType = "Admin, SuperAdmin")]
         public IActionResult Create()
         {
             return View();
@@ -92,6 +95,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(RoleType = "Admin, SuperAdmin")]
         public async Task<IActionResult> Create(Department department)
         {
             try
@@ -115,6 +119,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
         }
 
         // GET: Department/Edit/5
+        [Authorize(RoleType = "Admin, SuperAdmin")]
         public async Task<IActionResult> Edit(int? id)
         {
             try
@@ -146,6 +151,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(RoleType = "Admin, SuperAdmin")]
         public async Task<IActionResult> Edit(int? id, DepartmentUpSertDTO req)
         {
             if (id != req.ID)
@@ -188,6 +194,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
         }
 
         // GET: Department/Delete/5
+        [Authorize(RoleType = "Admin, SuperAdmin")]
         public async Task<IActionResult> Delete(int? id)
         {
             try
@@ -217,6 +224,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // POST: Department/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(RoleType = "Admin, SuperAdmin")]
         public async Task<IActionResult> DeleteConfirmed(int? id)
         {
             try

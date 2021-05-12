@@ -57,6 +57,37 @@ namespace CollegeManagement.Middleware
 
                 if (user != null)
                 {
+                    if (user.Role == "Faculty")
+                    {
+                        var faculty = await dataContext.Faculties.FirstOrDefaultAsync(f => f.Deleted != 1 && f.UserID == user.ID);
+                        if (faculty == null)
+                        {
+                            context.Response.Redirect("/Admin/Auth/Logout");
+                        }
+                        else
+                        {
+                            user.PhoneNumber = faculty.PhoneNumber;
+                            user.Address = faculty.Address;
+                            user.FullName = faculty.Name;
+                            user.Email = faculty.Email;
+                        }
+                    }
+                    else if (user.Role == "Student")
+                    {
+                        var student = await dataContext.Students.FirstOrDefaultAsync(f => f.Deleted != 1 && f.UserID == user.ID);
+                        if (student == null)
+                        {
+                            context.Response.Redirect("/Admin/Auth/Logout");
+                        }
+                        else
+                        {
+                            user.PhoneNumber = student.PhoneNumber;
+                            user.Address = student.PermanentAddress;
+                            user.FullName = student.Name;
+                            user.Email = student.Email;
+                        }
+                    }
+
                     accountLogin = new AccountLogin(user);
                 }
                 else

@@ -34,13 +34,13 @@
                     {
                         data: 'gender',
                         render: (data, type, row, meta) => {
-                            return `<p>${data === 1 ? "Male" : data === 0 ? "Female" : "Other"}</p>`
+                            return `${data === 1 ? "Male" : data === 0 ? "Female" : "Other"}`
                         }
                     },
                     {
                         data: 'dob',
                         render: (data, type, row, meta) => {
-                            return `<p>${data ? moment(data).format("DD/MM/YYYY") : ""}</p>`
+                            return `${data ? moment(data).format("DD/MM/YYYY") : ""}`
                         }
                     },
                     { data: 'courseName' },
@@ -49,15 +49,15 @@
                         render: (data, type, row, meta) => {
                             switch (data) {
                                 case 0:
-                                    return `<p>Processing</p>`
+                                    return `<p class="text-warning">Processing</p>`
                                 case 1:
-                                    return `<p>Admission</p>`
+                                    return `<p class="text-info">Admission</p>`
                                 case 2:
-                                    return `<p>Expelled</p>`
+                                    return `<p class="text-danger">Expelled</p>`
                                 case 3:
-                                    return `<p>Graduating</p>`
+                                    return `<p class="text-success">Graduating</p>`
                                 default:
-                                    return `<p>Processing</p>`
+                                    return `<p class="text-warning">Processing</p>`
                             }
                             
                         }
@@ -138,5 +138,6 @@
                     selector: 'td:first-child'
                 },
             })
-        })</script>
+        })
+    </script>
 }

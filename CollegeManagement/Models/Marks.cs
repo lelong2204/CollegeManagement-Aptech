@@ -8,8 +8,8 @@ namespace CollegeManagement.Models
     {
         public enum MarksStatus
         {
-            Pass,
-            Failed
+            Failed,
+            Pass
         }
 
         [ForeignKey("Subject")]

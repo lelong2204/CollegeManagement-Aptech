@@ -64,6 +64,16 @@
                     },
                     { data: 'departmentName' },
                     {
+                        data: 'status',
+                        render: (data, type, row, meta) => {
+                            if (data === 1) {
+                                return `<p class="text-info">DONE</p>`
+                            }
+                            return `<p class="text-warning">IsErolling</p>`
+                        }
+                    },
+                    { data: 'studentCount' },
+                    {
                         data: 'startDate',
                         render: (data, type, row, meta) => {
                             return `<p>${data ? moment(data).format("DD/MM/YYYY") : ""}</p>`
@@ -119,21 +129,31 @@
                     },
                     {
                         targets: 5,
-                        title: 'DepartmentName',
+                        title: 'Department Name',
                         className: "td-word_break"
                     },
                     {
                         targets: 6,
-                        title: 'Start Date',
+                        title: 'Status',
                         className: "td-word_break"
                     },
                     {
                         targets: 7,
-                        title: 'End Date',
+                        title: 'Student Register',
                         className: "td-word_break"
                     },
                     {
                         targets: 8,
+                        title: 'Start Date',
+                        className: "td-word_break"
+                    },
+                    {
+                        targets: 9,
+                        title: 'End Date',
+                        className: "td-word_break"
+                    },
+                    {
+                        targets: 10,
                         title: 'Action'
                     }
                 ],

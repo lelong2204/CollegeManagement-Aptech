@@ -55,6 +55,9 @@ namespace CollegeManagement
                     ClockSkew = TimeSpan.Zero
                 };
             });
+            services.AddControllersWithViews().AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            );
 
             services.Configure<RazorViewEngineOptions>(options =>
             {

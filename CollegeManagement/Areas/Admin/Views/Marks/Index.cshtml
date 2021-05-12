@@ -1,0 +1,81 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    var userInfo = (AccountLogin)Context.Items["UserLogin"];
+}
+
+<h1>Index</h1>
+<table class="table table-striped table-bordered" id="datatable">
+</table>
+
+@section Scripts {
+    @{
+        if (userInfo.Role == "Faculty" || userInfo.Role == "Student")
+        {
+            <script>
+                var isAdmin = false
+            </script>
+        }
+        else
+        {
+            <script>
+                var isAdmin = true
+            </script>
+        }
+    }
+    <script>
+        $(document).ready(function () {
+            $('#datatable').DataTable({
+                ajax: {
+                    url: '/Admin/Marks/List',
+                    dataSrc: function (res) {
+                        return res.data
+                    }
+                },
+                language: {
+                    paginate: {
+                        previous: "<",
+                        next: ">",
+                    }
+                },
+                columns: [
+                    { data: 'courseName' },
+                    { data: 'subjectName' },
+                    {
+                        data: 'subjectName',
+                        render: (data, type, row, meta) => {
+                            if (isAdmin === false) {
+                                return `<div>
+                                    <a href="/Admin/Marks/Details/${row.courseID}/${row.subjectID}" class="btn btn-action btn-info"><i class="fa fa-eye"></i></a>
+                                </div>`
+                            }
+                            return `<div>
+                                <a href="/Admin/Marks/Edit/${row.courseID}/${row.subjectID}" class="btn btn-action btn-warning"><i class="fa fa-edit"></i></a>
+                                <a href="/Admin/Marks/Details/${row.courseID}/${row.subjectID}" class="btn btn-action btn-info"><i class="fa fa-eye"></i></a>
+                            </div>`
+                        }
+                    },
+                ],
+                columnDefs: [
+                    {
+                        targets: 0,
+                        title: "Course Name",
+                        className: "text-center",
+                    },
+                    {
+                        targets: 1,
+                        title: "Subject Name",
+                        className: "text-center",
+                    },
+                    {
+                        targets: 2,
+                        title: 'Action'
+                    }
+                ],
+                select: {
+                    style: 'os',
+                    selector: 'td:first-child'
+                },
+            })
+        })
+    </script>
+}

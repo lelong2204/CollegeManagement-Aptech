@@ -1,0 +1,62 @@
+﻿@model MarksUpSertDTO
+
+@{
+    ViewData["Title"] = "Detail";
+}
+
+<h1>Detail</h1>
+
+<h4>Marks</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form id="marks_form">
+            <div class="form-group">
+                <label class="control-label">Subject Name: </label>
+                <label class="control-label text-info">@(Model.Subject != null? Model.Subject.Name:"")</label>
+            </div>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Marks</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        if (Model.Marks != null)
+                        {
+                            foreach (var m in Model.Marks)
+                            {
+                                <tr class="student-core">
+                                    <td>@m.StudentName</td>
+                                    <td class="form-group">@m.Score</td>
+                                    @if (m.Status == 1)
+                                    {
+                                        <td class="status text-success">Pass</td>
+                                    }
+                                    else if (m.Status == 0)
+                                    {
+                                        <td class="status text-danger">Failed</td>
+                                    }
+                                    else
+                                    {
+                                        <td class="status"></td>
+                                    }
+                                </tr>
+                            }
+                        }
+                    }
+                </tbody>
+            </table>
+            <div class="form-group">
+                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

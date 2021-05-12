@@ -94,4 +94,9 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function () {
+            $("#DOB").attr("max", moment(new Date().getTime() - (20*365+5)*24*60*60*1000).format("yyyy-MM-DD"));
+        })
+    </script>
 }

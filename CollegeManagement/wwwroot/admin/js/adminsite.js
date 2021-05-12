@@ -8,7 +8,6 @@
 
     if (img_index && img_index.length) {
         $.each(img_index, function (i, data) {
-            console.log
             if (data.src == undefined || !data.src || data.src === '') {
                 data.src = DEFAULT_IMG
             }
@@ -41,15 +40,19 @@
         }
     })
 
-    var url = window.location.pathname.toUpperCase(),
-        urlRegExp = new RegExp(url.replace(/\/$/, '') + "$");
+    var url = window.location.pathname.toUpperCase();
 
-    $('.sidebar-item a').each(function () {
-        if (urlRegExp.test(this.href.replace(/\/$/, '').toUpperCase())) {
-            $(this).parent().addClass('active');
-            document.querySelector('.sidebar-item.active').scrollIntoView(false)
-        }
-    });
+    if (url === "/ADMIN") {
+        $("#home_page").addClass('active');
+    } else {
+        $('.sidebar-item a').each(function () {
+
+            if (url.includes($(this).attr("href").toUpperCase())) {
+                $(this).parent().addClass('active');
+                document.querySelector('.sidebar-item.active').scrollIntoView(false)
+            }
+        });
+    }
 
     $('.select2').select2({ allowClear: true, placeholder: "Select option" })
     $('.select2-multiple').select2({ allowClear: true, placeholder: "Select option" })

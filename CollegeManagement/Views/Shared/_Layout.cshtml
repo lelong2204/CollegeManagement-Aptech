@@ -136,21 +136,12 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbars-host">
                     <ul class="navbar-nav ml-auto">
-                        <li class="nav-item active"><a class="nav-link" href="/">Home</a></li>
-
-                        <li class="nav-item dropdown">
-                            <a class="nav-link" href="#" data-toggle="dropdown">Course </a>
-                        </li>
-                        <li class="nav-item"><a class="nav-link" href="teachers.html">Teachers</a></li>
+                        <li class="nav-item" id="home_page"><a class="nav-link" href="/home">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/home/Course">Course</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/home/Faculities">Teachers</a></li>
                         <li class="nav-item"><a class="nav-link" href="/home/Departments">Departments</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/home/facilities">Facilities</a></li>
-                        @*<li class="nav-item"><a class="nav-link" href="pricing.html">Pricing</a></li>*@
+                        <li class="nav-item"><a class="nav-link" href="/home/Blog">Blog</a></li>
                         <li class="nav-item"><a class="nav-link" href="/home/contactus">Contact Us</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/home/feedback">Feed back</a></li>
-
-                    </ul>
-                    <ul class="nav navbar-nav navbar-right">
-                        <li><a class="hover-btn-new log orange" href="#" data-toggle="modal" data-target="#login"><span>Book Now</span></a></li>
                     </ul>
                 </div>
             </div>
@@ -177,21 +168,6 @@
                                 <li><a href="#"><i class="fa fa-pinterest"></i></a></li>
                             </ul><!-- end links -->
                         </div>
-                    </div><!-- end clearfix -->
-                </div><!-- end col -->
-
-                <div class="col-lg-4 col-md-4 col-xs-12">
-                    <div class="widget clearfix">
-                        <div class="widget-title">
-                            <h3>Information Link</h3>
-                        </div>
-                        <ul class="footer-links">
-                            <li><a href="#">Home</a></li>
-                            <li><a href="#">Blog</a></li>
-                            <li><a href="#">Pricing</a></li>
-                            <li><a href="#">About</a></li>
-                            <li><a href="#">Contact</a></li>
-                        </ul><!-- end links -->
                     </div><!-- end clearfix -->
                 </div><!-- end col -->
 
@@ -229,14 +205,34 @@
     <!-- ALL PLUGINS -->
     <script src="~/js/custom.js"></script>
     <script src="~/js/timeline.min.js"></script>
-    <script>timeline(document.querySelectorAll('.timeline'), {
+    <script>
+        timeline(document.querySelectorAll('.timeline'), {
             forceVerticalMode: 700,
             mode: 'horizontal',
             verticalStartPosition: 'left',
             visibleItems: 4
-        });</script>
+        });
+    </script>
     @*<script src="~/lib/jquery/dist/jquery.min.js"></script>
-        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>*@
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>*@
+    <script>
+        $(document).ready(function () {
+            var url = window.location.pathname.toUpperCase();
+
+            if (url === "/" || url === "/HOME" ) {
+                $("#home_page").addClass('active');
+            } else {
+                $('.nav-link').each(function () {
+                    if ($(this).attr("href").toUpperCase() !== "/HOME") {
+                        if (url.includes($(this).attr("href").toUpperCase())) {
+                            $(this).parent().addClass('active');
+                            document.querySelector('.sidebar-item.active').scrollIntoView(false)
+                        }
+                    }
+                });
+            }
+        })
+    </script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

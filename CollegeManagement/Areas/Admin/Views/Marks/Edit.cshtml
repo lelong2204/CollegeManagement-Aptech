@@ -1,0 +1,133 @@
+﻿@model MarksUpSertDTO
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Marks</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form id="marks_form">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input asp-for="CourseID" class="form-control" hidden />
+            <div class="form-group">
+                <label asp-for="Subject.ID" class="control-label">Subject Name: </label>
+                <input asp-for="Subject.ID" class="form-control" hidden />
+                <label class="control-label text-info">@(Model.Subject != null? Model.Subject.Name:"")</label>
+            </div>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Marks</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        if (Model.Marks != null)
+                        {
+                            foreach (var m in Model.Marks)
+                            {
+                                <tr class="student-core" data-std-id="@m.StudentID">
+                                    <td data-std-id="@m.StudentID">@m.StudentName</td>
+                                    <td class="form-group"><input data-std-id="@m.StudentID" value="@m.Score" type="number" min="0" max="20" class="form-control score" /></td>
+                                    @if (m.Status == 1)
+                                    {
+                                        <td class="status text-success">Pass</td>
+                                    }
+                                    else if (m.Status == 0)
+                                    {
+                                        <td class="status text-danger">Failed</td>
+                                    }
+                                    else
+                                    {
+                                        <td class="status"></td>
+                                    }
+                                </tr>
+                            }
+                        }
+                    }
+                </tbody>
+            </table>
+            <div class="form-group">
+                <input type="button" id="save_marks" value="Save" class="btn btn-warning" />
+                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        var marks = [];
+        $(document).ready(function () {
+            $.each($(".student-core"), function (i, data) {
+                marks.push({
+                    StudentID: isNaN(parseInt($(this).data("std-id"))) ? null : parseInt($(this).data("std-id")) ,
+                    Score: isNaN(parseInt($(this).find('.score').val())) ? null : parseInt($(this).find('.score').val())
+                })
+            })
+
+            $(document).on('keyup keypress blur change', '.score', function () {
+                var stdID = isNaN(parseInt($(this).data("std-id"))) ? null : parseInt($(this).data("std-id"));
+                var score = isNaN(parseInt($(this).val())) ? null : parseInt($(this).val());
+                if (score > 20) {
+                    $(this).val(20)
+                    return
+                }
+                if (score < 0) {
+                    $(this).val(0)
+                    return
+                }
+                var status = $(this).parent().parent().find('.status');
+
+                if (!stdID) {
+                    return
+                }
+
+                $.map(marks, function (data, i) {
+                    if (data.StudentID === stdID) {
+                        data.Score = score
+                        if (score >= 8) {
+                            status.removeClass("text-danger").addClass("text-success").text("Pass");
+                        } else {
+                            status.addClass("text-danger").removeClass("text-success").text("Failed");
+                        }
+                    }
+                })
+            })
+
+            $('#save_marks').on("click", function () {
+                addIndicator();
+                $.ajax({
+                    url: "/Admin/Marks/EditMark",
+                    type: "POST",
+                    data: {
+                        MarkJson: JSON.stringify(marks),
+                        SubjectID: $("#Subject_ID").val(),
+                        CourseID: $("#CourseID").val()
+                    },
+                    success: function (res) {
+                        removeIndicator();
+                        if (res.status) {
+                            notificationSuccess(res.message);
+                            location.reload()
+
+                        } else {
+                            notificationError(res.message);
+                        }
+                    },
+                    error: function () {
+                        removeIndicator();
+                        notificationError("Something wrong");
+                    }
+                })
+            })
+        })
+    </script>
+}

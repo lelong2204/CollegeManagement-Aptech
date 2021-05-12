@@ -9,6 +9,11 @@ namespace CollegeManagement.Models
 {
     public class Course: BaseModel
     {
+        public enum CourseStatus
+        {
+            IsEnrolling,
+            Done
+        }
         [Required(ErrorMessage = "Course name is required")]
         [MaxLength(255 ,ErrorMessage = "Course name max length is 255")]
         public string? Name { get; set; }
