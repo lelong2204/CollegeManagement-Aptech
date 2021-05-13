@@ -23,7 +23,7 @@ namespace CollegeManagement.Middleware
 
         public async Task Invoke(HttpContext context, DataContext dataContext)
         {
-            var jwtToken = context.Request.Cookies["token"];
+            var jwtToken = context.Request.Cookies["collegeusertoken"];
             var authorization = context.Request.Headers["Authorization"].FirstOrDefault();
 
             if (!String.IsNullOrEmpty(jwtToken))

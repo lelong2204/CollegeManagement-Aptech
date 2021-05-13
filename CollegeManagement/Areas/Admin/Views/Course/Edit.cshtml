@@ -115,7 +115,9 @@
         var facultyList = [];
 
         $(document).ready(function () {
-            $("#StartDate").attr("min", moment(Date.now()).format("yyyy-MM-DD"));
+            $("#StartDate").attr("min", $("#StartDate").val());
+            $("#StartDate").attr("max", $("#EndDate").val());
+            $("#EndDate").attr("min", $("#StartDate").val());
             $("#StartDate").on('change', function () {
                 $("#EndDate").attr("min", $(this).val());
             })
@@ -223,7 +225,6 @@
             subjectData.push({ subjectID: subjectID, facultyID: facultyID });
             subjectList.push(subjectID);
             facultyList.push(facultyID);
-            console.log(subjectID);
 
             $('#course_subject').append(`
                 <tr class="row" data-index="${subjectIndex}">
@@ -345,7 +346,9 @@
         foreach (var s in Model.SubjectList)
         {
             <script>
-                addSubject("@s.Subject.Name", "@s.SubjectID", "@s.Faculty.Name", "@s.FacultyID")
+                $(document).ready(function () {
+                    addSubject("@s.Subject.Name", "@s.SubjectID", "@s.Faculty.Name", "@s.FacultyID")
+                })
             </script>
         }
     }

@@ -61,7 +61,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
                                           Name = c.Name,
                                           Info = c.Info,
                                           Price = c.Price,
-                                          Focus = c.Focus,
+                                          StudentNumber = c.StudentNumber,
                                           DepartmentName = ds.Name,
                                           StartDate = c.StartDate,
                                           EndDate = c.EndDate,
@@ -76,7 +76,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
                                           Name = sc.Key.Name,
                                           Info = sc.Key.Info,
                                           Price = sc.Key.Price,
-                                          Focus = sc.Key.Focus,
+                                          StudentNumber = sc.Key.StudentNumber,
                                           DepartmentName = sc.Key.Name,
                                           StartDate = sc.Key.StartDate,
                                           EndDate = sc.Key.EndDate,
@@ -110,7 +110,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
                                           Name = c.Name,
                                           Info = c.Info,
                                           Price = c.Price,
-                                          Focus = c.Focus,
+                                          StudentNumber = c.StudentNumber,
                                           DepartmentName = ds.Name,
                                           StartDate = c.StartDate,
                                           EndDate = c.EndDate,
@@ -125,7 +125,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
                                           Name = sc.Key.Name,
                                           Info = sc.Key.Info,
                                           Price = sc.Key.Price,
-                                          Focus = sc.Key.Focus,
+                                          StudentNumber = sc.Key.StudentNumber,
                                           DepartmentName = sc.Key.Name,
                                           StartDate = sc.Key.StartDate,
                                           EndDate = sc.Key.EndDate,
@@ -301,6 +301,12 @@ namespace CollegeManagement.Areas.Admin.Controllers
                     return RedirectToAction(nameof(Index));
                 }
 
+                if (course.Status == 1)
+                {
+                    TempData["Error"] = "Course can't edit";
+                    return RedirectToAction(nameof(Index));
+                }
+
                 var res = new CourseUpSertDTO
                 {
                     ID = course.ID,
@@ -366,6 +372,18 @@ namespace CollegeManagement.Areas.Admin.Controllers
 
                     var course = await _context.Courses.
                         FirstOrDefaultAsync(c => c.ID == id && c.Deleted != 1);
+
+                    if (course == null)
+                    {
+                        TempData["Error"] = "Course not found";
+                        return RedirectToAction(nameof(Index));
+                    }
+
+                    if (course.Status == 1)
+                    {
+                        TempData["Error"] = "Course can't edit";
+                        return RedirectToAction(nameof(Index));
+                    }
 
                     course.DepartmentID = req.DepartmentID;
                     course.Focus = req.Focus;

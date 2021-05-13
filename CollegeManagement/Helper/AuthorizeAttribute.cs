@@ -29,7 +29,7 @@ public class AuthorizeAttribute : Attribute, IAuthorizationFilter
             context.HttpContext.Response.Redirect("/Admin/Auth");
         }
 
-        if (_RoleType != null && _RoleType.Length > 0 && !_RoleType.Contains(account.Role))
+        if (_RoleType != null && _RoleType.Length > 0 && account != null && !_RoleType.Contains(account.Role))
         {
             context.HttpContext.Response.Redirect("/Admin/NotFound");
         }

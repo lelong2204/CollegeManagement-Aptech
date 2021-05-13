@@ -48,6 +48,12 @@ namespace CollegeManagement.Controllers
 
         public IActionResult Courses()
         {
+            var res = from c in _context.Courses
+                      join s in _context.Students on c.ID equals s.CourseID
+                      into m from s in m.DefaultIfEmpty()
+                      join cs in _context.CourseSubjects on c.ID equals cs.CourseID
+                      into e from cs in e.DefaultIfEmpty()
+                      where c.Deleted != 1
             return View();
         }
 

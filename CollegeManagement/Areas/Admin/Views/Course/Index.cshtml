@@ -47,16 +47,12 @@
                     { data: 'info' },
                     { data: 'price' },
                     {
-                        data: 'focus',
-                        render: (data, type, row, meta) => {
-                            return `<div class="form-group form-switch" style="padding: 0">
-                                        <input disabled ${row.focus ? "checked" : null} class="form-check-input" style="float:right; opacity:1" type="checkbox" id="flexSwitchCheckChecked">
-                                    </div>`
-                        }
+                        data: 'studentNumber'
                     },
                     {
                         data: 'imageURL',
                         render: (data, type, row, meta) => {
+                            console.log(row)
                             return `<img
                                         src="${row.imageURL !== undefined && row.imageURL && row.imageURL != "" ? row.imageURL : DEFAULT_IMG}"
                                     class="img-index" />`
@@ -93,6 +89,12 @@
                                     <a href="/Admin/Course/Details/${row.id}" class="btn btn-action btn-info"><i class="fa fa-eye"></i></a>
                                 </div>`
                             }
+                            if (row.status == 1) {
+                                return `<div>
+                                    <a href="/Admin/Course/Details/${row.id}" class="btn btn-action btn-info"><i class="fa fa-eye"></i></a>
+                                    <a href="/Admin/Course/Delete/${row.id}" class="btn btn-action btn-danger"><i class="fa fa-trash"></i></a>
+                                </div>`
+                            }
                             return `<div>
                                 <a href="/Admin/Course/Edit/${row.id}" class="btn btn-action btn-warning"><i class="fa fa-edit"></i></a>
                                 <a href="/Admin/Course/Details/${row.id}" class="btn btn-action btn-info"><i class="fa fa-eye"></i></a>
@@ -119,7 +121,7 @@
                     },
                     {
                         targets: 3,
-                        title: 'Focus',
+                        title: 'Student Number',
                         className: "td-word_break"
                     },
                     {

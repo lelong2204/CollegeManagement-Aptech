@@ -17,46 +17,46 @@ namespace CollegeManagement.DTO.Student
             Graduating
         };
         public int? ID { get; set; }
-        [Required(ErrorMessage = "Student name is required")]
-        [MaxLength(255, ErrorMessage = "The maximum length of the name is 255")]
+        [Required()]
+        [MaxLength(255)]
         public string? Name { get; set; }
 
-        [Required(ErrorMessage = "Responsible person name is required")]
-        [MaxLength(255, ErrorMessage = "The maximum length of the responsible person name is 255")]
-        [Display(Name = "Responsible person name")]
+        [Required()]
+        [MaxLength(255)]
+        [Display()]
         public string? ResponsiblePersonName { get; set; }
 
-        [Required(ErrorMessage = "Responsible person phone is required")]
-        [MaxLength(11, ErrorMessage = "The maximum length of the responsible person phone is 255")]
-        [Display(Name = "Responsible person phone")]
+        [Required()]
+        [MaxLength(11)]
+        [Display()]
         [RegularExpression(@"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$", ErrorMessage = "Wrong responsible person phone number format")]
 
         public string? ResponsiblePersonPhone { get; set; }
         public string? Code { get; set; }
         [MaxLength(500)]
-        [EmailAddress(ErrorMessage = "Wrong email format")]
+        [EmailAddress()]
         public string? Email { get; set; }
         [MaxLength(11)]
         [Display(Name = "Phone")]
         [RegularExpression(@"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$", ErrorMessage = "Wrong phone number format")]
         public string? PhoneNumber { get; set; }
-        [MaxLength(500, ErrorMessage = "The maximum length of the residential address is 500")]
+        [MaxLength(500)]
         [Display(Name = "Residential address")]
         public string? ResidentialAddress { get; set; }
-        [MaxLength(500, ErrorMessage = "The maximum length of the permanent address is 500")]
+        [MaxLength(500)]
         [Display(Name = "Permanent address")]
         public string? PermanentAddress { get; set; }
-        [MaxLength(500, ErrorMessage = "The maximum length of the image url is 500")]
+        [MaxLength(500)]
         public string? ImageURL { get; set; }
         public IFormFile Image { get; set; }
         public byte? Gender { get; set; }
         [DataType(DataType.Date)]
         public DateTime? DOB { get; set; }
         public int? Status { get; set; }
-        [Required(ErrorMessage = "The course is required")]
+        [Required()]
         public int? CourseID { get; set; }
         public int? Admission { get; set; }
-        [Range(0, int.MaxValue, ErrorMessage = "The test score must be larger than 0")]
+        [Range(0, int.MaxValue)]
         [Required()]
         [Display(Name = "Test Score")]
         public int? TestScore { get; set; }

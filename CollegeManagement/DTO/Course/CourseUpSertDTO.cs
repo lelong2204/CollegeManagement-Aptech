@@ -13,17 +13,18 @@ namespace CollegeManagement.DTO.Course
     public class CourseUpSertDTO
     {
         public int? ID { get; set; }
-        [Required(ErrorMessage = "Course name is required")]
-        [MaxLength(255, ErrorMessage = "Course name max length is 255")]
+        [Required()]
+        [MaxLength(255)]
         public string? Name { get; set; }
         public string? Info { get; set; }
         public IFormFile Image { get; set; }
         public string ImageURL { get; set; }
         [Required()]
         [Display(Name = "Student Number")]
+        [Range(0, 60)]
         public int? StudentNumber { get; set; }
         public string Subjects { get; set; }
-        [Range(0, int.MaxValue, ErrorMessage = "Price must be greater than or equal 0")]
+        [Range(0, int.MaxValue)]
         public int? Price { get; set; }
         public Boolean Focus { get; set; }
 
@@ -34,7 +35,7 @@ namespace CollegeManagement.DTO.Course
         [DataType(DataType.Date)]
         public DateTime? EndDate { get; set; }
         public IQueryable<CourseSubject> SubjectList { get; set; }
-        [Required(ErrorMessage = "Department is required")]
+        [Required()]
         public int? DepartmentID { get; set; }
         public IQueryable<DepartmentSelectDTO> DepartmentList { get; set; }
     }
