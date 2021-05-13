@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CollegeManagement.DTO.Home;
 using CollegeManagement.Helper;
+using CollegeManagement.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -48,13 +49,99 @@ namespace CollegeManagement.Controllers
 
         public IActionResult Courses()
         {
-            var res = from c in _context.Courses
-                      join s in _context.Students on c.ID equals s.CourseID
-                      into m from s in m.DefaultIfEmpty()
-                      join cs in _context.CourseSubjects on c.ID equals cs.CourseID
-                      into e from cs in e.DefaultIfEmpty()
-                      where c.Deleted != 1
-            return View();
+            var res = _context.Courses.Where(c => c.Deleted != 1)
+                .Select(c => new CourseHome
+                {
+                    ID = c.ID,
+                    DepartmentID = c.DepartmentID,
+                    EndDate = c.EndDate,
+                    StartDate = c.StartDate,
+                    ImageURL = c.ImageURL,
+                    Info = c.Info,
+                    Name = c.Name,
+                    Status = c.Status,
+                    StudentNumber = c.StudentNumber,
+                    TotalBook = c.CourseSubject.Count(),
+                    StudentRegister = c.Students.Count(),
+                });
+
+            return View(res);
+        }
+
+        [Route("/Home/Courses/Register/{id?}")]
+        public async Task<IActionResult> RegisterCourses(int? id)
+        {
+            var res = new StudentRegisterDTO();
+            res.Course = await _context.Courses
+                .FirstOrDefaultAsync(c => c.Deleted != 1 && 
+                    c.StartDate <= DateTime.Now && c.EndDate >= DateTime.Now && c.Status != 1);
+
+            if (res.Course == null)
+            {
+                return RedirectToAction(nameof(Courses));
+            }
+
+            return View(res);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RegisterCourses(StudentRegisterDTO req)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var imgPath = await Utils.SaveFile(req.Image, "Student");
+                    var code = await CreateCode();
+
+                    var student = new Student
+                    {
+                        CourseID = req.CourseID,
+                        Status = 1,
+                        Code = code,
+                        DOB = req.DOB,
+                        Email = req.Email,
+                        Gender = req.Gender,
+                        ImageURL = imgPath,
+                        Name = req.Name,
+                        PermanentAddress = req.PermanentAddress,
+                        PhoneNumber = req.PhoneNumber,
+                        ResidentialAddress = req.ResidentialAddress,
+                        ResponsiblePersonName = req.ResponsiblePersonName,
+                        ResponsiblePersonPhone = req.ResponsiblePersonPhone,
+                        TestScore = req.TestScore,
+                        CreatedAt = DateTime.Now,
+                        UpdatedAt = DateTime.Now
+                    };
+                    _context.Add(student);
+                    await _context.SaveChangesAsync();
+                    TempData["Success"] = "Successfully";
+                    return RedirectToAction(nameof(Courses));
+                }
+
+                req.Course = await _context.Courses
+                    .FirstOrDefaultAsync(c => c.Deleted != 1 &&
+                    c.StartDate <= DateTime.Now && c.EndDate >= DateTime.Now && c.Status != 1);
+                return View(req);
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+                return RedirectToAction(nameof(Courses));
+            }
+        }
+
+        private async Task<string> CreateCode()
+        {
+            var code = $"STD{DateTimeOffset.Now.ToUnixTimeMilliseconds()}";
+
+            if (await _context.Students.AnyAsync(s => s.Code.Equals(code)))
+            {
+                return await CreateCode();
+            }
+
+            return code;
         }
 
         public IActionResult Departments()

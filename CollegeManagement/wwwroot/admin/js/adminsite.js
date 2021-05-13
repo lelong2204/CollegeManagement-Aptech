@@ -92,4 +92,4 @@ function removeIndicator() {
     $('#indicator_loading').remove();
 }
 
-const DEFAULT_IMG = '/admin/assets/images/default-image.jpg';
+const DEFAULT_IMG = '/images/default-image.jpg';

@@ -3873,18 +3873,51 @@ a.link-style3 {
 	color: #eea412;
 }
 
+.img-fluid {
+    height: 250px;
+}
 
+.course-item:hover {
+    cursor: pointer
+}
 
+img.upload-img {
+    border-radius: 0.42rem;
+    height: 200px;
+}
 
+.select2-container {
+    width: 100% !important;
+}
 
+.select2-container--default .select2-selection--single,
+.select2-container--default .select2-selection--multiple {
+    display: block !important;
+    width: 100% !important;
+    padding: .375rem .75rem !important;
+    font-size: 1rem !important;
+    font-weight: 400 !important;
+    line-height: 1.5 !important;
+    color: #607080 !important;
+    background-color: #fff !important;
+    background-clip: padding-box !important;
+    border: 1px solid #dce7f1 !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    border-radius: .25rem !important;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out !important;
+    min-height: 38px !important;
+}
 
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        min-height: 38px !important;
+    }
 
+    .select2-container--default .select2-selection--multiple .select2-selection__choice {
+        margin: 0 2px !important;
+    }
 
-
-
-
-
-
-
-
-
+    .select2-container--default .select2-selection--multiple .select2-selection__clear {
+        margin: 0 10px 0 0 !important;
+    }

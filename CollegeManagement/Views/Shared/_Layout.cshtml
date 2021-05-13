@@ -3,13 +3,13 @@
 <head>
     <!-- Basic -->
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">   
-   
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
     <!-- Mobile Metas -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
- 
-     <!-- Site Metas -->
-    <title>SmartEDU - Education - @ViewData["Title"]</title>  
+
+    <!-- Site Metas -->
+    <title>SmartEDU - Education - @ViewData["Title"]</title>
     <meta name="keywords" content="">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -28,6 +28,7 @@
     <link rel="stylesheet" href="~/css/responsive.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="~/css/custom.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
     <!-- Modernizer for Portfolio -->
     <script src="js/modernizer.js"></script>
@@ -202,6 +203,7 @@
 
     <a href="#" id="scroll-to-top" class="dmtop global-radius"><i class="fa fa-angle-up"></i></a>
     <script src="~/js/all.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
     <!-- ALL PLUGINS -->
     <script src="~/js/custom.js"></script>
     <script src="~/js/timeline.min.js"></script>
@@ -214,26 +216,28 @@
         });
     </script>
     @*<script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>*@
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>*@
     <script>
         $(document).ready(function () {
             var url = window.location.pathname.toUpperCase();
 
-            if (url === "/" || url === "/HOME" ) {
+            if (url === "/" || url === "/HOME") {
                 $("#home_page").addClass('active');
             } else {
                 $('.nav-link').each(function () {
                     if ($(this).attr("href").toUpperCase() !== "/HOME") {
                         if (url.includes($(this).attr("href").toUpperCase())) {
                             $(this).parent().addClass('active');
-                            document.querySelector('.sidebar-item.active').scrollIntoView(false)
+                            if (document.querySelector('.sidebar-item.active') != null)
+                                document.querySelector('.sidebar-item.active').scrollIntoView(false)
                         }
                     }
                 });
             }
         })
     </script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/lib/moment.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

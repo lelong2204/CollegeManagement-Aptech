@@ -1,0 +1,99 @@
+﻿@model StudentRegisterDTO
+
+@{
+    ViewData["Title"] = "Create";
+}
+<div id="course_register" style="text-align:center">
+    <h1 style="color:cornflowerblue">Course Register</h1>
+    <hr />
+    <div class="row" style="margin-bottom:20px">
+        <div class="col-12" style="background: #4c5a7d; color: whitesmoke; padding: 15px 20px;">
+            <form class="row" asp-action="RegisterCourses" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group col-md-4">
+                    <label asp-for="Name" class="control-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="ResponsiblePersonName" class="control-label"></label>
+                    <input asp-for="ResponsiblePersonName" class="form-control" />
+                    <span asp-validation-for="ResponsiblePersonName" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="ResponsiblePersonPhone" class="control-label"></label>
+                    <input asp-for="ResponsiblePersonPhone" class="form-control" />
+                    <span asp-validation-for="ResponsiblePersonPhone" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="Email" class="control-label"></label>
+                    <input asp-for="Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="PhoneNumber" class="control-label"></label>
+                    <input asp-for="PhoneNumber" class="form-control" />
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="ResidentialAddress" class="control-label"></label>
+                    <input asp-for="ResidentialAddress" class="form-control" />
+                    <span asp-validation-for="ResidentialAddress" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="PermanentAddress" class="control-label"></label>
+                    <input asp-for="PermanentAddress" class="form-control" />
+                    <span asp-validation-for="PermanentAddress" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="Gender" class="control-label"></label>
+                    <select class="select2 form-control" asp-for="Gender">
+                        <option value="1">Male</option>
+                        <option value="0">Female</option>
+                        <option>Other</option>
+                    </select>
+                    <span asp-validation-for="Gender" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="DOB" class="control-label"></label>
+                    <input asp-for="DOB" class="form-control" />
+                    <span asp-validation-for="DOB" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="CourseID" class="control-label">Course:</label>
+                    <input asp-for="CourseID" class="form-control" value="@Model.Course.ID" hidden/>
+                    <label class="control-label text-warning" style="font-size:16px">@Model.Course.Name</label>
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="TestScore" class="control-label"></label>
+                    <input asp-for="TestScore" class="form-control" />
+                    <span asp-validation-for="TestScore" class="text-danger"></span>
+                </div>
+                <div class="col-md-4 row">
+                    <div class="form-group col-12">
+                        <label asp-for="Image" class="control-label"></label>
+                        <button type="button" class="btn btn-info" id="img-select-btn">Choose Image...</button>
+                        <input asp-for="Image" type="file" class="form-control" id="image-select" hidden accept="image/*" />
+                    </div>
+                    <div class="form-group col-12">
+                        <img class="upload-img" />
+                    </div>
+                </div>
+                <div class="form-group col-12 text-center">
+                    <input type="submit" value="Create" class="btn btn-success mr-2" />
+                    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function () {
+            $(document).ready(function () {
+                $("#DOB").attr("max", moment(new Date().getTime() - (20 * 365 + 5) * 24 * 60 * 60 * 1000).format("yyyy-MM-DD"));
+            })
+        })
+    </script>
+}

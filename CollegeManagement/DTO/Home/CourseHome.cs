@@ -8,6 +8,7 @@ namespace CollegeManagement.DTO.Home
 {
     public class CourseHome
     {
+        public int ID { get; set; }
         public string? Name { get; set; }
         public string? Info { get; set; }
         public int? DepartmentID { get; set; }
