@@ -45,7 +45,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
                                       ID = s.ID,
                                       Name = s.Name,
                                       Code = s.Code,
-                                      CourseName = ds.Name,
+                                      CourseName = $"{ds.Name} - {ds.Code}",
                                       Gender = s.Gender,
                                       DOB = s.DOB,
                                       Status = s.Status,
@@ -106,12 +106,12 @@ namespace CollegeManagement.Areas.Admin.Controllers
             try
             {
                 res.CourseList = _context.Courses
-                    .Where(d => d.Deleted != 1 && d.StartDate <= DateTime.Now && d.EndDate >= DateTime.Now)
+                    .Where(d => d.Deleted != 1 && d.StartDate <= DateTime.Now && d.EndDate >= DateTime.Now && d.Status != 1)
                     .OrderByDescending(d => d.UpdatedAt)
                     .Select(d => new DepartmentSelectDTO
                     {
                         ID = (int)d.ID,
-                        Name = d.Name
+                        Name = $"{d.Name} - {d.Code}"
                     }).ToList();
             }
             catch (Exception ex)
@@ -210,12 +210,12 @@ namespace CollegeManagement.Areas.Admin.Controllers
                 var res = new StudentUpsertDTO
                 {
                     CourseList = _context.Courses
-                    .Where(d => d.Deleted != 1 && d.StartDate <= DateTime.Now && d.EndDate >= DateTime.Now)
+                    .Where(d => d.Deleted != 1 && d.StartDate <= DateTime.Now && d.EndDate >= DateTime.Now && d.Status != 1)
                         .OrderByDescending(d => d.UpdatedAt)
                         .Select(d => new DepartmentSelectDTO
                         {
                             ID = (int)d.ID,
-                            Name = d.Name
+                            Name = $"{d.Name} - {d.Code}"
                         }).ToList(),
                     CourseID = student.CourseID,
                     ID = student.ID,

@@ -17,6 +17,9 @@ namespace CollegeManagement.Models
         [Required(ErrorMessage = "Course name is required")]
         [MaxLength(255 ,ErrorMessage = "Course name max length is 255")]
         public string? Name { get; set; }
+        [Required(ErrorMessage = "Course code is required")]
+        [MaxLength(5, ErrorMessage = "Course code max length is 255")]
+        public string? Code { get; set; }
         public string? Info { get; set; }
         [Range(1, 5, ErrorMessage = "Evaluate must be between 1 and 5")]
         public int? Evaluate { get; set; }

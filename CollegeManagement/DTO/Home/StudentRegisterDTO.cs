@@ -54,5 +54,6 @@ namespace CollegeManagement.DTO.Home
         [Display(Name = "Test Score")]
         public int? TestScore { get; set; }
         public Models.Course Course { get; set; }
+        public List<Course.CourseSelectDTO> CourseList { get; set; }
     }
 }

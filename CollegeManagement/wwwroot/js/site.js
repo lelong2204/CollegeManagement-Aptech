@@ -4,7 +4,7 @@
         $('.upload-img').attr('src', DEFAULT_IMG)
     }
 
-    var img_index = $('.img-index , .img-detail');
+    var img_index = $('.img-index , .img-detail , .img-fluid');
 
     if (img_index && img_index.length) {
         $.each(img_index, function (i, data) {
@@ -93,3 +93,52 @@ function removeIndicator() {
 }
 
 const DEFAULT_IMG = '/admin/assets/images/default-image.jpg';
+
+function ExportRegisterForm() {
+    var doc = new jsPDF();
+    doc.setFontSize(35);
+    doc.text("My college", 10, 20);
+    doc.line(10, 25, 70, 25);
+
+    doc.setFontSize(24);
+    doc.text("Register course",
+        doc.internal.pageSize.width / 2, 40, 'center');
+
+    doc.setFontSize(15);
+    doc.text("Student Name:", 10, 60);
+    doc.text("____________________________", 50, 60);
+    doc.text("Gender:", 135, 60);
+    doc.text("Male / Female", 155, 60);
+
+    doc.text("Responsible Person Name:", 10, 75);
+    doc.text("_____________________________________", 80, 75);
+
+    doc.text("Responsible Person Phone:", 10, 90);
+    doc.text("_____________________________________", 80, 90);
+
+    doc.text("Email:", 10, 105);
+    doc.text("_____________________________", 30, 105);
+    doc.text("Phone:", 120, 105);
+    doc.text("________________", 140, 105);
+
+    doc.text("Residential Address:", 10, 120);
+    doc.text("____________________________________________", 60, 120);
+
+    doc.text("Permanent Address:", 10, 135);
+    doc.text("____________________________________________", 60, 135);
+
+    doc.text("Date of birth:", 10, 150);
+    doc.text("____(Month)/____(Date)/________(Year)", 45, 150);
+
+    doc.text("Course Code:", 10, 165);
+    doc.text("_____________________________________(Example: \"IT1\")", 45, 165);
+
+    doc.text("Test Score:", 10, 180);
+    doc.text("_____________________", 45, 180);
+
+    doc.text("Signature", 150, 215);
+
+    doc.text("Month_____, Date____, Year  20____", 100, 255);
+
+    doc.save('register_form.pdf');
+}

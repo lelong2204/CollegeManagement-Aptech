@@ -3855,6 +3855,7 @@ a.link-style3 {
 	border: 1px solid #4babb1;
 	border-top: 0px;
 	padding: 15px;
+    height: 130px;
 }
 .course-meta-bot ul{
 	padding: 0px;
@@ -3874,7 +3875,7 @@ a.link-style3 {
 }
 
 .img-fluid {
-    height: 250px;
+    height: 150px;
 }
 
 .course-item:hover {

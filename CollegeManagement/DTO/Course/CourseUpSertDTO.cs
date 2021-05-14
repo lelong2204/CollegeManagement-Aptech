@@ -16,6 +16,9 @@ namespace CollegeManagement.DTO.Course
         [Required()]
         [MaxLength(255)]
         public string? Name { get; set; }
+        [Required()]
+        [MaxLength(5)]
+        public string? Code { get; set; }
         public string? Info { get; set; }
         public IFormFile Image { get; set; }
         public string ImageURL { get; set; }

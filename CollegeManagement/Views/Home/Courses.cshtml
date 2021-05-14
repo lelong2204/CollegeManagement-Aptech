@@ -2,7 +2,7 @@
 
 <div class="all-title-box">
     <div class="container text-center">
-        <h1>Course Grid 4<span class="m_1">Lorem Ipsum dolroin gravida nibh vel velit.</span></h1>
+        <h1>Course List<span class="m_1">Lorem Ipsum dolroin gravida nibh vel velit.</span></h1>
     </div>
 </div>
 
@@ -33,19 +33,31 @@
                                         <h2><a href="#" title="">@(m.Name)</a></h2>
                                     </div>
                                     <div class="course-desc">
-                                        <p>@(m.Info)</p>
+                                        <p>@(m.Info.Length > 200 ? m.Info.Substring(0, 200)+"...": m.Info)</p>
                                     </div>
                                 </div>
                                 <div class="course-meta-bot">
                                     <ul>
-                                        <li>From: @(((DateTime)m.StartDate).ToString("dd/MM/yyyy"))</li>
-                                        <li>To: @(((DateTime)m.EndDate).ToString("dd/MM/yyyy"))</li>
+                                        @if (m.Status == 1)
+                                        {
+                                            <li class="col-12 text-danger">Stop Enrollment </li>
+                                        }
+                                        else
+                                        {
+                                            <li class="col-12 text-success">Enrollment Time</li>
+                                            <li>From: @(((DateTime)m.StartDate).ToString("dd/MM/yyyy"))</li>
+                                            <li>To: @(((DateTime)m.EndDate).ToString("dd/MM/yyyy"))</li>
+                                        }
                                         <li><i class="fa fa-users" aria-hidden="true"></i>@(m.StudentRegister)/@(m.StudentNumber) Student</li>
                                         <li><i class="fa fa-book" aria-hidden="true"></i>@(m.TotalBook) Books</li>
                                     </ul>
                                 </div>
-                                <div>
-                                    <a asp-action="RegisterCourses" asp-route-id="@m.ID">Register</a>
+                                <div class="mt-2 text-center">
+                                    @if (m.Status != 1)
+                                    {
+                                        <a asp-action="RegisterCourses" asp-route-id="@m.ID" class="btn btn-success">Register</a>
+                                    }
+                                    <a asp-action="CourseDetails" asp-route-id="@m.ID" class="btn btn-info">Detail</a>
                                 </div>
                             </div>
                         </div>

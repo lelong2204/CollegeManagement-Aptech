@@ -18,6 +18,11 @@
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="Code" class="control-label"></label>
+                <input asp-for="Code" class="form-control" readonly/>
+                <span asp-validation-for="Code" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="Info" class="control-label">
                     Information
                 </label>
@@ -177,6 +182,8 @@
                 if ($('.text-danger').text().length > 0) return;
 
                 $.validator.unobtrusive.parse($('#course_form'));
+
+                console.log($('#course_form').valid())
 
                 if (!$('#course_form').valid()) {
                     return;

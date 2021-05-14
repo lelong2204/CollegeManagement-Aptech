@@ -1,0 +1,40 @@
+﻿@model CourseDetailsDTO
+
+<div class="all-title-box">
+    <div class="container text-center">
+        <h1>Course @Model.Name Detail</h1>
+    </div>
+</div>
+
+<div id="overviews" class="section wb" style="padding-top:20px">
+    <div class="container">
+        <div class="section-title row text-center">
+            <div class="col-md-8 offset-md-2">
+                <img style="width: 100%" src="@Model.ImageURL" />
+                <p class="lead">
+                    @Model.Info
+                </p>
+                <h3><u>Somethings about course</u></h3>
+                <dl class="row text-left">
+                    <dt class="col-3">Code: </dt>
+                    <dd class="col-9">@Model.Code</dd>
+                    <dt class="col-3">Department: </dt>
+                    <dd class="col-9">@Model.DepartmentName (<a asp-action="Courses" asp-route-id="@Model.DepartmentID">View detail</a>)</dd>
+                    <dt class="col-3">Max student: </dt>
+                    <dd class="col-9">@Model.StudentNumber</dd>
+                    <dt class="col-3">Number of student registered:</dt>
+                    <dd class="col-9">@Model.StudentRegisterNumber</dd>
+                    <dt class="col-3">Enrollment time: </dt>
+                    <dd class="col-9">@(((DateTime)Model.StartDate).ToString("dd/MM/yyyy")) ~ @(((DateTime)Model.EndDate).ToString("dd/MM/yyyy"))</dd>
+                    <dt class="col-3">Price: </dt>
+                    <dd class="col-9">@Model.Price</dd>
+                </dl>
+                @if (Model.Status != 1)
+                {
+                    <a asp-action="RegisterCourses" asp-route-id="@Model.ID" class="btn btn-success">Register</a>
+                }
+                <a asp-action="Courses" class="btn btn-secondary">Back</a>
+            </div>
+        </div>
+    </div>
+</div>

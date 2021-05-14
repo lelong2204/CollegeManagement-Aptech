@@ -1,6 +1,46 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-department
+﻿@model IEnumerable<Department>
+
+<div class="all-title-box">
+    <div class="container text-center">
+        <h1>Department List<span class="m_1">Lorem Ipsum dolroin gravida nibh vel velit.</span></h1>
+    </div>
+</div>
+
+<div id="overviews" class="section wb">
+    <div class="container">
+        <div class="section-title row text-center">
+            <div class="col-md-8 offset-md-2">
+                <p class="lead">Lorem Ipsum dolroin gravida nibh vel velit auctor aliquet. Aenean sollicitudin, lorem quis bibendum auctor, nisi elit consequat ipsum, nec sagittis sem!</p>
+            </div>
+        </div><!-- end title -->
+
+        <hr class="invis">
+
+        <div class="row">
+            @{
+                if (Model != null)
+                {
+                    foreach (var m in Model)
+                    {
+                        <div class="col-lg-3 col-md-6 col-12">
+                            <div class="course-item">
+                                <div class="course-br">
+                                    <div class="course-title">
+                                        <h2><a href="#" title="">@(m.Name)</a></h2>
+                                    </div>
+                                    <div class="course-desc">
+                                        <p>@(m.Info.Length > 200 ? m.Info.Substring(0, 200)+"...": m.Info)</p>
+                                    </div>
+                                </div>
+                                <div class="mt-2 text-center">
+                                    <a asp-action="Faculties" asp-route-id="@m.ID" class="btn btn-success">View Faculty</a>
+                                    <a asp-action="Courses" asp-route-id="@m.ID" class="btn btn-info">View Course</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            }
+        </div><!-- end row -->
+    </div><!-- end container -->
+</div><!-- end section -->

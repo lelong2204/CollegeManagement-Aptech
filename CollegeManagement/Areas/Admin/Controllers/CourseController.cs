@@ -239,6 +239,11 @@ namespace CollegeManagement.Areas.Admin.Controllers
                 {
                     var imgPath = await Utils.SaveFile(req.Image, "Course");
 
+                    if (_context.Courses.Any(c => c.Code.Equals(req.Code) && c.Deleted != 1))
+                    {
+                        return Json(new { status = false, msg = "This course code was exist" });
+                    }
+
                     var course = new Course
                     {
                         DepartmentID = req.DepartmentID,
@@ -251,6 +256,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
                         StudentNumber = req.StudentNumber,
                         Price = req.Price,
                         Status = 0,
+                        Code = req.Code,
                         UpdatedAt = DateTime.Now,
                         CreatedAt = DateTime.Now
                     };
@@ -317,6 +323,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
                     StudentNumber = course.StudentNumber,
                     Name = course.Name,
                     Price = course.Price,
+                    Code = course.Code,
                     EndDate = course.EndDate,
                     StartDate = course.StartDate,
                 };
