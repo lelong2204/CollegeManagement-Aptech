@@ -129,9 +129,6 @@ namespace CollegeManagement.Migrations
                     b.Property<int?>("Evaluate")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Focus")
-                        .HasColumnType("bit");
-
                     b.Property<string>("ImageURL")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");

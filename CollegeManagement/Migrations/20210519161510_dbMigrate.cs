@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CollegeManagement.Migrations
 {
-    public partial class DbMigrations : Migration
+    public partial class dbMigrate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -34,10 +34,10 @@ namespace CollegeManagement.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     Type = table.Column<int>(type: "int", nullable: true),
                     Year = table.Column<int>(type: "int", nullable: true),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Deleted = table.Column<byte>(type: "tinyint", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -114,6 +114,7 @@ namespace CollegeManagement.Migrations
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     Password = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Role = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     Deleted = table.Column<byte>(type: "tinyint", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -130,10 +131,10 @@ namespace CollegeManagement.Migrations
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Code = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
                     Info = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Evaluate = table.Column<int>(type: "int", nullable: true),
                     Price = table.Column<int>(type: "int", nullable: true),
-                    Focus = table.Column<bool>(type: "bit", nullable: false),
                     DepartmentID = table.Column<int>(type: "int", nullable: true),
                     StudentNumber = table.Column<int>(type: "int", nullable: false),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -171,6 +172,7 @@ namespace CollegeManagement.Migrations
                     PhoneNumber = table.Column<string>(type: "nvarchar(11)", maxLength: 11, nullable: true),
                     ExperienceYear = table.Column<int>(type: "int", nullable: true),
                     DepartmentID = table.Column<int>(type: "int", nullable: true),
+                    UserID = table.Column<int>(type: "int", nullable: true),
                     Deleted = table.Column<byte>(type: "tinyint", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -182,6 +184,12 @@ namespace CollegeManagement.Migrations
                         name: "FK_Faculty_Department_DepartmentID",
                         column: x => x.DepartmentID,
                         principalTable: "Department",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Faculty_User_UserID",
+                        column: x => x.UserID,
+                        principalTable: "User",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -205,7 +213,7 @@ namespace CollegeManagement.Migrations
                     DOB = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: true),
                     CourseID = table.Column<int>(type: "int", nullable: false),
-                    Admission = table.Column<int>(type: "int", nullable: true),
+                    UserID = table.Column<int>(type: "int", nullable: true),
                     TestScore = table.Column<int>(type: "int", nullable: true),
                     Deleted = table.Column<byte>(type: "tinyint", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -220,6 +228,12 @@ namespace CollegeManagement.Migrations
                         principalTable: "Course",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Student_User_UserID",
+                        column: x => x.UserID,
+                        principalTable: "User",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -338,6 +352,11 @@ namespace CollegeManagement.Migrations
                 column: "DepartmentID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Faculty_UserID",
+                table: "Faculty",
+                column: "UserID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_FacultySubject_FacultyID",
                 table: "FacultySubject",
                 column: "FacultyID");
@@ -361,6 +380,11 @@ namespace CollegeManagement.Migrations
                 name: "IX_Student_CourseID",
                 table: "Student",
                 column: "CourseID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Student_UserID",
+                table: "Student",
+                column: "UserID");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -384,9 +408,6 @@ namespace CollegeManagement.Migrations
                 name: "Marks");
 
             migrationBuilder.DropTable(
-                name: "User");
-
-            migrationBuilder.DropTable(
                 name: "Faculty");
 
             migrationBuilder.DropTable(
@@ -397,6 +418,9 @@ namespace CollegeManagement.Migrations
 
             migrationBuilder.DropTable(
                 name: "Course");
+
+            migrationBuilder.DropTable(
+                name: "User");
 
             migrationBuilder.DropTable(
                 name: "Department");

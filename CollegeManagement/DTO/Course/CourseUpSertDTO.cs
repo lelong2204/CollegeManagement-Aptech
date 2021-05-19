@@ -29,7 +29,6 @@ namespace CollegeManagement.DTO.Course
         public string Subjects { get; set; }
         [Range(0, int.MaxValue)]
         public int? Price { get; set; }
-        public Boolean Focus { get; set; }
 
         [Display(Name = "Start date")]
         [DataType(DataType.Date)]

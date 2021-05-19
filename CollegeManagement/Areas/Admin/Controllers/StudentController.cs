@@ -135,6 +135,14 @@ namespace CollegeManagement.Areas.Admin.Controllers
                 {
                     var imgPath = await Utils.SaveFile(req.Image, "Student");
                     var code = await CreateCode();
+                    var course = await _context.Courses.FirstOrDefaultAsync(c => c.Deleted != 1 && c.Students.Count < c.StudentNumber
+                        && c.Status != 1 && c.ID == req.CourseID);
+
+                    if (course == null)
+                    {
+                        TempData["Error"] = "Sorry the course you register is not available";
+                        return View(req);
+                    }
 
                     var student = new Student
                     {
@@ -156,6 +164,11 @@ namespace CollegeManagement.Areas.Admin.Controllers
                         UpdatedAt = DateTime.Now
                     };
                     _context.Add(student);
+                    if (_context.Students.Where(s => s.CourseID == req.CourseID && s.Deleted != 1).Count() + 1 == course.StudentNumber)
+                    {
+                        course.Status = 1;
+                        _context.Update(course);
+                    }
                     await _context.SaveChangesAsync();
                     TempData["Success"] = MESSAGE_SUCCESS;
                     return RedirectToAction(nameof(Index));
@@ -268,7 +281,6 @@ namespace CollegeManagement.Areas.Admin.Controllers
                     }
 
                     var imgPath = await Utils.SaveFile(req.Image, "Student");
-                    student.CourseID = req.CourseID;
                     student.Status = req.Status;
                     student.Code = req.Code;
                     student.DOB = req.DOB;

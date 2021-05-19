@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CollegeManagement.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20210511055251_NewUpdateRoleToUser")]
-    partial class NewUpdateRoleToUser
+    [Migration("20210519161510_dbMigrate")]
+    partial class dbMigrate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -111,6 +111,11 @@ namespace CollegeManagement.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
+
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -125,9 +130,6 @@ namespace CollegeManagement.Migrations
 
                     b.Property<int?>("Evaluate")
                         .HasColumnType("int");
-
-                    b.Property<bool>("Focus")
-                        .HasColumnType("bit");
 
                     b.Property<string>("ImageURL")
                         .HasMaxLength(500)
@@ -311,9 +313,14 @@ namespace CollegeManagement.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("UserID")
+                        .HasColumnType("int");
+
                     b.HasKey("ID");
 
                     b.HasIndex("DepartmentID");
+
+                    b.HasIndex("UserID");
 
                     b.ToTable("Faculty");
                 });
@@ -384,9 +391,6 @@ namespace CollegeManagement.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("Admission")
-                        .HasColumnType("int");
-
                     b.Property<string>("Code")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -452,9 +456,14 @@ namespace CollegeManagement.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("UserID")
+                        .HasColumnType("int");
+
                     b.HasKey("ID");
 
                     b.HasIndex("CourseID");
+
+                    b.HasIndex("UserID");
 
                     b.ToTable("Student");
                 });
@@ -589,7 +598,13 @@ namespace CollegeManagement.Migrations
                         .WithMany("Faculties")
                         .HasForeignKey("DepartmentID");
 
+                    b.HasOne("CollegeManagement.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID");
+
                     b.Navigation("Department");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("CollegeManagement.Models.FacultySubject", b =>
@@ -629,6 +644,12 @@ namespace CollegeManagement.Migrations
                         .HasForeignKey("CourseID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("CollegeManagement.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("CollegeManagement.Models.Course", b =>

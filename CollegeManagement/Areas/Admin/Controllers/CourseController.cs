@@ -247,7 +247,6 @@ namespace CollegeManagement.Areas.Admin.Controllers
                     var course = new Course
                     {
                         DepartmentID = req.DepartmentID,
-                        Focus = req.Focus,
                         ImageURL = imgPath,
                         Name = req.Name,
                         StartDate = req.StartDate,
@@ -317,7 +316,6 @@ namespace CollegeManagement.Areas.Admin.Controllers
                 {
                     ID = course.ID,
                     DepartmentID = course.DepartmentID,
-                    Focus = course.Focus,
                     ImageURL = course.ImageURL,
                     Info = course.Info,
                     StudentNumber = course.StudentNumber,
@@ -393,7 +391,6 @@ namespace CollegeManagement.Areas.Admin.Controllers
                     }
 
                     course.DepartmentID = req.DepartmentID;
-                    course.Focus = req.Focus;
                     course.ImageURL = string.IsNullOrEmpty(imgPath) ? course.ImageURL: imgPath;
                     course.Name = req.Name;
                     course.Info = req.Info;

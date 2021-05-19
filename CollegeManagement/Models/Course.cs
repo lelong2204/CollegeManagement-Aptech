@@ -12,7 +12,7 @@ namespace CollegeManagement.Models
         public enum CourseStatus
         {
             IsEnrolling,
-            Done
+            StopEnrollment
         }
         [Required(ErrorMessage = "Course name is required")]
         [MaxLength(255 ,ErrorMessage = "Course name max length is 255")]
@@ -25,7 +25,6 @@ namespace CollegeManagement.Models
         public int? Evaluate { get; set; }
         [Range(0, int.MaxValue, ErrorMessage = "Price must be greater than or equal 0")]
         public int? Price { get; set; }
-        public Boolean Focus { get; set; }
         [ForeignKey("Department")]
         public int? DepartmentID { get; set; }
         [Required()]
