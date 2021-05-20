@@ -66,7 +66,7 @@
                                     </a>
                                 </li>
 
-                                if (userInfo.Role.Contains("Admin") || userInfo.Role.Contains("SuperAdmin"))
+                                if (userInfo.Role.Contains(ConstantVariables.ROLE_ADMIN) || userInfo.Role.Contains(ConstantVariables.ROLE_SUPER_ADMIN))
                                 {
                                     <li class="sidebar-item">
                                         <a href="/Admin/Faculty" class='sidebar-link'>
@@ -75,8 +75,8 @@
                                         </a>
                                     </li>
                                 }
-                                if (userInfo.Role.Contains("Admin") || userInfo.Role.Contains("SuperAdmin")
-                                    || userInfo.Role.Contains("Faculty"))
+                                if (userInfo.Role.Contains(ConstantVariables.ROLE_ADMIN) || userInfo.Role.Contains(ConstantVariables.ROLE_SUPER_ADMIN)
+                                    || userInfo.Role.Contains(ConstantVariables.ROLE_FACULTY))
                                 {
 
                                     <li class="sidebar-item">
@@ -93,7 +93,7 @@
                                         </a>
                                     </li>
                                 }
-                                if (userInfo.Role.Contains("Admin") || userInfo.Role.Contains("SuperAdmin"))
+                                if (userInfo.Role.Contains(ConstantVariables.ROLE_ADMIN) || userInfo.Role.Contains(ConstantVariables.ROLE_SUPER_ADMIN))
                                 {
                                     <li class="sidebar-item">
                                         <a href="/Admin/Student" class='sidebar-link'>

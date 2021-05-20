@@ -9,7 +9,7 @@ public class AuthorizeAttribute : Attribute, IAuthorizationFilter
     private string _RoleType;
     public string RoleType
     {
-        get { return _RoleType; }
+        get { return _RoleType.ToUpper(); }
         set
         {
             _RoleType = value;

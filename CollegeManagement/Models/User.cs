@@ -25,8 +25,9 @@ namespace CollegeManagement.Models
         [Required(ErrorMessage = "Password is required")]
         [MaxLength(255, ErrorMessage = "The maximum length of the password is 255")]
         public string Password { get; set; }
+        private string role;
         [Required(ErrorMessage = "Role is required")]
         [MaxLength(20)]
-        public string? Role { get; set; }
+        public string? Role { get { return role.ToUpper(); } set { role = value; } }
     }
 }
