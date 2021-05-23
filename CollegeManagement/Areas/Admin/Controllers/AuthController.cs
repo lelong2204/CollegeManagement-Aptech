@@ -182,15 +182,57 @@ namespace CollegeManagement.Areas.Admin.Controllers
                         TempData["Error"] = "Authentication failed";
                         return RedirectToAction(nameof(Logout));
                     }
+                    
+                    if (user.Role.Equals(ConstantVariables.ROLE_FACULTY))
+                    {
+                        var faculty = _context.Faculties.FirstOrDefault(f => f.Deleted != 1 && f.UserID == user.ID);
 
-                    var imgPath = await Utils.SaveFile(req.Image, "Users");
+                        if (faculty == null)
+                        {
+                            TempData["Error"] = "Authentication failed";
+                            return RedirectToAction(nameof(Logout));
+                        }
 
-                    user.Address = req.Address;
-                    user.Email = req.Email;
-                    user.FullName = req.FullName;
-                    user.ImageURL = imgPath;
-                    user.PhoneNumber = req.PhoneNumber;
-                    _context.Users.Update(user);
+                        var imgPath = await Utils.SaveFile(req.Image, "Faculty");
+
+                        faculty.Address = req.Address;
+                        faculty.Email = req.Email;
+                        faculty.Name = req.FullName;
+                        faculty.ImageUrl = imgPath ?? faculty.ImageUrl;
+                        faculty.PhoneNumber = req.PhoneNumber;
+                        _context.Faculties.Update(faculty);
+                    }
+                    else if (user.Role.Equals(ConstantVariables.ROLE_STUDENT))
+                    {
+                        var std = _context.Students.FirstOrDefault(f => f.Deleted != 1 && f.UserID == user.ID);
+
+                        if (std == null)
+                        {
+                            TempData["Error"] = "Authentication failed";
+                            return RedirectToAction(nameof(Logout));
+                        }
+
+                        var imgPath = await Utils.SaveFile(req.Image, "Student");
+
+                        std.PermanentAddress = req.Address;
+                        std.Email = req.Email;
+                        std.Name = req.FullName;
+                        std.ImageURL = imgPath ?? std.ImageURL;
+                        std.PhoneNumber = req.PhoneNumber;
+                        _context.Students.Update(std);
+                    }
+                    else
+                    {
+                        var imgPath = await Utils.SaveFile(req.Image, "Users");
+
+                        user.Address = req.Address;
+                        user.Email = req.Email;
+                        user.FullName = req.FullName;
+                        user.ImageURL = imgPath ?? user.ImageURL;
+                        user.PhoneNumber = req.PhoneNumber;
+                        _context.Users.Update(user);
+                    }
+
                     await _context.SaveChangesAsync();
 
                     TempData["Success"] = "Update profile successfully";
@@ -226,21 +268,56 @@ namespace CollegeManagement.Areas.Admin.Controllers
 
                 switch (UserLogin.Role)
                 {
-                    case "SuperAdmin":
+                    case ConstantVariables.ROLE_SUPER_ADMIN:
                         return Json(new
                         {
                             status = true,
                             msg = MESSAGE_SUCCESS,
-                            data = await _context.Users.Where(d => d.Deleted != 1 && d.ID != UserLogin.ID)
-                                .OrderByDescending(d => d.UpdatedAt).ToListAsync()
+                            data = from u in _context.Users
+                                   join f in _context.Faculties on u.ID equals f.UserID
+                                   into q from f in q.DefaultIfEmpty()
+                                   join s in _context.Students on u.ID equals s.UserID
+                                   into p from s in p.DefaultIfEmpty()
+                                   where u.Deleted != 1 && u.ID != UserLogin.ID
+                                   orderby u.UpdatedAt descending
+                                   select new User
+                                   {
+                                       ID = u.ID,
+                                       FullName = f != null ? f.Name : s != null ? s.Name: u.FullName,
+                                       Address = f != null ? f.Address : s != null ? s.PermanentAddress : u.Address,
+                                       Email = f != null ? f.Email : s != null ? s.Email : u.Email,
+                                       PhoneNumber = f != null ? f.PhoneNumber : s != null ? s.PhoneNumber : u.PhoneNumber,
+                                       ImageURL = f != null ? f.ImageUrl : s != null ? s.ImageURL : u.ImageURL,
+                                       Role = u.Role,
+                                       UserName = u.UserName,
+                                   }
                         });
-                    case "Admin":
+                    case ConstantVariables.ROLE_ADMIN:
                         return Json(new
                         {
                             status = true,
                             msg = MESSAGE_SUCCESS,
-                            data = await _context.Users.Where(d => d.Deleted != 1 && !d.Role.Equals("SuperAdmin") && d.ID != UserLogin.ID)
-                                .OrderByDescending(d => d.UpdatedAt).ToListAsync()
+                            data = from u in _context.Users
+                                   join f in _context.Faculties on u.ID equals f.UserID
+                                   into q
+                                   from f in q.DefaultIfEmpty()
+                                   join s in _context.Students on u.ID equals s.UserID
+                                   into p
+                                   from s in p.DefaultIfEmpty()
+                                   where u.Deleted != 1 && u.ID != UserLogin.ID && 
+                                        !u.Role.Equals(ConstantVariables.ROLE_SUPER_ADMIN)
+                                   orderby u.UpdatedAt descending
+                                   select new User
+                                   {
+                                       ID = u.ID,
+                                       FullName = f != null ? f.Name : s != null ? s.Name : u.FullName,
+                                       Address = f != null ? f.Address : s != null ? s.PermanentAddress : u.Address,
+                                       Email = f != null ? f.Email : s != null ? s.Email : u.Email,
+                                       PhoneNumber = f != null ? f.PhoneNumber : s != null ? s.PhoneNumber : u.PhoneNumber,
+                                       ImageURL = f != null ? f.ImageUrl : s != null ? s.ImageURL : u.ImageURL,
+                                       Role = u.Role,
+                                       UserName = u.UserName,
+                                   }
                         });
                     default:
                         return Json(new

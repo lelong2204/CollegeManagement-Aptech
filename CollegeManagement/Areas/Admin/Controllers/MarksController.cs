@@ -26,44 +26,73 @@ namespace CollegeManagement.Areas.Admin.Controllers
         }
 
         // GET: Admin/Marks
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var data = from c in _context.Courses
-                       join cs in _context.CourseSubjects on c.ID equals cs.CourseID
-                       into q
-                       from cs in q.DefaultIfEmpty()
-                       join s in _context.Subjects on cs.SubjectID equals s.ID
-                       into p
-                       from s in p.DefaultIfEmpty()
-                       where c.Status == 1 && c.Deleted != 1 && s.Deleted != 1
-                       select new MarksListDTO
-                       {
-                           CourseID = c.ID,
-                           CourseName = c.Name,
-                           SubjectID = s.ID,
-                           SubjectName = s.Name
-                       };
-            return View(await data.ToListAsync());
+            return View();
         }
 
         public async Task<IActionResult> List()
         {
-            var data = from c in _context.Courses
-                       join cs in _context.CourseSubjects on c.ID equals cs.CourseID
-                       into q
-                       from cs in q.DefaultIfEmpty()
-                       join s in _context.Subjects on cs.SubjectID equals s.ID
-                       into p
-                       from s in p.DefaultIfEmpty()
-                       where c.Status == 1 && c.Deleted != 1 && s.Deleted != 1
-                       select new MarksListDTO
-                       {
-                           CourseID = c.ID,
-                           CourseName = c.Name,
-                           SubjectID = s.ID,
-                           SubjectName = s.Name
-                       };
-            return Json(new { data = await data.ToListAsync() });
+            switch (UserLogin.Role)
+            {
+                case ConstantVariables.ROLE_FACULTY:
+                    var faculty = _context.Faculties.FirstOrDefault(f => f.Deleted != 1 && f.UserID == UserLogin.ID);
+
+                    var data = from c in _context.Courses
+                               join cs in _context.CourseSubjects on c.ID equals cs.CourseID
+                               into q
+                               from cs in q.DefaultIfEmpty()
+                               join s in _context.Subjects on cs.SubjectID equals s.ID
+                               into p
+                               from s in p.DefaultIfEmpty()
+                               where c.Status == 1 && c.Deleted != 1 && s.Deleted != 1 && cs.FacultyID == faculty.ID
+                               select new MarksListDTO
+                               {
+                                   CourseID = c.ID,
+                                   CourseName = c.Name,
+                                   SubjectID = s.ID,
+                                   SubjectName = s.Name
+                               };
+                    return Json(new { data = await data.ToListAsync() });
+
+                case ConstantVariables.ROLE_STUDENT:
+                    var student = _context.Students.FirstOrDefault(f => f.Deleted != 1 && f.UserID == UserLogin.ID);
+
+                    data = from c in _context.Courses
+                               join cs in _context.CourseSubjects on c.ID equals cs.CourseID
+                               into q
+                               from cs in q.DefaultIfEmpty()
+                               join s in _context.Subjects on cs.SubjectID equals s.ID
+                               into p
+                               from s in p.DefaultIfEmpty()
+                               where c.Status == 1 && c.Deleted != 1 && s.Deleted != 1 && student.CourseID == c.ID
+                               select new MarksListDTO
+                               {
+                                   CourseID = c.ID,
+                                   CourseName = c.Name,
+                                   SubjectID = s.ID,
+                                   SubjectName = s.Name
+                               };
+                    return Json(new { data = await data.ToListAsync() });
+
+                default:
+                    data = from c in _context.Courses
+                           join cs in _context.CourseSubjects on c.ID equals cs.CourseID
+                           into q
+                           from cs in q.DefaultIfEmpty()
+                           join s in _context.Subjects on cs.SubjectID equals s.ID
+                           into p
+                           from s in p.DefaultIfEmpty()
+                           where c.Status == 1 && c.Deleted != 1 && s.Deleted != 1
+                           select new MarksListDTO
+                           {
+                               CourseID = c.ID,
+                               CourseName = c.Name,
+                               SubjectID = s.ID,
+                               SubjectName = s.Name
+                           };
+                    return Json(new { data = await data.ToListAsync() });
+            }
         }
 
         // GET: Admin/Marks/Details/5
@@ -74,31 +103,96 @@ namespace CollegeManagement.Areas.Admin.Controllers
                 TempData["Error"] = MESSAGE_NOT_FOUND;
                 return RedirectToAction(nameof(Index));
             }
-            var res = new MarksUpSertDTO
+            var res = new MarksUpSertDTO();
+
+            switch (UserLogin.Role)
             {
-                Marks = await (from s in _context.Students
-                               join m in _context.Markses on s.ID equals m.StudentID
-                               into p
-                               from m in p.DefaultIfEmpty()
-                               join c in _context.Courses on s.CourseID equals c.ID
-                               into q
-                               from c in q.DefaultIfEmpty()
-                               where c.ID == courseId && s.Status == 1 && s.Deleted != 1
-                               select new MarksSelectDTO
-                               {
-                                   StudentID = s.ID,
-                                   StudentName = s.Name,
-                                   Score = m.Score,
-                                   Status = m.Status
-                               }).ToListAsync(),
-                Subject = await (from s in _context.Subjects
-                                 where s.ID == subjectId && s.Deleted != 1
-                                 select new SubjectSelectDTO
-                                 {
-                                     ID = s.ID,
-                                     Name = s.Name
-                                 }).FirstOrDefaultAsync()
-            };
+                case ConstantVariables.ROLE_FACULTY:
+                    var faculty = _context.Faculties.FirstOrDefault(f => f.Deleted != 1 && f.UserID == UserLogin.ID);
+                    if (_context.CourseSubjects.Any(cs => cs.CourseID == courseId && cs.SubjectID == subjectId && cs.FacultyID == faculty.ID))
+                    {
+                        res.Marks = await (from s in _context.Students
+                                           join m in _context.Markses on s.ID equals m.StudentID
+                                           into p
+                                           from m in p.DefaultIfEmpty()
+                                           join c in _context.Courses on s.CourseID equals c.ID
+                                           into q
+                                           from c in q.DefaultIfEmpty()
+                                           where c.ID == courseId && s.Status == 1 && s.Deleted != 1
+                                           select new MarksSelectDTO
+                                           {
+                                               StudentID = s.ID,
+                                               StudentName = s.Name,
+                                               Score = m.Score,
+                                               Status = m.Status
+                                           }).ToListAsync();
+                        res.Subject = await (from s in _context.Subjects
+                                             where s.ID == subjectId && s.Deleted != 1
+                                             select new SubjectSelectDTO
+                                             {
+                                                 ID = s.ID,
+                                                 Name = s.Name
+                                             }).FirstOrDefaultAsync();
+                    }
+                    break;
+
+                case ConstantVariables.ROLE_STUDENT:
+                    var student = _context.Students.FirstOrDefault(f => f.Deleted != 1 && f.UserID == UserLogin.ID);
+
+                    if (student.CourseID == courseId)
+                    {
+                        res.Marks = await (from s in _context.Students
+                                           join m in _context.Markses on s.ID equals m.StudentID
+                                           into p
+                                           from m in p.DefaultIfEmpty()
+                                           join c in _context.Courses on s.CourseID equals c.ID
+                                           into q
+                                           from c in q.DefaultIfEmpty()
+                                           where c.ID == courseId && s.Status == 1 && s.Deleted != 1
+                                           select new MarksSelectDTO
+                                           {
+                                               StudentID = s.ID,
+                                               StudentName = s.Name,
+                                               Score = m.Score,
+                                               Status = m.Status
+                                           }).ToListAsync();
+                        res.Subject = await (from s in _context.Subjects
+                                             where s.ID == subjectId && s.Deleted != 1
+                                             select new SubjectSelectDTO
+                                             {
+                                                 ID = s.ID,
+                                                 Name = s.Name
+                                             }).FirstOrDefaultAsync();
+                    }
+                    break;
+
+                default:
+                    res.Marks = await (from s in _context.Students
+                                       join m in _context.Markses on s.ID equals m.StudentID
+                                       into p
+                                       from m in p.DefaultIfEmpty()
+                                       join c in _context.Courses on s.CourseID equals c.ID
+                                       into q
+                                       from c in q.DefaultIfEmpty()
+                                       where c.ID == courseId && s.Status == 1 && s.Deleted != 1
+                                       select new MarksSelectDTO
+                                       {
+                                           StudentID = s.ID,
+                                           StudentName = s.Name,
+                                           Score = m.Score,
+                                           Status = m.Status
+                                       }).ToListAsync();
+                    res.Subject = await (from s in _context.Subjects
+                                         where s.ID == subjectId && s.Deleted != 1
+                                         select new SubjectSelectDTO
+                                         {
+                                             ID = s.ID,
+                                             Name = s.Name
+                                         }).FirstOrDefaultAsync();
+
+                    break;
+            }
+            
             return View(res);
         }
 

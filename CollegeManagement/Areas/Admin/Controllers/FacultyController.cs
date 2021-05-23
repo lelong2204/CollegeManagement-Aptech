@@ -225,7 +225,9 @@ namespace CollegeManagement.Areas.Admin.Controllers
                     ImageUrl = faculty.ImageUrl,
                     Info = faculty.Info,
                     PhoneNumber = faculty.PhoneNumber,
-                    Name = faculty.Name
+                    Name = faculty.Name,
+                    SubjectIDs = await _context.FacultySubjects
+                        .Where(fs => fs.FacultyID == faculty.ID).Select(fs => fs.SubjectID).ToListAsync()
                 };
 
                 res.DepartmentList = _context.Departments.Where(d => d.Deleted != 1)

@@ -57,7 +57,7 @@ namespace CollegeManagement.Middleware
 
                 if (user != null)
                 {
-                    if (user.Role == "Faculty")
+                    if (user.Role.Equals(ConstantVariables.ROLE_FACULTY))
                     {
                         var faculty = await dataContext.Faculties.FirstOrDefaultAsync(f => f.Deleted != 1 && f.UserID == user.ID);
                         if (faculty == null)
@@ -70,9 +70,10 @@ namespace CollegeManagement.Middleware
                             user.Address = faculty.Address;
                             user.FullName = faculty.Name;
                             user.Email = faculty.Email;
+                            user.ImageURL = faculty.ImageUrl;
                         }
                     }
-                    else if (user.Role == "Student")
+                    else if (user.Role.Equals(ConstantVariables.ROLE_STUDENT))
                     {
                         var student = await dataContext.Students.FirstOrDefaultAsync(f => f.Deleted != 1 && f.UserID == user.ID);
                         if (student == null)
@@ -85,6 +86,7 @@ namespace CollegeManagement.Middleware
                             user.Address = student.PermanentAddress;
                             user.FullName = student.Name;
                             user.Email = student.Email;
+                            user.ImageURL = student.ImageURL;
                         }
                     }
 

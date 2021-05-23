@@ -9,7 +9,7 @@ public class AuthorizeAttribute : Attribute, IAuthorizationFilter
     private string _RoleType;
     public string RoleType
     {
-        get { return _RoleType.ToUpper(); }
+        get { return _RoleType; }
         set
         {
             _RoleType = value;
@@ -29,7 +29,7 @@ public class AuthorizeAttribute : Attribute, IAuthorizationFilter
             context.HttpContext.Response.Redirect("/Admin/Auth");
         }
 
-        if (_RoleType != null && _RoleType.Length > 0 && account != null && !_RoleType.Contains(account.Role))
+        if (_RoleType != null && _RoleType.Length > 0 && account != null && !_RoleType.ToUpper().Contains(account.Role.ToUpper()))
         {
             context.HttpContext.Response.Redirect("/Admin/NotFound");
         }

@@ -38,6 +38,7 @@ namespace CollegeManagement.Models
         [MaxLength(500, ErrorMessage = "The maximum length of the image url is 500")]
         public string? ImageURL { get; set; }
         public int? Status { get; set; }
+        public int? EntryPoint { get; set; }
         public ICollection<Student> Students { get; set; }
         public ICollection<CourseSubject> CourseSubject { get; set; }
     }

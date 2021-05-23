@@ -29,6 +29,9 @@ namespace CollegeManagement.DTO.Course
         public string Subjects { get; set; }
         [Range(0, int.MaxValue)]
         public int? Price { get; set; }
+        [Range(0, 30)]
+        [Required()]
+        public int? EntryPoint { get; set; }
 
         [Display(Name = "Start date")]
         [DataType(DataType.Date)]

@@ -9,7 +9,7 @@
 
 @section Scripts {
     @{
-        if (userInfo.Role == "Faculty" || userInfo.Role == "Student")
+        if (userInfo.Role.Equals(ConstantVariables.ROLE_FACULTY) || userInfo.Role.Equals(ConstantVariables.ROLE_STUDENT))
         {
             <script>
                 var isAdmin = false

@@ -942,13 +942,13 @@ body {
 }
 
     .sidebar-wrapper .sidebar-header {
-        padding: 2rem 2rem 1rem;
+        padding: 0.5rem 2rem;
         font-size: 2rem;
         font-weight: 700
     }
 
         .sidebar-wrapper .sidebar-header img {
-            height: 1.2rem
+            height: 100px
         }
 
     .sidebar-wrapper .sidebar-toggler.x {
