@@ -29,7 +29,7 @@ namespace CollegeManagement.Models
         public int? DepartmentID { get; set; }
         [Required()]
         [Display(Name = "Student Number")]
-        public int? StudentNumber { get; set; }
+        public int StudentNumber { get; set; }
         [Display(Name = "Start date")]
         public DateTime? StartDate { get; set; }
         [Display(Name = "End date")]

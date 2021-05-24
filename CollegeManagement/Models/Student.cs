@@ -13,6 +13,7 @@ namespace CollegeManagement.Models
             Processing,
             Admission,
             Expelled,
+            Fail,
             Graduating
         };
 

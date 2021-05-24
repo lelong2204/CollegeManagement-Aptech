@@ -33,17 +33,21 @@ namespace CollegeManagement.DTO.Student
 
         public string? ResponsiblePersonPhone { get; set; }
         public string? Code { get; set; }
+        [Required]
         [MaxLength(500)]
         [EmailAddress()]
         public string? Email { get; set; }
         [MaxLength(11)]
+        [Required]
         [Display(Name = "Phone")]
         [RegularExpression(@"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$", ErrorMessage = "Wrong phone number format")]
         public string? PhoneNumber { get; set; }
         [MaxLength(500)]
+        [Required]
         [Display(Name = "Residential address")]
         public string? ResidentialAddress { get; set; }
         [MaxLength(500)]
+        [Required]
         [Display(Name = "Permanent address")]
         public string? PermanentAddress { get; set; }
         [MaxLength(500)]

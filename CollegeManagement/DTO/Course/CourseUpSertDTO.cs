@@ -25,7 +25,7 @@ namespace CollegeManagement.DTO.Course
         [Required()]
         [Display(Name = "Student Number")]
         [Range(0, 60)]
-        public int? StudentNumber { get; set; }
+        public int StudentNumber { get; set; }
         public string Subjects { get; set; }
         [Range(0, int.MaxValue)]
         public int? Price { get; set; }

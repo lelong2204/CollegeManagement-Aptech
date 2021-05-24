@@ -59,21 +59,25 @@
 })
 
 function notificationSuccess(msg) {
-    iziToast.success({
-        timeout: 3000,
-        title: 'Success',
-        message: msg,
-        position: 'topRight'
-    })
+    setTimeout(() =>
+        iziToast.success({
+            timeout: 3000,
+            title: 'Success',
+            message: msg,
+            position: 'topRight'
+        }), 300)
+    
 }
 
 function notificationError(msg) {
-    iziToast.error({
-        timeout: 3000,
-        title: 'Error',
-        message: msg,
-        position: 'topRight'
-    })
+    setTimeout(() =>
+        iziToast.error({
+            timeout: 3000,
+            title: 'Error',
+            message: msg,
+            position: 'topRight'
+        }),300)
+    
 }
 
 function addIndicator() {

@@ -521,5 +521,44 @@ namespace CollegeManagement.Areas.Admin.Controllers
         {
             return _context.Courses.Any(e => e.ID == id && e.Deleted != 1);
         }
+
+        [HttpPost, ActionName("UpdateCourseStatus")]
+        [Authorize(RoleType = "Admin, SuperAdmin")]
+        public async Task<IActionResult> UpdateCourseStatus(int id)
+        {
+            try
+            {
+                var course = await _context.Courses.FirstOrDefaultAsync(c => c.Deleted != 1 && c.Status != 1 && c.EndDate < DateTime.Now && c.ID == id);
+                if (course == null)
+                {
+                    return Json(new { status = false, msg = "Course not found" });
+                }
+                if (_context.Students.Count(s => s.Deleted != 1 && s.CourseID == course.ID) <= course.StudentNumber)
+                {
+                    var stdList = _context.Students.Where(s => s.Deleted != 1 && s.CourseID == course.ID).ToList();
+                    stdList.ForEach(s => s.Status = (int)Student.StudentStatus.Admission);
+                    course.EntryPoint = stdList.Min(s => s.TestScore);
+                }
+                else
+                {
+                    var stdList = _context.Students.OrderByDescending(s => s.TestScore)
+                        .Where(s => s.Deleted != 1 && s.CourseID == course.ID).Take((int)course.StudentNumber).ToList();
+                    stdList.ForEach(s => s.Status = (int)Student.StudentStatus.Admission);
+
+                    course.EntryPoint = stdList.Min(s => s.TestScore);
+                    _context.Students.OrderByDescending(s => s.TestScore)
+                        .Where(s => s.Deleted != 1 && s.CourseID == course.ID).Skip((int)course.StudentNumber).ToList()
+                        .ForEach(s => s.Status = (int)Student.StudentStatus.Fail);
+                }
+                course.Status = 1;
+                _context.Courses.Update(course);
+                await _context.SaveChangesAsync();
+                return Json(new { status = true, msg = "Update course status done" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { status = false, msg = ex.Message });
+            }
+        }
     }
 }

@@ -27,7 +27,7 @@
             var isFaculty = false
         </script>
     }
-    <script>
+<script>
         $(document).ready(function () {
             $('#datatable').DataTable({
                 ajax: {
@@ -52,7 +52,6 @@
                     {
                         data: 'imageURL',
                         render: (data, type, row, meta) => {
-                            console.log(row)
                             return `<img
                                         src="${row.imageURL !== undefined && row.imageURL && row.imageURL != "" ? row.imageURL : DEFAULT_IMG}"
                                     class="img-index" />`
@@ -94,6 +93,14 @@
                                     <a href="/Admin/Course/Details/${row.id}" class="btn btn-action btn-info"><i class="fa fa-eye"></i></a>
                                     <a href="/Admin/Course/Delete/${row.id}" class="btn btn-action btn-danger"><i class="fa fa-trash"></i></a>
                                 </div>`
+                            }
+                            if (row.status != 1 && new Date(row.endDate) < new Date()) {
+                                return `<div>
+                                <a href="/Admin/Course/Edit/${row.id}" class="btn btn-action btn-warning"><i class="fa fa-edit"></i></a>
+                                <button data-id="${row.id}" class="update_course btn btn-action btn-primary"><i class="fa fa-sync" aria-hidden="true"></i></button>
+                                <a href="/Admin/Course/Details/${row.id}" class="btn btn-action btn-info"><i class="fa fa-eye"></i></a>
+                                <a href="/Admin/Course/Delete/${row.id}" class="btn btn-action btn-danger"><i class="fa fa-trash"></i></a>
+                            </div>`
                             }
                             return `<div>
                                 <a href="/Admin/Course/Edit/${row.id}" class="btn btn-action btn-warning"><i class="fa fa-edit"></i></a>
@@ -164,6 +171,30 @@
                     selector: 'td:first-child'
                 },
             })
+
+            $(document).on('click', '.update_course', function () {
+                let id = $(this).data("id")
+                addIndicator()
+                $.ajax({
+                    url: "/Admin/Course/UpdateCourseStatus",
+                    type: "Post",
+                    data: { id: id},
+                    success: function (res) {
+                        removeIndicator()
+                        if (res.status) {
+                            notificationSuccess(res.msg);
+                            window.location.reload();
+                        } else {
+                            notificationError(res.msg);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(xhr, status, error)
+                        removeIndicator()
+                        notificationError(error);
+                    }
+                })
+            })
         })
-    </script>
+</script>
 }
