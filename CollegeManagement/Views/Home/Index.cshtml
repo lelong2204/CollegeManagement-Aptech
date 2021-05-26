@@ -13,7 +13,8 @@
                     if (i == 0)
                     {
                         <div class="carousel-item active">
-                            <div id="home" class="first-section" style="background-image:url('@c.ImageURL');">
+                            <div id="home" class="first-section" 
+                                 style="background-image:url('@(string.IsNullOrWhiteSpace(c.ImageURL)? "/admin/assets/images/logo/logo.png": c.ImageURL)');">
                                 <div class="dtab">
                                     <div class="container">
                                         <div class="row">
@@ -21,7 +22,7 @@
                                                 <div class="big-tagline">
                                                     <h2><strong>@c.Name</strong></h2>
                                                     <p class="lead">@c.Info</p>
-                                                    <a href="/Home/Course/Detail/{@c.ID}" class="hover-btn-new"><span>Read More</span></a>
+                                                    <a href="/Home/Courses/Details/@c.ID" class="hover-btn-new"><span>Read More</span></a>
                                                 </div>
                                             </div>
                                         </div><!-- end row -->
