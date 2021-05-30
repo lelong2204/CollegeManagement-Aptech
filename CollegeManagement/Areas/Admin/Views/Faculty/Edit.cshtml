@@ -24,6 +24,11 @@
                 <span asp-validation-for="Info" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="Testimonials" class="control-label">Testimonials</label>
+                <textarea class="form-control" asp-for="Testimonials" rows="3"></textarea>
+                <span asp-validation-for="Testimonials" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="Gender" class="control-label"></label>
                 <select class="select2 form-control" asp-for="Gender">
                     <option value="1">Male</option>
@@ -54,12 +59,12 @@
             </div>
             <div class="form-group">
                 <label asp-for="ExperienceYear" class="control-label">Experience Year</label>
-                <input asp-for="ExperienceYear" class="form-control" min="0" max="100"/>
+                <input asp-for="ExperienceYear" class="form-control" min="0" max="100" />
                 <span asp-validation-for="ExperienceYear" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="DepartmentID" class="control-label">Department</label>
-                <select asp-for="DepartmentID" class="select2 form-control" >
+                <select asp-for="DepartmentID" class="select2 form-control">
                     @foreach (var department in Model.DepartmentList)
                     {
                         <option value="@department.ID">@department.Name</option>

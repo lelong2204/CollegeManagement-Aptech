@@ -1,4 +1,4 @@
-﻿using CollegeManagement.DTO.Account;
+﻿using CollegeManagement.DTO.AccountDTO;
 using CollegeManagement.Helper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;

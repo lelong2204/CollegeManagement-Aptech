@@ -49,7 +49,7 @@ namespace CollegeManagement.Models
         public int? UserID { get; set; }
         public User User { get; set; }
         [Range(0, int.MaxValue, ErrorMessage = "The test score must be larger than 0")]
-        public int? TestScore { get; set; }
+        public float? TestScore { get; set; }
         public ICollection<Marks> Marks { get; set; }
     }
 }

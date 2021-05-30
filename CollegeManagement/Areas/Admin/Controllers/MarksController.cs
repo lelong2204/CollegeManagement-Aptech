@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CollegeManagement.Helper;
 using CollegeManagement.Models;
-using CollegeManagement.DTO.Markses;
-using CollegeManagement.DTO.Subject;
+using CollegeManagement.DTO.MarksesDTO;
+using CollegeManagement.DTO.SubjectDTO;
 using System.Text.Json;
 
 namespace CollegeManagement.Areas.Admin.Controllers

@@ -27,7 +27,7 @@
     @await RenderSectionAsync("CSS", required: false)
 </head>
 
-@using CollegeManagement.DTO.Account
+@using CollegeManagement.DTO.AccountDTO
 
 @{
     var userInfo = (AccountLogin)Context.Items["UserLogin"];
@@ -93,6 +93,12 @@
                                         </a>
                                     </li>
                                 }
+                                <li class="sidebar-item">
+                                    <a href="/Admin/Marks" class='sidebar-link'>
+                                        <i class="fa fa-check-circle "></i>
+                                        <span>Marks</span>
+                                    </a>
+                                </li>
                                 if (userInfo.Role.Contains(ConstantVariables.ROLE_ADMIN) || userInfo.Role.Contains(ConstantVariables.ROLE_SUPER_ADMIN))
                                 {
                                     <li class="sidebar-item">
@@ -115,13 +121,14 @@
                                             <span>Account</span>
                                         </a>
                                     </li>
+
+                                    <li class="sidebar-item">
+                                        <a href="/Admin/Facility" class='sidebar-link'>
+                                            <i class="fas fa-toolbox"></i>
+                                            <span>Facility</span>
+                                        </a>
+                                    </li>
                                 }
-                                <li class="sidebar-item">
-                                    <a href="/Admin/Marks" class='sidebar-link'>
-                                        <i class="fa fa-check-circle "></i>
-                                        <span>Marks</span>
-                                    </a>
-                                </li>
                             }
                         }
                     </ul>

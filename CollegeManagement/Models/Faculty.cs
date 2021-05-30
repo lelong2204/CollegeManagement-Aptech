@@ -20,6 +20,8 @@ namespace CollegeManagement.Models
         public string? Address { get; set; }
         [MaxLength(500)]
         public string? Email { get; set; }
+        [MaxLength(500)]
+        public string? Testimonials { get; set; }
         [MaxLength(11)]
         public string? PhoneNumber { get; set; }
         public int? ExperienceYear { get; set; }

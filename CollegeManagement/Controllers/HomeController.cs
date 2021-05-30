@@ -1,8 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CollegeManagement.DTO.Departments;
+using CollegeManagement.DTO.CourseDTO;
+using CollegeManagement.DTO.DepartmentsDTO;
 using CollegeManagement.DTO.Home;
 using CollegeManagement.Helper;
 using CollegeManagement.Models;
@@ -23,7 +23,7 @@ namespace CollegeManagement.Controllers
         {
             var res = new UserHome();
             res.Histories = await _context.Contents.Where(c => c.Type == 1 && c.Deleted != 1)
-                .OrderByDescending(c => c.Year).ToListAsync();
+                .OrderBy(c => c.Year).ToListAsync();
             res.Courses = await _context.Courses.Where(c => c.Deleted != 1)
                 .OrderByDescending(c => c.UpdatedAt).Take(3).ToListAsync();
             res.Faculties = await _context.Faculties.Where(c => c.Deleted != 1).Take(5).ToListAsync();
@@ -130,7 +130,7 @@ namespace CollegeManagement.Controllers
             res.CourseList = await _context.Courses
                 .Where(c => c.Deleted != 1 &&
                     c.StartDate <= DateTime.Now && c.EndDate >= DateTime.Now && c.Status != 1)
-                .Select(c => new DTO.Course.CourseSelectDTO {
+                .Select(c => new CourseSelectDTO {
                     ID = c.ID,
                     Name = $"{c.Name} - {c.Code}"
                 }).ToListAsync();

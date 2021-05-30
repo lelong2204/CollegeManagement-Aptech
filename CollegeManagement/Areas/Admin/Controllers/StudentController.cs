@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CollegeManagement.Helper;
 using CollegeManagement.Models;
-using CollegeManagement.DTO.Student;
-using CollegeManagement.DTO.Departments;
-using CollegeManagement.DTO.Faculty;
+using CollegeManagement.DTO.StudentDTO;
+using CollegeManagement.DTO.DepartmentsDTO;
+using CollegeManagement.DTO.FacultyDTO;
+using CollegeManagement.DTO.Datatable;
 
 namespace CollegeManagement.Areas.Admin.Controllers
 {
@@ -26,20 +28,22 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // GET: Admin/Student
         public IActionResult Index()
         {
+            ViewBag.SchoolYears = _context.Courses.Where(c => c.Deleted != 1).Select(d => d.StartDate.Value.Year).ToList();
             return View();
         }
 
-        // GET: Admin/Student
-        public async Task<IActionResult> List()
+        [HttpPost]
+        public async Task<IActionResult> List(DataTableAjaxPostModel model, int? SchoolYear)
         {
             try
             {
-                var data = await (from s in _context.Students
+                var search = model.search.value ?? "";
+
+                var data = from s in _context.Students
                                   join d in _context.Courses on s.CourseID equals d.ID
                                   into d
                                   from ds in d.DefaultIfEmpty()
-                                  where s.Deleted != 1
-                                  orderby s.UpdatedAt descending
+                                  where s.Deleted != 1 && s.Name.Contains(search)
                                   select new
                                   {
                                       ID = s.ID,
@@ -50,13 +54,24 @@ namespace CollegeManagement.Areas.Admin.Controllers
                                       DOB = s.DOB,
                                       Status = s.Status,
                                       ImageURL = s.ImageURL,
-                                      TestScore = s.TestScore
-                                  }).ToListAsync();
+                                      TestScore = s.TestScore,
+                                      SchoolYear = ds.StartDate
+                                  };
+
+                if (SchoolYear != null && SchoolYear > 0)
+                {
+                    data = data.Where(d => d.SchoolYear.Value.Year == SchoolYear);
+                }
+
+                var totalRecord = data.Count();
+                data = data.OrderBy($"{model.columns[model.order[0].column].data} {model.order[0].dir.ToLower()}").Skip(model.start).Take(model.length);
+
                 return Json(new
                 {
-                    status = true,
-                    msg = MESSAGE_SUCCESS,
-                    data = data
+                    draw = model.draw,
+                    recordsTotal = totalRecord,
+                    recordsFiltered = totalRecord,
+                    data = await data.ToListAsync()
                 });
             }
             catch (Exception ex)

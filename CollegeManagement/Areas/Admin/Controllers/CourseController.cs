@@ -3,16 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CollegeManagement.Helper;
 using CollegeManagement.Models;
-using CollegeManagement.DTO.Course;
-using CollegeManagement.DTO.Subject;
-using CollegeManagement.DTO.Departments;
-using CollegeManagement.DTO.Faculty;
+using CollegeManagement.DTO.CourseDTO;
+using CollegeManagement.DTO.DepartmentsDTO;
 using System.Text.Json;
-using Microsoft.AspNetCore.Authorization;
 
 namespace CollegeManagement.Areas.Admin.Controllers
 {
@@ -50,12 +46,9 @@ namespace CollegeManagement.Areas.Admin.Controllers
                                       join d in _context.Departments on c.DepartmentID equals d.ID
                                       into d
                                       from ds in d.DefaultIfEmpty()
-                                      join s in _context.Students on c.ID equals s.CourseID
-                                      into g
-                                      from s in g.DefaultIfEmpty()
                                       where c.Deleted != 1 && f.UserID == UserLogin.ID && f.Deleted != 1
                                       orderby c.UpdatedAt descending
-                                      group s by new
+                                      select new
                                       {
                                           ID = c.ID,
                                           Name = c.Name,
@@ -68,23 +61,8 @@ namespace CollegeManagement.Areas.Admin.Controllers
                                           ImageURL = c.ImageURL,
                                           CreatedAt = c.CreatedAt,
                                           UpdatedAt = c.UpdatedAt,
-                                          Status = c.Status
-                                      } into sc
-                                      select new
-                                      {
-                                          ID = sc.Key.ID,
-                                          Name = sc.Key.Name,
-                                          Info = sc.Key.Info,
-                                          Price = sc.Key.Price,
-                                          StudentNumber = sc.Key.StudentNumber,
-                                          DepartmentName = sc.Key.Name,
-                                          StartDate = sc.Key.StartDate,
-                                          EndDate = sc.Key.EndDate,
-                                          ImageURL = sc.Key.ImageURL,
-                                          CreatedAt = sc.Key.CreatedAt,
-                                          UpdatedAt = sc.Key.UpdatedAt,
-                                          Status = sc.Key.Status,
-                                          StudentCount = sc.Count()
+                                          Status = c.Status,
+                                          StudentCount = c.Students.Count()
                                       }).ToListAsync();
 
                     return Json(new
@@ -100,12 +78,10 @@ namespace CollegeManagement.Areas.Admin.Controllers
                                       join d in _context.Departments on c.DepartmentID equals d.ID
                                       into d
                                       from ds in d.DefaultIfEmpty()
-                                      join s in _context.Students on c.ID equals s.CourseID
-                                      into q
-                                      from s in q.DefaultIfEmpty()
                                       where c.Deleted != 1
                                       orderby c.UpdatedAt descending
-                                      group s by new {
+                                      select new
+                                      {
                                           ID = c.ID,
                                           Name = c.Name,
                                           Info = c.Info,
@@ -117,23 +93,8 @@ namespace CollegeManagement.Areas.Admin.Controllers
                                           ImageURL = c.ImageURL,
                                           CreatedAt = c.CreatedAt,
                                           UpdatedAt = c.UpdatedAt,
-                                          Status = c.Status
-                                      } into sc
-                                      select new
-                                      {
-                                          ID = sc.Key.ID,
-                                          Name = sc.Key.Name,
-                                          Info = sc.Key.Info,
-                                          Price = sc.Key.Price,
-                                          StudentNumber = sc.Key.StudentNumber,
-                                          DepartmentName = sc.Key.Name,
-                                          StartDate = sc.Key.StartDate,
-                                          EndDate = sc.Key.EndDate,
-                                          ImageURL = sc.Key.ImageURL,
-                                          CreatedAt = sc.Key.CreatedAt,
-                                          UpdatedAt = sc.Key.UpdatedAt,
-                                          Status = sc.Key.Status,
-                                          StudentCount = sc.Count()
+                                          Status = c.Status,
+                                          StudentCount = c.Students.Count()
                                       }).ToListAsync();
 
                     return Json(new

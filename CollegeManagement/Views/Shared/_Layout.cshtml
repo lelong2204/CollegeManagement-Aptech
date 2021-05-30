@@ -209,12 +209,14 @@
     <script src="~/js/custom.js"></script>
     <script src="~/js/timeline.min.js"></script>
     <script>
-        timeline(document.querySelectorAll('.timeline'), {
-            forceVerticalMode: 700,
-            mode: 'horizontal',
-            verticalStartPosition: 'left',
-            visibleItems: 4
-        });
+        setTimeout(() => {
+            timeline(document.querySelectorAll('.timeline'), {
+                forceVerticalMode: 700,
+                mode: 'horizontal',
+                verticalStartPosition: 'left',
+                visibleItems: 4
+            })
+        }, 100);
     </script>
     <script>
         $(document).ready(function () {

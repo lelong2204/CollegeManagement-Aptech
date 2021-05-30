@@ -1,5 +1,4 @@
 @model DashboardDTO
-@using CollegeManagement.DTO.Account
 
 @{
     ViewData["Title"] = "Index";
@@ -195,6 +194,7 @@
             $.ajax({
                 url: "/Admin/Home/StudentPerYear",
                 success: function (res) {
+                    console.log(res);
                     var options = {
                         series: [{
                             name: 'Student Register',
@@ -202,14 +202,24 @@
                             data: res.totalStudent
                         },
                         {
+                            name: 'Student Adminssion',
+                            type: 'line',
+                            data: res.totalStudentAdmission
+                        },
+                        {
                             name: 'Student Graduating',
-                            type: 'area',
+                            type: 'line',
                             data: res.totalStudentGraduating
                         },
                         {
                             name: 'Student Expelled',
-                            type: 'area',
+                            type: 'line',
                             data: res.totalStudentExpelled
+                        },
+                        {
+                            name: 'Student Failed',
+                            type: 'line',
+                            data: res.totalStudentFailed
                         }],
                         chart: {
                             height: 350,

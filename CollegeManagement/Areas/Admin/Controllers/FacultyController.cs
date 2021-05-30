@@ -4,10 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CollegeManagement.Helper;
 using CollegeManagement.Models;
-using CollegeManagement.DTO.Faculty;
+using CollegeManagement.DTO.FacultyDTO;
 using System;
-using CollegeManagement.DTO.Departments;
-using CollegeManagement.DTO.Subject;
+using CollegeManagement.DTO.DepartmentsDTO;
+using CollegeManagement.DTO.SubjectDTO;
 using System.Collections.Generic;
 
 namespace CollegeManagement.Areas.Admin.Controllers
@@ -303,18 +303,22 @@ namespace CollegeManagement.Areas.Admin.Controllers
                     var facultySubjectExistList = await _context.FacultySubjects
                         .Where(fs => fs.FacultyID == faculty.ID).ToListAsync();
                     var facultySubjectIDExistList = facultySubjectExistList.Select(fs => fs.SubjectID).ToList();
-                    var subjectIDs = req.SubjectIDs.Distinct<int>();
 
-                    foreach (var subjectID in subjectIDs)
+                    if  (req.SubjectIDs != null && req.SubjectIDs.Count > 0)
                     {
-                        if (facultySubjectIDExistList.Contains(subjectID))
+                        var subjectIDs = req.SubjectIDs.Distinct<int>();
+                        foreach (var subjectID in subjectIDs)
                         {
-                            facultySubjectExistList = facultySubjectExistList
-                                .Where(fs => fs.SubjectID != subjectID).ToList();
-                            continue;
-                        }
+                            if (facultySubjectIDExistList.Contains(subjectID))
+                            {
+                                facultySubjectExistList = facultySubjectExistList
+                                    .Where(fs => fs.SubjectID != subjectID).ToList();
+                                continue;
+                            }
 
-                        facultySubjectList.Add(new FacultySubject { SubjectID = subjectID, FacultyID = (int)faculty.ID });
+                            facultySubjectList.Add(new FacultySubject { SubjectID = subjectID, FacultyID = (int)faculty.ID });
+                        }
+                        await _context.FacultySubjects.AddRangeAsync(facultySubjectList);
                     }
 
                     if (facultySubjectExistList.Count > 0)
@@ -322,7 +326,6 @@ namespace CollegeManagement.Areas.Admin.Controllers
                         _context.FacultySubjects.RemoveRange(facultySubjectExistList);
                     }
 
-                    await _context.FacultySubjects.AddRangeAsync(facultySubjectList);
                     _context.Update(faculty);
                     await _context.SaveChangesAsync();
                 }

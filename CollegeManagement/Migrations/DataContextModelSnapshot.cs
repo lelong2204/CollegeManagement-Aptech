@@ -126,8 +126,8 @@ namespace CollegeManagement.Migrations
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("EntryPoint")
-                        .HasColumnType("int");
+                    b.Property<float?>("EntryPoint")
+                        .HasColumnType("real");
 
                     b.Property<int?>("Evaluate")
                         .HasColumnType("int");
@@ -153,8 +153,7 @@ namespace CollegeManagement.Migrations
                     b.Property<int?>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int?>("StudentNumber")
-                        .IsRequired()
+                    b.Property<int>("StudentNumber")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedAt")
@@ -203,9 +202,6 @@ namespace CollegeManagement.Migrations
 
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<int?>("DeanID")
-                        .HasColumnType("int");
 
                     b.Property<byte?>("Deleted")
                         .HasColumnType("tinyint");
@@ -261,6 +257,28 @@ namespace CollegeManagement.Migrations
                     b.ToTable("Facility");
                 });
 
+            modelBuilder.Entity("CollegeManagement.Models.FacilityImg", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("FacilityId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ImgUrl")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FacilityId");
+
+                    b.ToTable("FacilityImg");
+                });
+
             modelBuilder.Entity("CollegeManagement.Models.Faculty", b =>
                 {
                     b.Property<int>("ID")
@@ -310,6 +328,10 @@ namespace CollegeManagement.Migrations
                     b.Property<string>("PhoneNumber")
                         .HasMaxLength(11)
                         .HasColumnType("nvarchar(11)");
+
+                    b.Property<string>("Testimonials")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -451,8 +473,8 @@ namespace CollegeManagement.Migrations
                     b.Property<int?>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int?>("TestScore")
-                        .HasColumnType("int");
+                    b.Property<float?>("TestScore")
+                        .HasColumnType("real");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -593,6 +615,17 @@ namespace CollegeManagement.Migrations
                     b.Navigation("Subject");
                 });
 
+            modelBuilder.Entity("CollegeManagement.Models.FacilityImg", b =>
+                {
+                    b.HasOne("CollegeManagement.Models.Facility", "Facility")
+                        .WithMany("FacilityImgs")
+                        .HasForeignKey("FacilityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Facility");
+                });
+
             modelBuilder.Entity("CollegeManagement.Models.Faculty", b =>
                 {
                     b.HasOne("CollegeManagement.Models.Department", "Department")
@@ -663,6 +696,11 @@ namespace CollegeManagement.Migrations
             modelBuilder.Entity("CollegeManagement.Models.Department", b =>
                 {
                     b.Navigation("Faculties");
+                });
+
+            modelBuilder.Entity("CollegeManagement.Models.Facility", b =>
+                {
+                    b.Navigation("FacilityImgs");
                 });
 
             modelBuilder.Entity("CollegeManagement.Models.Faculty", b =>

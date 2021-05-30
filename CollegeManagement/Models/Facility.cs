@@ -8,11 +8,12 @@ namespace CollegeManagement.Models
 {
     public class Facility : BaseModel
     {
-        [Required(ErrorMessage = "Facilities name is required")]
-        [MaxLength(255, ErrorMessage = "Facilities name max length is 255")]
+        [Required]
+        [MaxLength(255)]
         public string? Name { get; set; }
         public int? Qty { get; set; }
-        [MaxLength(1000, ErrorMessage = "Facilities info max length is 1000")]
+        [MaxLength(1000)]
         public string? Info { get; set; }
+        public ICollection<FacilityImg> FacilityImgs { get; set; }
     }
 }

@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CollegeManagement.Helper;
 using CollegeManagement.Models;
+using CollegeManagement.DTO.FacilityDTO;
 
 namespace CollegeManagement.Areas.Admin.Controllers
 {
@@ -56,15 +56,52 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Qty,Info,ID,Deleted,CreatedAt,UpdatedAt")] Facility facility)
+        public async Task<IActionResult> Create(FacilityUpSertDTO req)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(facility);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    var pathList =  await Utils.SaveMultiFile(req.Imgs, "Facility");
+
+                    var facility = new Facility
+                    {
+                        Name = req.Name,
+                        Info = req.Info,
+                        Qty = req.Qty,
+                        CreatedAt = DateTime.Now,
+                        UpdatedAt = DateTime.Now
+                    };
+                    _context.Add(facility);
+                    await _context.SaveChangesAsync();
+                    
+                    if (pathList != null && pathList.Count() > 0)
+                    {
+                        var facilityImgs = new List<FacilityImg>();
+
+                        foreach (var path in pathList)
+                        {
+                            facilityImgs.Add(new FacilityImg
+                            {
+                                FacilityId = facility.ID,
+                                ImgUrl = path
+                            });
+                        }
+
+                        await _context.FacilityImg.AddRangeAsync(facilityImgs);
+                        await _context.SaveChangesAsync();
+                    }
+
+                    TempData["Error"] = MESSAGE_SUCCESS;
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    TempData["Error"] = ex.Message;
+                    return View(req);
+                }
             }
-            return View(facility);
+            return View(req);
         }
 
         // GET: Facility/Edit/5

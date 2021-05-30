@@ -72,7 +72,9 @@ namespace CollegeManagement.Areas.Admin.Controllers
                 {
                     Year = i,
                     TotalStudent = studentPerYear.Where(s => s.CreatedAt.Value.Year == i).Count(),
-                    TotalStudentGraduating = studentPerYear.Where(s => s.UpdatedAt.Value.Year == i && s.Status == 3).Count(),
+                    TotalStudentAdmission = studentPerYear.Where(s => s.CreatedAt.Value.Year == i && s.Status == 1).Count(),
+                    TotalStudentFailed = studentPerYear.Where(s => s.CreatedAt.Value.Year == i && s.Status == 3).Count(),
+                    TotalStudentGraduating = studentPerYear.Where(s => s.UpdatedAt.Value.Year == i && s.Status == 4).Count(),
                     TotalStudentExpelled = studentPerYear.Where(s => s.UpdatedAt.Value.Year == i && s.Status == 2).Count()
                 });
             }
@@ -82,6 +84,8 @@ namespace CollegeManagement.Areas.Admin.Controllers
                 TotalStudent = res.Select(r => r.TotalStudent),
                 TotalStudentGraduating = res.Select(r => r.TotalStudentGraduating),
                 TotalStudentExpelled = res.Select(r => r.TotalStudentExpelled),
+                TotalStudentAdmission = res.Select(r => r.TotalStudentAdmission),
+                TotalStudentFailed = res.Select(r => r.TotalStudentFailed),
             });
         }
     }

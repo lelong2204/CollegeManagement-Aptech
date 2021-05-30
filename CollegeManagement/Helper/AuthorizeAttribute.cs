@@ -1,4 +1,4 @@
-﻿using CollegeManagement.DTO.Account;
+﻿using CollegeManagement.DTO.AccountDTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System;

@@ -1,9 +1,6 @@
-﻿using CollegeManagement.DTO.Departments;
-using CollegeManagement.Models;
+﻿using CollegeManagement.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CollegeManagement.DTO.Home
 {

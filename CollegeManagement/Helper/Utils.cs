@@ -28,5 +28,31 @@ namespace CollegeManagement.Helper
 
             return null;
         }
+
+        public static async Task<List<string>> SaveMultiFile(List<IFormFile> images, string folder)
+        {
+            if (images != null && images.Count > 0)
+            {
+                var pathList = new List<string>();
+                var dir = Path.Combine(@"wwwroot/img", folder);
+                foreach (var image in images)
+                {
+                    if (!Directory.Exists(folder))
+                    {
+                        Directory.CreateDirectory(folder);
+                    }
+                    var path = Path.Combine(dir, image.FileName);
+                    using (var fileStream = new FileStream(path, FileMode.Create))
+                    {
+                        await image.CopyToAsync(fileStream);
+                    }
+                    pathList.Add(path.Replace("wwwroot", "").Replace('\\', '/'));
+                }
+
+                return pathList;
+            }
+
+            return null;
+        }
     }
 }

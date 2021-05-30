@@ -26,6 +26,7 @@ namespace CollegeManagement.Helper
         public DbSet<Marks> Markses { get; set; }
         public DbSet<Student> Students { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<FacilityImg> FacilityImg { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -41,6 +42,7 @@ namespace CollegeManagement.Helper
             modelBuilder.Entity<Marks>().ToTable("Marks");
             modelBuilder.Entity<Student>().ToTable("Student");
             modelBuilder.Entity<User>().ToTable("User");
+            modelBuilder.Entity<FacilityImg>().ToTable("FacilityImg");
         }
     }
 }

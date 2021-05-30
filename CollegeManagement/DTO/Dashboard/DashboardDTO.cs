@@ -27,6 +27,8 @@ namespace CollegeManagement.DTO.Dashboard
     {
         public int Year { get; set; }
         public int TotalStudent { get; set; }
+        public int TotalStudentAdmission { get; set; }
+        public int TotalStudentFailed { get; set; }
         public int TotalStudentGraduating { get; set; }
         public int TotalStudentExpelled { get; set; }
     }

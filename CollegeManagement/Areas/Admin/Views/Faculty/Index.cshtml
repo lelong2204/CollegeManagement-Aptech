@@ -31,13 +31,13 @@
                     {
                         data: 'gender',
                         render: (data, type, row, meta) => {
-                            return `<p>${data === 1 ? "Male" : data === 0 ? "Female" : "Other"}</p>`
+                            return `${data === 1 ? "Male" : data === 0 ? "Female" : "Other"}`
                         }
                     },
                     {
                         data: 'dob',
                         render: (data, type, row, meta) => {
-                            return `<p>${data ? moment(data).format("DD/MM/YYYY") : ""}</p>`
+                            return `${data ? moment(data).format("DD/MM/YYYY") : ""}`
                         }
                     },
                     { data: 'phoneNumber' },

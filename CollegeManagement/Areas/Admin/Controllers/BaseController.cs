@@ -1,4 +1,4 @@
-﻿using CollegeManagement.DTO.Account;
+﻿using CollegeManagement.DTO.AccountDTO;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
