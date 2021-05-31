@@ -1,5 +1,21 @@
 ﻿@model IEnumerable<CourseHome>
+@{ 
+    var pageIndex = (int)ViewBag.PageIndex;
+    var totalRecord = (decimal)ViewBag.TotalRecord;
+    var totalPage = Math.Ceiling(totalRecord/8);
+    var queryParams = Context.Request.Query;
+    var routeParams = new Dictionary<string, string>();
 
+    if (queryParams.Count > 0)
+    {
+        foreach (var key in queryParams.Keys)
+        {
+            queryParams.TryGetValue(key, out var value);
+            routeParams.Add(key, value);
+        }
+    }
+    var SchoolYears = (List<int>)ViewBag.SchoolYears;
+}
 <div class="all-title-box">
     <div class="container text-center">
         <h1>Course List<span class="m_1">Lorem Ipsum dolroin gravida nibh vel velit.</span></h1>
@@ -15,6 +31,29 @@
         </div><!-- end title -->
 
         <hr class="invis">
+        <div class="row">
+            <div class="col-md-4 form-group">
+                <label class="control-label">School year</label>
+                <select class="form-control" onchange="changeParam(this.value, 'Year')" id="search-by-school-year">
+                    <option value="0">All</option>
+                    @if (SchoolYears != null && SchoolYears.Count > 0)
+                    {
+                        @foreach (var i in SchoolYears)
+                        {
+                            <option value="@i">@i</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-4 form-group">
+                <label class="control-label">Status</label>
+                <select class="form-control" onchange="changeParam(this.value, 'Status')" id="search-by-status">
+                    <option value="-1">All</option>
+                    <option value="0">Enrollment Time</option>
+                    <option value="1">Stop Enrollment</option>
+                </select>
+            </div>
+        </div>
 
         <div class="row">
 
@@ -23,7 +62,7 @@
                 {
                     foreach (var m in Model)
                     {
-                        <div class="col-lg-3 col-md-6 col-12">
+                        <div class="col-lg-3 col-md-6 col-12" style="margin-bottom: 30px">
                             <div class="course-item">
                                 <div class="image-blog">
                                     <img src="@(m.ImageURL)" alt="" class="img-fluid">
@@ -53,9 +92,14 @@
                                     </ul>
                                 </div>
                                 <div class="mt-2 text-center">
-                                    @if (m.Status != 1)
+                                    @if (m.Status != 1 && m.EndDate.Value.Date >= DateTime.Now.Date)
                                     {
                                         <a asp-action="RegisterCourses" asp-route-id="@m.ID" class="btn btn-success">Register</a>
+                                    }
+
+                                    @if (m.Status == 1)
+                                    {
+                                        <a asp-action="ElectList" asp-route-id="@m.ID" class="btn btn-success">Elect List</a>
                                     }
                                     <a asp-action="CourseDetails" asp-route-id="@m.ID" class="btn btn-info">Detail</a>
                                 </div>
@@ -65,5 +109,174 @@
                 }
             }
         </div><!-- end row -->
+        <div class="dataTables_paginate paging_simple_numbers pull-right" id="kt_datatable_paginate">
+            <ul class="pagination">
+                @if (totalPage > 0)
+                {
+                    if (pageIndex > 1)
+                    {
+                        <li class="paginate_button page-item previous" id="kt_datatable_previous">
+                            <a asp-all-route-data="routeParams" asp-route-PageIndex="@pageIndex - 1)"
+                               aria-controls="kt_datatable" data-dt-idx="0" tabindex="0" class="page-link">
+                                Previous
+                            </a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="paginate_button page-item previous disabled" id="kt_datatable_previous">
+                            <button aria-controls="kt_datatable" data-dt-idx="0" tabindex="0" class="page-link">
+                                Previous
+                            </button>
+                        </li>
+                    }
+
+                    if (totalPage < 8)
+                    {
+                        for (var i = 1; i <= totalPage; i++)
+                        {
+                            if (i == pageIndex)
+                            {
+                                <li class="paginate_button page-item active"><button aria-controls="kt_datatable" tabindex="0" class="page-link">@i</button></li>
+                            }
+                            else
+                            {
+                                <li class="paginate_button page-item"><a asp-all-route-data="routeParams" asp-route-PageIndex="@i" tabindex="0" class="page-link">@i</a></li>
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (pageIndex <= 4)
+                        {
+                            for (var i = 1; i <= 5; i++)
+                            {
+                                if (i == pageIndex)
+                                {
+                                    <li class="paginate_button page-item active"><button aria-controls="kt_datatable" tabindex="0" class="page-link">@i</button></li>
+                                }
+                                else
+                                {
+                                    <li class="paginate_button page-item"><a asp-all-route-data="routeParams" asp-route-PageIndex="@i" tabindex="0" class="page-link">@i</a></li>
+                                }
+                            }
+
+                            <li class="paginate_button page-item disabled"><button aria-controls="kt_datatable" tabindex="0" class="page-link">...</button></li>
+                            <li class="paginate_button page-item"><a asp-all-route-data="routeParams" asp-route-PageIndex="@totalPage" tabindex="0" class="page-link">@totalPage</a></li>
+                        }
+                        else if (pageIndex < totalPage - 3)
+                        {
+                            <li class="paginate_button page-item"><a asp-all-route-data="routeParams" asp-route-PageIndex="1" tabindex="0" class="page-link">1</a></li>
+                            <li class="paginate_button page-item disabled"><button aria-controls="kt_datatable" tabindex="0" class="page-link">...</button></li>
+                            for (var i = pageIndex - 2; i <= pageIndex + 2; i++)
+                            {
+                                if (i == pageIndex)
+                                {
+                                    <li class="paginate_button page-item active"><button aria-controls="kt_datatable" tabindex="0" class="page-link">@i</button></li>
+                                }
+                                else
+                                {
+                                    <li class="paginate_button page-item"><a asp-all-route-data="routeParams" asp-route-PageIndex="@i" tabindex="0" class="page-link">@i</a></li>
+                                }
+                            }
+                            <li class="paginate_button page-item disabled"><button aria-controls="kt_datatable" tabindex="0" class="page-link">...</button></li>
+                            <li class="paginate_button page-item"><a asp-all-route-data="routeParams" asp-route-PageIndex="@totalPage" tabindex="0" class="page-link">@totalPage</a></li>
+                        }
+                        else
+                        {
+                            <li class="paginate_button page-item"><a asp-all-route-data="routeParams" asp-route-PageIndex="1" tabindex="0" class="page-link">1</a></li>
+                            <li class="paginate_button page-item disabled"><button aria-controls="kt_datatable" tabindex="0" class="page-link">...</button></li>
+                            for (var i = totalPage - 4; i <= totalPage; i++)
+                            {
+                                if (i == pageIndex)
+                                {
+                                    <li class="paginate_button page-item active"><button aria-controls="kt_datatable" tabindex="0" class="page-link">@i</button></li>
+                                }
+                                else
+                                {
+                                    <li class="paginate_button page-item"><a asp-all-route-data="routeParams" asp-route-PageIndex="@i" tabindex="0" class="page-link">@i</a></li>
+                                }
+                            }
+                        }
+                    }
+
+                    if (pageIndex < totalPage)
+                    {
+                        <li class="paginate_button page-item next" id="kt_datatable_next">
+                            <a asp-all-route-data="routeParams" asp-route-PageIndex="@(pageIndex + 1)"
+                               aria-controls="kt_datatable" data-dt-idx="2" tabindex="0" class="page-link">
+                                @* <i class="ki ki-arrow-next"></i> *@
+                                Next
+                            </a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="paginate_button page-item next disabled" id="kt_datatable_next">
+                            <button aria-controls="kt_datatable" data-dt-idx="2" tabindex="0" class="page-link">
+                                @* <i class="ki ki-arrow-next"></i> *@
+                                Next
+                            </button>
+                        </li>
+                    }
+                }
+            </ul>
+        </div>
     </div><!-- end container -->
 </div><!-- end section -->
+
+@section Scripts{ 
+    <script>
+
+        function getRequestParamNew(qs) {
+            qs = qs || location.search.slice(1);
+
+            var pairs = qs.split('&');
+            var result = {};
+            pairs.forEach(function (p) {
+                var pair = p.split('=');
+                var key = pair[0].toUpperCase();
+                var value = decodeURIComponent(pair[1] || '');
+
+                if (result[key]) {
+                    if (Object.prototype.toString.call(result[key]) === '[object Array]') {
+                        result[key].push(value);
+                    } else {
+                        result[key] = [result[key], value];
+                    }
+                } else {
+                    result[key] = value;
+                }
+            });
+
+            return JSON.parse(JSON.stringify(result))
+        }
+
+        function getRequestParam() {
+            var search = location.search.substring(1);
+            if (search) {
+                return JSON.parse('{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g, '":"') + '"}');
+            }
+
+            return {}
+        }
+
+        function changeParam(value, key) {
+            var params = getRequestParam();
+            params[key] = value;
+            reloadPage(params);
+        }
+
+        function reloadPage(params) {
+            var queryString = Object.keys(params).map(key => key + '=' + params[key]).join('&');
+            fullUrl = location.protocol + '//' + location.host + location.pathname;
+            window.location.href = fullUrl + "?" + queryString;
+        }
+
+        $(document).ready(function () {
+            var params = getRequestParamNew();
+            $("#search-by-school-year").val(params["YEAR"] !== undefined ? params["YEAR"] : 0);
+            $("#search-by-status").val(params["STATUS"] !== undefined ? params["STATUS"] : -1);
+        })
+    </script>
+}

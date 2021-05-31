@@ -30,6 +30,7 @@
 <script>
         $(document).ready(function () {
             $('#datatable').DataTable({
+                order: [[9, "desc"]],
                 ajax: {
                     url: '/Admin/Course/List',
                     dataSrc: function (res) {
@@ -71,13 +72,13 @@
                     {
                         data: 'startDate',
                         render: (data, type, row, meta) => {
-                            return `<p>${data ? moment(data).format("DD/MM/YYYY") : ""}</p>`
+                            return `${data ? moment(data).format("DD/MM/YYYY") : ""}`
                         }
                     },
                     {
                         data: 'endDate',
                         render: (data, type, row, meta) => {
-                            return `<p>${data ? moment(data).format("DD/MM/YYYY") : ""}</p>`
+                            return `${data ? moment(data).format("DD/MM/YYYY") : ""}`
                         }
                     },
                     {
@@ -94,7 +95,7 @@
                                     <a href="/Admin/Course/Delete/${row.id}" class="btn btn-action btn-danger"><i class="fa fa-trash"></i></a>
                                 </div>`
                             }
-                            if (row.status != 1 && new Date(row.endDate) < new Date()) {
+                            if (row.status != 1 && new Date(row.endDate) < new Date().setHours(0,0,0,0)) {
                                 return `<div>
                                 <a href="/Admin/Course/Edit/${row.id}" class="btn btn-action btn-warning"><i class="fa fa-edit"></i></a>
                                 <button data-id="${row.id}" class="update_course btn btn-action btn-primary"><i class="fa fa-sync" aria-hidden="true"></i></button>

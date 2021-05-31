@@ -15,7 +15,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
         protected const string MESSAGE_NOT_CREATE = "Data not create";
         protected const string MESSAGE_NOT_COPIED = "Data not copied";
         protected const string MESSAGE_NOT_UPDATE = "Data not update";
-        protected const string MESSAGE_DELETE_SUCCESS = "Supplier deleted successfully";
+        protected const string MESSAGE_DELETE_SUCCESS = "Deleted successfully";
         protected const string MESSAGE_NOT_DELETE = "Data delete unsuccessfully";
         protected const string MESSAGE_STOCK = "Qty is than stock!";
         protected const string MESSAGE_DUPLICATE = "This template is already exist";

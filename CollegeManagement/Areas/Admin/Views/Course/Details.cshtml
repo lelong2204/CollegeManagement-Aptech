@@ -57,7 +57,7 @@
     </dl>
 </div>
 <div>
-    @if (userInfo.Role != "Faculty")
+    @if (userInfo.Role != "Faculty" && Model.Status != 1)
     {
         <a class="btn btn-warning mr-2" asp-action="Edit" asp-route-id="@Model.ID">Edit</a>
     }

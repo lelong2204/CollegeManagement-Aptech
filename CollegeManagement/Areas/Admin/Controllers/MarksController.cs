@@ -50,7 +50,8 @@ namespace CollegeManagement.Areas.Admin.Controllers
                                    CourseID = c.ID,
                                    CourseName = c.Name,
                                    SubjectID = s.ID,
-                                   SubjectName = s.Name
+                                   SubjectName = s.Name,
+                                   Year = c.EndDate.Value.Year
                                };
                     return Json(new { data = await data.ToListAsync() });
 
@@ -70,7 +71,8 @@ namespace CollegeManagement.Areas.Admin.Controllers
                                    CourseID = c.ID,
                                    CourseName = c.Name,
                                    SubjectID = s.ID,
-                                   SubjectName = s.Name
+                                   SubjectName = s.Name,
+                                   Year = c.EndDate.Value.Year
                                };
                     return Json(new { data = await data.ToListAsync() });
 
@@ -88,7 +90,8 @@ namespace CollegeManagement.Areas.Admin.Controllers
                                CourseID = c.ID,
                                CourseName = c.Name,
                                SubjectID = s.ID,
-                               SubjectName = s.Name
+                               SubjectName = s.Name,
+                               Year = c.EndDate.Value.Year
                            };
                     return Json(new { data = await data.ToListAsync() });
             }
@@ -178,6 +181,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
                                        {
                                            StudentID = s.ID,
                                            StudentName = s.Name,
+                                           StudentCode = s.Code,
                                            Score = m.Score,
                                            Status = m.Status
                                        }).ToListAsync();
@@ -207,7 +211,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
             var res = new MarksUpSertDTO
             {
                 Marks = await (from s in _context.Students
-                                join m in _context.Markses on s.ID equals m.StudentID
+                                join m in _context.Markses.Where(m => m.SubjectID == subjectId) on s.ID equals m.StudentID
                                 into p from m in p.DefaultIfEmpty()
                                 join c in _context.Courses on s.CourseID equals c.ID
                                 into q
@@ -217,6 +221,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
                                 {
                                     StudentID = s.ID,
                                     StudentName = s.Name,
+                                    StudentCode = s.Code,
                                     Score = m.Score,
                                     Status = m.Status
                                 }).ToListAsync(),
@@ -305,6 +310,14 @@ namespace CollegeManagement.Areas.Admin.Controllers
                     }
                     await _context.AddRangeAsync(newMarks);
                 }
+
+                var std = _context.Students.Where(s => s.Deleted != 1 && s.Status == (int)Student.StudentStatus.Admission &&
+                    s.Marks.Where(m => m.Status == (int)Marks.MarksStatus.Pass).Count() == s.Course.CourseSubject.Count())
+                    .ToList();
+                std.ForEach(s => s.Status = (int)Student.StudentStatus.Graduating);
+
+
+
                 await _context.SaveChangesAsync();
                 return Json(new { status = true, message = MESSAGE_SUCCESS });
             }

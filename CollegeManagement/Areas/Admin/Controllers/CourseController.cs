@@ -467,7 +467,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
                 course.Deleted = 1;
                 _context.Courses.Update(course);
                 await _context.SaveChangesAsync();
-                TempData["Error"] = MESSAGE_DELETE_SUCCESS;
+                TempData["Success"] = MESSAGE_DELETE_SUCCESS;
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)

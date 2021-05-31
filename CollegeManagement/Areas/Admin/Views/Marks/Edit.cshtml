@@ -21,7 +21,9 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
+                        <th>Std</th>
                         <th>Student</th>
+                        <th>Code</th>
                         <th>Marks</th>
                         <th>Status</th>
                     </tr>
@@ -30,11 +32,23 @@
                     @{
                         if (Model.Marks != null)
                         {
+                            var i = 1;
                             foreach (var m in Model.Marks)
                             {
                                 <tr class="student-core" data-std-id="@m.StudentID">
+                                    <td data-std-id="@m.StudentID">@(i++)</td>
                                     <td data-std-id="@m.StudentID">@m.StudentName</td>
-                                    <td class="form-group"><input data-std-id="@m.StudentID" value="@m.Score" type="number" min="0" max="20" class="form-control score" /></td>
+                                    <td data-std-id="@m.StudentID">@m.StudentCode</td>
+                                    <td class="form-group">
+                                        @if (m.Status == 1)
+                                        {
+                                            <input data-std-id="@m.StudentID" value="@m.Score" type="number" min="0" max="20" class="form-control score" readonly/>
+                                        }
+                                        else
+                                        {
+                                            <input data-std-id="@m.StudentID" value="@m.Score" type="number" min="0" max="20" class="form-control score" />
+                                        }
+                                    </td>
                                     @if (m.Status == 1)
                                     {
                                         <td class="status text-success">Pass</td>

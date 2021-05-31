@@ -1,0 +1,42 @@
+﻿@model ElectList
+<div id="overviews" class="section wb" style="padding-top:20px">
+    <div class="container">
+        <div class="section-title row text-center">
+            <div class="col-md-8 offset-md-2">
+                <img style="width: 100%" src="@Model.ImageURL" />
+                <p class="lead">
+                    @Model.Info
+                </p>
+                <h3><u>Elect List</u></h3>
+                <div class="row">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Name</th>
+                                <th>Code</th>
+                                <th>Score</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Students != null)
+                            {
+                                var i = 1;
+                                foreach (var std in Model.Students)
+                                {
+                                    <tr>
+                                        <th>@(i++)</th>
+                                        <td>@std.Name</td>
+                                        <td>@std.Code</td>
+                                        <td>@std.TestScore</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <a asp-action="Courses" class="btn btn-secondary">Back</a>
+            </div>
+        </div>
+    </div>
+</div>

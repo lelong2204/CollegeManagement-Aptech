@@ -31,7 +31,14 @@
                 <select class="form-control" asp-for="Year" disabled>
                     @for (var i = DateTime.Now.Year; i >= 1900; i--)
                     {
-                        <option value="@i">@i</option>
+                        if (i == Model.Year)
+                        {
+                            <option value="@i" selected>@i</option>
+                        }
+                        else
+                        {
+                            <option value="@i">@i</option>
+                        }
                     }
                 </select>
                 <span asp-validation-for="Year" class="text-danger"></span>

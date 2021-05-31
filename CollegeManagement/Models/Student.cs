@@ -50,6 +50,7 @@ namespace CollegeManagement.Models
         public User User { get; set; }
         [Range(0, int.MaxValue, ErrorMessage = "The test score must be larger than 0")]
         public float? TestScore { get; set; }
+        public Course Course { get; set; }
         public ICollection<Marks> Marks { get; set; }
     }
 }

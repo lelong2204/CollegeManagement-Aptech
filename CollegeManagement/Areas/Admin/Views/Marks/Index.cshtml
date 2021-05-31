@@ -25,6 +25,7 @@
     <script>
         $(document).ready(function () {
             $('#datatable').DataTable({
+                order: [[2, "desc"]],
                 ajax: {
                     url: '/Admin/Marks/List',
                     dataSrc: function (res) {
@@ -40,9 +41,11 @@
                 columns: [
                     { data: 'courseName' },
                     { data: 'subjectName' },
+                    { data: 'year' },
                     {
-                        data: 'subjectName',
+                        data: 'year',
                         render: (data, type, row, meta) => {
+                            console.log(row)
                             if (isAdmin === false) {
                                 return `<div>
                                     <a href="/Admin/Marks/Details/${row.courseID}/${row.subjectID}" class="btn btn-action btn-info"><i class="fa fa-eye"></i></a>
@@ -68,6 +71,10 @@
                     },
                     {
                         targets: 2,
+                        title: 'School Year'
+                    },
+                    {
+                        targets: 3,
                         title: 'Action'
                     }
                 ],

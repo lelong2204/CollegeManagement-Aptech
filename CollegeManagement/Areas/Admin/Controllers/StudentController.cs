@@ -28,7 +28,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // GET: Admin/Student
         public IActionResult Index()
         {
-            ViewBag.SchoolYears = _context.Courses.Where(c => c.Deleted != 1).Select(d => d.StartDate.Value.Year).ToList();
+            ViewBag.SchoolYears = _context.Courses.Where(c => c.Deleted != 1).Select(d => d.StartDate.Value.Year).Distinct().ToList();
             return View();
         }
 
@@ -43,7 +43,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
                                   join d in _context.Courses on s.CourseID equals d.ID
                                   into d
                                   from ds in d.DefaultIfEmpty()
-                                  where s.Deleted != 1 && s.Name.Contains(search)
+                                  where s.Deleted != 1 && s.Name.Contains(search) && s.Status != 3 && s.Status != 2
                                   select new
                                   {
                                       ID = s.ID,
@@ -55,7 +55,8 @@ namespace CollegeManagement.Areas.Admin.Controllers
                                       Status = s.Status,
                                       ImageURL = s.ImageURL,
                                       TestScore = s.TestScore,
-                                      SchoolYear = ds.StartDate
+                                      SchoolYear = ds.StartDate,
+                                      UpdatedDate = s.UpdatedAt
                                   };
 
                 if (SchoolYear != null && SchoolYear > 0)
@@ -223,7 +224,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
                     return RedirectToAction(nameof(Index));
                 }
 
-                var student = await _context.Students.FirstOrDefaultAsync(c => c.ID == id && c.Deleted != 1);
+                var student = await _context.Students.FirstOrDefaultAsync(c => c.ID == id && c.Deleted != 1 && (c.Status == 1 || c.Status == 0));
                 if (student == null)
                 {
                     TempData["Error"] = MESSAGE_NOT_FOUND;
@@ -331,7 +332,7 @@ namespace CollegeManagement.Areas.Admin.Controllers
                 }
 
                 var student = await _context.Students
-                    .FirstOrDefaultAsync(m => m.ID == id && m.Deleted != 1);
+                    .FirstOrDefaultAsync(m => m.ID == id && m.Deleted != 1 && (m.Status == 1 || m.Status == 0));
                 if (student == null)
                 {
                     TempData["Error"] = MESSAGE_NOT_FOUND;

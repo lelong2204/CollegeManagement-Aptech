@@ -63,19 +63,19 @@ namespace CollegeManagement.Areas.Admin.Controllers
         }
         public async Task<IActionResult> StudentPerYear()
         {
-            var studentPerYear = await _context.Students
-                   .Where(s => s.Deleted != 1 && s.CreatedAt.Value.Year >= DateTime.Now.Year - 9).ToListAsync();
+            var studentPerYear = _context.Students
+                   .Where(s => s.Deleted != 1 && s.CreatedAt.Value.Year >= DateTime.Now.Year - 9);
             var res = new List<StudentPerYear>();
             for (var i = DateTime.Now.Year - 9;i <= DateTime.Now.Year; i++)
             {
                 res.Add(new StudentPerYear
                 {
                     Year = i,
-                    TotalStudent = studentPerYear.Where(s => s.CreatedAt.Value.Year == i).Count(),
-                    TotalStudentAdmission = studentPerYear.Where(s => s.CreatedAt.Value.Year == i && s.Status == 1).Count(),
-                    TotalStudentFailed = studentPerYear.Where(s => s.CreatedAt.Value.Year == i && s.Status == 3).Count(),
-                    TotalStudentGraduating = studentPerYear.Where(s => s.UpdatedAt.Value.Year == i && s.Status == 4).Count(),
-                    TotalStudentExpelled = studentPerYear.Where(s => s.UpdatedAt.Value.Year == i && s.Status == 2).Count()
+                    TotalStudent = studentPerYear.Where(s => s.Course.StartDate.Value.Year == i).Count(),
+                    TotalStudentAdmission = studentPerYear.Where(s => s.Course.StartDate.Value.Year == i && s.Status == 1).Count(),
+                    TotalStudentFailed = studentPerYear.Where(s => s.Course.StartDate.Value.Year == i && s.Status == 3).Count(),
+                    TotalStudentGraduating = studentPerYear.Where(s => s.Course.StartDate.Value.Year == i && s.Status == 4).Count(),
+                    TotalStudentExpelled = studentPerYear.Where(s => s.Course.StartDate.Value.Year == i && s.Status == 2).Count()
                 });
             }
 

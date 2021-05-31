@@ -79,11 +79,14 @@ namespace CollegeManagement.Controllers
 
         [Route("/Home/Courses/{id?}")]
         [Route("/Home/Courses")]
-        public IActionResult Courses(int? id)
+        public IActionResult Courses(int? id, int? pageIndex, int? Year, int? Status)
         {
+            pageIndex = pageIndex ?? 1;
+            ViewBag.PageIndex = pageIndex;
             if (id != null)
             {
                 var res = _context.Courses.Where(c => c.Deleted != 1 && c.DepartmentID == id)
+                    .OrderBy(c => c.Status)
                     .Select(c => new CourseHome
                     {
                         ID = c.ID,
@@ -99,11 +102,25 @@ namespace CollegeManagement.Controllers
                         StudentRegister = c.Students.Count(),
                     });
 
+                if (Status != null)
+                {
+                    res = res.Where(r => r.Status == Status);
+                }
+
+                if (Year != null)
+                {
+                    res = res.Where(r => r.StartDate.Value.Year == Year);
+                }
+                ViewBag.SchoolYears = _context.Courses.Where(c => c.Deleted != 1).Select(d => d.StartDate.Value.Year).Distinct().ToList();
+                ViewBag.TotalRecord = res.Count();
+
+                res = res.Skip(((int)pageIndex - 1) * 8).Take(8);
                 return View(res);
             }
             else
             {
                 var res = _context.Courses.Where(c => c.Deleted != 1)
+                    .OrderBy(c => c.Status)
                     .Select(c => new CourseHome
                     {
                         ID = c.ID,
@@ -118,6 +135,20 @@ namespace CollegeManagement.Controllers
                         TotalBook = c.CourseSubject.Count(),
                         StudentRegister = c.Students.Count(),
                     });
+
+                if (Status != null && Status != -1)
+                {
+                    res = res.Where(r => r.Status == Status);
+                }
+
+                if (Year > 0)
+                {
+                    res = res.Where(r => r.StartDate.Value.Year == Year);
+                }
+                ViewBag.SchoolYears = _context.Courses.Where(c => c.Deleted != 1 && c.StartDate != null).Select(d => d.StartDate.Value.Year).Distinct().ToList();
+                ViewBag.TotalRecord = res.Count();
+
+                res = res.Skip(((int)pageIndex - 1) * 8).Take(8);
 
                 return View(res);
             }
@@ -241,6 +272,29 @@ namespace CollegeManagement.Controllers
             return View(res);
         }
 
+        [Route("/Home/Courses/ElectList/{id?}")]
+        public async Task<IActionResult> ElectList(int? id)
+        {
+            var res = await (from c in _context.Courses
+                                where c.Deleted != 1 && c.ID == id
+                                select new ElectList
+                                {
+                                    Name = c.Name,
+                                    ImageURL = c.ImageURL,
+                                    ID = c.ID,
+                                    Info = c.Info,
+                                    Students = c.Students.OrderByDescending(s => s.TestScore).Where(s => s.Deleted != 1 && s.Status != 3).ToList()
+                                }).FirstOrDefaultAsync();
+
+            if (res == null)
+            {
+                TempData["Error"] = "Course not found";
+                return RedirectToAction(nameof(Courses));
+            }
+
+            return View(res);
+        }
+
         private async Task<string> CreateCode()
         {
             var code = $"STD{DateTimeOffset.Now.ToUnixTimeMilliseconds()}";
@@ -266,9 +320,13 @@ namespace CollegeManagement.Controllers
             return View(res);
         }
 
-        public IActionResult Blog()
+        public IActionResult Blog(int? pageIndex)
         {
+            pageIndex = pageIndex ?? 1;
+            ViewBag.PageIndex = pageIndex;
             var res = _context.Contents.Where(c => c.Deleted != 1 && c.Type == 2);
+            ViewBag.TotalRecord = res.Count();
+            res = res.OrderByDescending(c => c.CreatedAt).Skip(((int)pageIndex - 1) * 12).Take(12);
             return View(res);
         }
 

@@ -41,7 +41,7 @@
                 lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
                 pagingType: 'full_numbers',
                 info: true,
-                order: [[1, "asc"]],
+                order: [[8, "desc"]],
                 ajax: {
                     url: '/Admin/Student/List',
                     type: "POST",
@@ -105,8 +105,19 @@
                         }
                     },
                     {
+                        data: 'updatedDate',
+                        render: (data, type, row, meta) => {
+                            return `${data ? moment(data).format("DD/MM/YYYY") : ""}`
+                        }
+                    },
+                    {
                         data: 'id',
                         render: (data, type, row, meta) => {
+                            if (row.status != 0 && row.status != 1) {
+                                return `<div>
+                                    <a href="/Admin/Student/Details/${row.id}" class="btn btn-action btn-info"><i class="fa fa-eye"></i></a>
+                                </div>`
+                            }
                             return `<div>
                                     <a href="/Admin/Student/Edit/${row.id}" class="btn btn-action btn-warning"><i class="fa fa-edit"></i></a>
                                     <a href="/Admin/Student/Details/${row.id}" class="btn btn-action btn-info"><i class="fa fa-eye"></i></a>
@@ -158,6 +169,11 @@
                     },
                     {
                         targets: 8,
+                        title: 'Updated Date',
+                        className: "td-word_break"
+                    },
+                    {
+                        targets: 9,
                         title: 'Action'
                     }
                 ],

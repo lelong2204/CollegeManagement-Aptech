@@ -19,6 +19,7 @@
                 <thead>
                     <tr>
                         <th>Student</th>
+                        <th>Code</th>
                         <th>Marks</th>
                         <th>Status</th>
                     </tr>
@@ -31,6 +32,7 @@
                             {
                                 <tr class="student-core">
                                     <td>@m.StudentName</td>
+                                    <td data-std-id="@m.StudentID">@m.StudentCode</td>
                                     <td class="form-group">@m.Score</td>
                                     @if (m.Status == 1)
                                     {

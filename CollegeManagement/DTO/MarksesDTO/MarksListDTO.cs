@@ -6,5 +6,6 @@
         public string CourseName { get; set; }
         public int SubjectID { get; set; }
         public string SubjectName { get; set; }
+        public int Year { get; set; }
     }
 }
