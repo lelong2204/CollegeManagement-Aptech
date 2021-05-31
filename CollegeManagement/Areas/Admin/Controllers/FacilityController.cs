@@ -55,53 +55,47 @@ namespace CollegeManagement.Areas.Admin.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(FacilityUpSertDTO req)
         {
-            if (ModelState.IsValid)
+            
+            try
             {
-                try
+                var pathList =  await Utils.SaveMultiFile(req.Imgs, "Facility");
+
+                var facility = new Facility
                 {
-                    var pathList =  await Utils.SaveMultiFile(req.Imgs, "Facility");
-
-                    var facility = new Facility
-                    {
-                        Name = req.Name,
-                        Info = req.Info,
-                        Qty = req.Qty,
-                        CreatedAt = DateTime.Now,
-                        UpdatedAt = DateTime.Now
-                    };
-                    _context.Add(facility);
-                    await _context.SaveChangesAsync();
+                    Name = req.Name,
+                    Info = req.Info,
+                    Qty = req.Qty,
+                    CreatedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now
+                };
+                _context.Add(facility);
+                await _context.SaveChangesAsync();
                     
-                    if (pathList != null && pathList.Count() > 0)
+                if (pathList != null && pathList.Count() > 0)
+                {
+                    var facilityImgs = new List<FacilityImg>();
+
+                    foreach (var path in pathList)
                     {
-                        var facilityImgs = new List<FacilityImg>();
-
-                        foreach (var path in pathList)
+                        facilityImgs.Add(new FacilityImg
                         {
-                            facilityImgs.Add(new FacilityImg
-                            {
-                                FacilityId = facility.ID,
-                                ImgUrl = path
-                            });
-                        }
-
-                        await _context.FacilityImg.AddRangeAsync(facilityImgs);
-                        await _context.SaveChangesAsync();
+                            FacilityId = facility.ID,
+                            ImgUrl = path
+                        });
                     }
 
-                    TempData["Error"] = MESSAGE_SUCCESS;
-                    return RedirectToAction(nameof(Index));
+                    await _context.FacilityImg.AddRangeAsync(facilityImgs);
+                    await _context.SaveChangesAsync();
                 }
-                catch (Exception ex)
-                {
-                    TempData["Error"] = ex.Message;
-                    return View(req);
-                }
+
+                return new JsonResult(new { code = 200, message = MESSAGE_SUCCESS, status = true });
             }
-            return View(req);
+            catch (Exception ex)
+            {
+                return new JsonResult(new { code = 200, message = ex.Message, status = false });
+            }
         }
 
         // GET: Facility/Edit/5

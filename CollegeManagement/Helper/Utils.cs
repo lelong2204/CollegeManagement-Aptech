@@ -35,12 +35,12 @@ namespace CollegeManagement.Helper
             {
                 var pathList = new List<string>();
                 var dir = Path.Combine(@"wwwroot/img", folder);
+                if (!Directory.Exists(folder))
+                {
+                    Directory.CreateDirectory(folder);
+                }
                 foreach (var image in images)
                 {
-                    if (!Directory.Exists(folder))
-                    {
-                        Directory.CreateDirectory(folder);
-                    }
                     var path = Path.Combine(dir, image.FileName);
                     using (var fileStream = new FileStream(path, FileMode.Create))
                     {
