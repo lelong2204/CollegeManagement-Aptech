@@ -25,7 +25,7 @@
                     <dt class="col-3">Number of student registered:</dt>
                     <dd class="col-9">@Model.StudentRegisterNumber</dd>
                     <dt class="col-3">Enrollment time: </dt>
-                    <dd class="col-9">@(((DateTime)Model.StartDate).ToString("dd/MM/yyyy")) ~ @(((DateTime)Model.EndDate).ToString("dd/MM/yyyy"))</dd>
+                    <dd class="col-9">@(((DateTime)Model.StartDate).ToString("YYYY/MM/DD")) ~ @(((DateTime)Model.EndDate).ToString("YYYY/MM/DD"))</dd>
                     <dt class="col-3">Price: </dt>
                     <dd class="col-9">@Model.Price</dd>
                 </dl>

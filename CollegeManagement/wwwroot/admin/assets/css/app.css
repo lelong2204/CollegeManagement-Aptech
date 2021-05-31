@@ -1717,3 +1717,7 @@ tfoot input {
     padding: 3px;
     box-sizing: border-box;
 }
+
+.dropzone {
+    border-radius: 0.42rem;
+}

@@ -69,7 +69,7 @@
                     {
                         data: 'dob',
                         render: (data, type, row, meta) => {
-                            return `${data ? moment(data).format("DD/MM/YYYY") : ""}`
+                            return `${data ? moment(data).format("YYYY/MM/DD") : ""}`
                         }
                     },
                     { data: 'courseName' },
@@ -107,7 +107,7 @@
                     {
                         data: 'updatedDate',
                         render: (data, type, row, meta) => {
-                            return `${data ? moment(data).format("DD/MM/YYYY") : ""}`
+                            return `${data ? moment(data).format("YYYY/MM/DD") : ""}`
                         }
                     },
                     {

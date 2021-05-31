@@ -53,8 +53,8 @@ namespace CollegeManagement.Areas.Admin.Controllers
             }
 
             res.TotalStudent = await _context.Students.Where(d => d.Deleted != 1).CountAsync();
-            res.TotalCourse = await _context.Courses.CountAsync();
-            res.TotalCourseAvaiable = await _context.Courses.Where(d => d.Deleted != 1).CountAsync();
+            res.TotalCourse = await _context.Courses.Where(d => d.Deleted != 1).CountAsync();
+            res.TotalCourseAvaiable = await _context.Courses.Where(d => d.Deleted != 1 && d.Status == 0).CountAsync();
             res.TotalFaculty = await _context.Faculties.Where(d => d.Deleted != 1).CountAsync();
             res.TotalPost = await _context.Contents.Where(d => d.Deleted != 1 && d.Type == 2).CountAsync();
             res.TotalStudentAdmission = await _context.Students.Where(d => d.Deleted != 1 && d.Status == 1).CountAsync();

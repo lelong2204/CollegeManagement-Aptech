@@ -49,13 +49,13 @@
                     {
                         data: 'createdAt',
                         render: (data, type, row, meta) => {
-                            return `${data ? moment(data).format("DD/MM/YYYY HH:mm:ss") : ""}`
+                            return `${data ? moment(data).format("YYYY/MM/DD HH:mm:ss") : ""}`
                         }
                     },
                     {
                         data: 'updatedAt',
                         render: (data, type, row, meta) => {
-                            return `${data ? moment(data).format("DD/MM/YYYY HH:mm:ss") : ""}`
+                            return `${data ? moment(data).format("YYYY/MM/DD HH:mm:ss") : ""}`
                         }
                     },
                     {
