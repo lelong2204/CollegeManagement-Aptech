@@ -23,6 +23,10 @@
                                                     <h2><strong>@c.Name</strong></h2>
                                                     <p class="lead">@c.Info</p>
                                                     <a href="/Home/Courses/Details/@c.ID" class="hover-btn-new"><span>Read More</span></a>
+                                                    @if (c.Status == 1)
+                                                    {
+                                                        <a href="/Home/Courses/ElectList/@c.ID" class="hover-btn-new"><span>ElectList</span></a>
+                                                    }
                                                 </div>
                                             </div>
                                         </div><!-- end row -->

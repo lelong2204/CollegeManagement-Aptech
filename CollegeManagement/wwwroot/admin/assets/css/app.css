@@ -1721,3 +1721,8 @@ tfoot input {
 .dropzone {
     border-radius: 0.42rem;
 }
+
+.dz-image img {
+    width: inherit;
+    height: inherit;
+}

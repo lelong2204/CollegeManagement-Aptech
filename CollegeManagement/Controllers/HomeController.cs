@@ -25,7 +25,7 @@ namespace CollegeManagement.Controllers
             res.Histories = await _context.Contents.Where(c => c.Type == 1 && c.Deleted != 1)
                 .OrderBy(c => c.Year).ToListAsync();
             res.Courses = await _context.Courses.Where(c => c.Deleted != 1)
-                .OrderByDescending(c => c.UpdatedAt).Take(3).ToListAsync();
+                .OrderByDescending(c => c.EndDate).Take(3).ToListAsync();
             res.Faculties = await _context.Faculties.Where(c => c.Deleted != 1).Take(5).ToListAsync();
             res.Event = await _context.Contents.Where(c => c.Type == 2 && c.Deleted != 1)
                 .OrderByDescending(c => c.UpdatedAt).Take(3).ToListAsync();
@@ -340,6 +340,39 @@ namespace CollegeManagement.Controllers
                 TempData["Error"] = "Blog not found";
                 return RedirectToAction(nameof(Blog));
             }
+            return View(res);
+        }
+
+
+        [Route("/Home/Facility")]
+        public IActionResult Facility(int? pageIndex)
+        {
+            pageIndex = pageIndex ?? 1;
+            ViewBag.PageIndex = pageIndex;
+            ViewBag.TotalRecord = _context.Facilities.Count();
+            var res = _context.Facilities.OrderByDescending(c => c.CreatedAt).Skip(((int)pageIndex - 1) * 12).Take(12);
+            return View(res);
+        }
+
+        [Route("/Home/Facility/Details/{id?}")]
+        public IActionResult FacilityDetails(int? id)
+        {
+            var res = _context.Facilities.Select(f => new Facility {
+                ID = f.ID,
+                CreatedAt = f.CreatedAt,
+                FacilityImgs = f.FacilityImgs,
+                Info = f.Info,
+                Name = f.Name,
+                Qty = f.Qty,
+                UpdatedAt = f.UpdatedAt
+            }).FirstOrDefault(f => f.ID == id);
+
+            if (res == null)
+            {
+                TempData["Error"] = "Course not found";
+                return RedirectToAction(nameof(Facility));
+            }
+
             return View(res);
         }
     }

@@ -29,13 +29,6 @@
                 <input asp-for="Info" class="form-control" />
                 <span asp-validation-for="Info" class="text-danger"></span>
             </div>
-            @*<div class="form-group">
-                <label asp-for="Imgs" class="control-label">
-                    Image
-                </label>
-                <input asp-for="Imgs" class="form-control" accept="image/*" />
-                <span asp-validation-for="Imgs" class="text-danger"></span>
-            </div>*@
             <div class="col-lg-12">
                 <label asp-for="Imgs" class="control-label">
                     Image
@@ -52,7 +45,7 @@
             </div>
             <div class="form-group mt-3">
                 <button type="button" class="btn btn-success mr-2" id="btn-submit">Create</button>
-                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                <a asp-action="Index" class="btn btn-secondary" id="back-to-list">Back to List</a>
             </div>
         </form>
     </div>
@@ -130,13 +123,13 @@
                             if (!data.status) {
                                 notificationError(data.message)
                             } else {
-                                notificationSuccess(data.message)
-                                location.reload();
+                                window.location.href = $("#back-to-list").attr("href")
                             }
                         },
                         error: function (xhr, status, msg) {
                             removeIndicator();
                             notificationError(`${status} ${msg}`)
+                            window.location.href = $("#back-to-list").attr("href")
                         }
                     });
                 }

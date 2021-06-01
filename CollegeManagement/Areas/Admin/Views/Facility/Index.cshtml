@@ -1,5 +1,3 @@
-@model IEnumerable<CollegeManagement.Models.Facility>
-
 @{
     ViewData["Title"] = "Index";
 }
@@ -9,57 +7,85 @@
 <p>
     <a asp-action="Create" class="btn btn-success">Create New</a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Qty)
-            </th>
-            <th>
-                Information
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Deleted)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedAt)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UpdatedAt)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Qty)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Info)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Deleted)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UpdatedAt)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-action btn-warning"><i class="fa fa-edit"></i></a>
-                <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-action btn-info"><i class="fa fa-eye"></i></a>
-                <a asp-action="Delete" asp-route-id="@item.ID" class="btn btn-action btn-danger"><i class="fa fa-trash"></i></a>
-            </td>
-        </tr>
-}
-    </tbody>
+<table class="table table-striped table-bordered" id="datatable">
 </table>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#datatable').DataTable({
+                orderby: [[4, 'desc']],
+                ajax: {
+                    url: '/Admin/Facility/List',
+                    dataSrc: function (res) {
+                        return res.data
+                    }
+                },
+                language: {
+                    paginate: {
+                        previous: "<",
+                        next: ">",
+                    }
+                },
+                columns: [
+                    { data: 'name' },
+                    { data: 'qty' },
+                    { data: 'info' },
+                    {
+                        data: 'createdAt',
+                        render: (data, type, row, meta) => {
+                            return `${data ? moment(data).format("YYYY/MM/DD hh:mm:ss") : ""}`
+                        }
+                    },
+                    {
+                        data: 'updatedAt',
+                        render: (data, type, row, meta) => {
+                            return `${data ? moment(data).format("YYYY/MM/DD hh:mm:ss") : ""}`
+                        }
+                    },
+                    {
+                        data: 'id',
+                        render: (data, type, row, meta) => {
+                            return `<div>
+                                    <a href="/Admin/Facility/Edit/${row.id}" class="btn btn-action btn-warning"><i class="fa fa-edit"></i></a>
+                                    <a href="/Admin/Facility/Details/${row.id}" class="btn btn-action btn-info"><i class="fa fa-eye"></i></a>
+                                    <a href="/Admin/Facility/Delete/${row.id}" class="btn btn-action btn-danger"><i class="fa fa-trash"></i></a>
+                                </div>`
+                        }
+                    },
+                ],
+                columnDefs: [
+                    {
+                        targets: 0,
+                        title: "Name",
+                        className: "text-center",
+                    },
+                    {
+                        targets: 1,
+                        title: 'Quantity',
+                        className: "td-word_break"
+                    },
+                    {
+                        targets: 2,
+                        title: 'Infomation',
+                        className: "td-word_break"
+                    },
+                    {
+                        targets: 3,
+                        title: 'Created At',
+                        className: "td-word_break"
+                    },
+                    {
+                        targets: 4,
+                        title: 'Updated At',
+                        className: "td-word_break"
+                    }
+                ],
+                select: {
+                    style: 'os',
+                    selector: 'td:first-child'
+                },
+            })
+        })
+    </script>
+}

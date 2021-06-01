@@ -59,14 +59,14 @@
 })
 
 function notificationSuccess(msg) {
-    setTimeout(() =>
+    setTimeout(() => {
         iziToast.success({
             timeout: 3000,
             title: 'Success',
             message: msg,
             position: 'topRight'
-        }), 300)
-    
+        })
+    }, 300)
 }
 
 function notificationError(msg) {

@@ -489,10 +489,10 @@ namespace CollegeManagement.Areas.Admin.Controllers
         {
             try
             {
-                var course = await _context.Courses.FirstOrDefaultAsync(c => c.Deleted != 1 && c.Status != 1 && c.EndDate < DateTime.Now && c.ID == id);
+                var course = await _context.Courses.FirstOrDefaultAsync(c => c.Deleted != 1 && c.Status != 1 && c.EndDate.Value.Date < DateTime.Now.Date && c.ID == id);
                 if (course == null)
                 {
-                    return Json(new { status = false, msg = "Course not found" });
+                    return Json(new { status = false, msg = "Update status failed" });
                 }
                 if (_context.Students.Count(s => s.Deleted != 1 && s.CourseID == course.ID) <= course.StudentNumber)
                 {

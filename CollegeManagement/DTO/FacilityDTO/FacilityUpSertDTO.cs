@@ -10,7 +10,7 @@ namespace CollegeManagement.DTO.FacilityDTO
 {
     public class FacilityUpSertDTO
     {
-        public int? Id { get; set; }
+        public int? ID { get; set; }
         [Required]
         [MaxLength(255)]
         public string? Name { get; set; }
@@ -18,6 +18,7 @@ namespace CollegeManagement.DTO.FacilityDTO
         [MaxLength(1000)]
         public string? Info { get; set; }
         public List<FacilityImg> ImgUrls { get; set; }
+        public List<int> ImgsDelete { get; set; }
         public List<IFormFile> Imgs { get; set; }
     }
 }

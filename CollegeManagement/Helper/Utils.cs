@@ -35,9 +35,9 @@ namespace CollegeManagement.Helper
             {
                 var pathList = new List<string>();
                 var dir = Path.Combine(@"wwwroot/img", folder);
-                if (!Directory.Exists(folder))
+                if (!Directory.Exists(dir))
                 {
-                    Directory.CreateDirectory(folder);
+                    Directory.CreateDirectory(dir);
                 }
                 foreach (var image in images)
                 {

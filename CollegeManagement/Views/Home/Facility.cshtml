@@ -1,19 +1,8 @@
-﻿@model IEnumerable<Content>
+﻿@model IEnumerable<Facility>
 @{
     var pageIndex = (int)ViewBag.PageIndex;
     var totalRecord = (decimal)ViewBag.TotalRecord;
     var totalPage = Math.Ceiling(totalRecord / 12);
-    var queryParams = Context.Request.Query;
-    var routeParams = new Dictionary<string, string>();
-
-    if (queryParams.Count > 0)
-    {
-        foreach (var key in queryParams.Keys)
-        {
-            queryParams.TryGetValue(key, out var value);
-            routeParams.Add(key, value);
-        }
-    }
 }
 
 <div class="all-title-box">
@@ -42,15 +31,13 @@
                             <div class="course-item">
                                 <div class="course-br" style="background: #cece; height: 250px">
                                     <div class="course-title">
-                                        <h2><a href="#" title="">@(m.Title)</a></h2>
-                                        <span>@m.CreatedAt - source: copy</span>
-                                    </div>
-                                    <div class="course-item">
-                                        <a asp-action="BlogDetails" asp-route-id="@m.ID" >Read more....</a>
+                                        <h2><a href="#" title="">@(m.Name)</a></h2>
+                                        <label>@(string.IsNullOrEmpty(m.Info) && m.Info.Length > 200?m.Info.Substring(0, 200):m.Info)</label><br />
+                                        <label>QTY: @m.Qty</label>
                                     </div>
                                 </div>
                                 <div class="mt-2 text-center">
-                                    <a asp-action="BlogDetails" asp-route-id="@m.ID" class="btn btn-info">Detail</a>
+                                    <a asp-action="FacilityDetails" asp-route-id="@m.ID" class="btn btn-info">Detail</a>
                                 </div>
                             </div>
                         </div>
@@ -65,7 +52,7 @@
                     if (pageIndex > 1)
                     {
                         <li class="paginate_button page-item previous" id="kt_datatable_previous">
-                            <a asp-all-route-data="routeParams" asp-route-PageIndex="@pageIndex - 1)"
+                            <a asp-route-PageIndex="@pageIndex - 1)"
                                aria-controls="kt_datatable" data-dt-idx="0" tabindex="0" class="page-link">
                                 Previous
                             </a>
@@ -90,7 +77,7 @@
                             }
                             else
                             {
-                                <li class="paginate_button page-item"><a asp-all-route-data="routeParams" asp-route-PageIndex="@i" tabindex="0" class="page-link">@i</a></li>
+                                <li class="paginate_button page-item"><a asp-route-PageIndex="@i" tabindex="0" class="page-link">@i</a></li>
                             }
                         }
                     }
@@ -106,16 +93,16 @@
                                 }
                                 else
                                 {
-                                    <li class="paginate_button page-item"><a asp-all-route-data="routeParams" asp-route-PageIndex="@i" tabindex="0" class="page-link">@i</a></li>
+                                    <li class="paginate_button page-item"><a asp-route-PageIndex="@i" tabindex="0" class="page-link">@i</a></li>
                                 }
                             }
 
                             <li class="paginate_button page-item disabled"><button aria-controls="kt_datatable" tabindex="0" class="page-link">...</button></li>
-                            <li class="paginate_button page-item"><a asp-all-route-data="routeParams" asp-route-PageIndex="@totalPage" tabindex="0" class="page-link">@totalPage</a></li>
+                            <li class="paginate_button page-item"><a asp-route-PageIndex="@totalPage" tabindex="0" class="page-link">@totalPage</a></li>
                         }
                         else if (pageIndex < totalPage - 3)
                         {
-                            <li class="paginate_button page-item"><a asp-all-route-data="routeParams" asp-route-PageIndex="1" tabindex="0" class="page-link">1</a></li>
+                            <li class="paginate_button page-item"><a asp-route-PageIndex="1" tabindex="0" class="page-link">1</a></li>
                             <li class="paginate_button page-item disabled"><button aria-controls="kt_datatable" tabindex="0" class="page-link">...</button></li>
                             for (var i = pageIndex - 2; i <= pageIndex + 2; i++)
                             {
@@ -125,15 +112,15 @@
                                 }
                                 else
                                 {
-                                    <li class="paginate_button page-item"><a asp-all-route-data="routeParams" asp-route-PageIndex="@i" tabindex="0" class="page-link">@i</a></li>
+                                    <li class="paginate_button page-item"><a asp-route-PageIndex="@i" tabindex="0" class="page-link">@i</a></li>
                                 }
                             }
                             <li class="paginate_button page-item disabled"><button aria-controls="kt_datatable" tabindex="0" class="page-link">...</button></li>
-                            <li class="paginate_button page-item"><a asp-all-route-data="routeParams" asp-route-PageIndex="@totalPage" tabindex="0" class="page-link">@totalPage</a></li>
+                            <li class="paginate_button page-item"><a asp-route-PageIndex="@totalPage" tabindex="0" class="page-link">@totalPage</a></li>
                         }
                         else
                         {
-                            <li class="paginate_button page-item"><a asp-all-route-data="routeParams" asp-route-PageIndex="1" tabindex="0" class="page-link">1</a></li>
+                            <li class="paginate_button page-item"><a asp-route-PageIndex="1" tabindex="0" class="page-link">1</a></li>
                             <li class="paginate_button page-item disabled"><button aria-controls="kt_datatable" tabindex="0" class="page-link">...</button></li>
                             for (var i = totalPage - 4; i <= totalPage; i++)
                             {
@@ -143,7 +130,7 @@
                                 }
                                 else
                                 {
-                                    <li class="paginate_button page-item"><a asp-all-route-data="routeParams" asp-route-PageIndex="@i" tabindex="0" class="page-link">@i</a></li>
+                                    <li class="paginate_button page-item"><a asp-route-PageIndex="@i" tabindex="0" class="page-link">@i</a></li>
                                 }
                             }
                         }
@@ -152,7 +139,7 @@
                     if (pageIndex < totalPage)
                     {
                         <li class="paginate_button page-item next" id="kt_datatable_next">
-                            <a asp-all-route-data="routeParams" asp-route-PageIndex="@(pageIndex + 1)"
+                            <a asp-route-PageIndex="@(pageIndex + 1)"
                                aria-controls="kt_datatable" data-dt-idx="2" tabindex="0" class="page-link">
                                 @* <i class="ki ki-arrow-next"></i> *@
                                 Next
