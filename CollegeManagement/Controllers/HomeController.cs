@@ -160,7 +160,7 @@ namespace CollegeManagement.Controllers
             var res = new StudentRegisterDTO();
             res.CourseList = await _context.Courses
                 .Where(c => c.Deleted != 1 &&
-                    c.StartDate <= DateTime.Now && c.EndDate.Value.Date >= DateTime.Now.Date && c.Status != 1)
+                    c.StartDate.Value.Date <= DateTime.Now.Date && c.EndDate.Value.Date >= DateTime.Now.Date && c.Status != 1)
                 .Select(c => new CourseSelectDTO {
                     ID = c.ID,
                     Name = $"{c.Name} - {c.Code}"
@@ -175,7 +175,7 @@ namespace CollegeManagement.Controllers
             var res = new StudentRegisterDTO();
             res.Course = await _context.Courses
                 .FirstOrDefaultAsync(c => c.Deleted != 1 && c.ID == id &&
-                    c.StartDate <= DateTime.Now && c.EndDate.Value.Date >= DateTime.Now.Date && c.Status != 1);
+                    c.StartDate.Value.Date <= DateTime.Now.Date && c.EndDate.Value.Date >= DateTime.Now.Date && c.Status != 1);
 
             if (res.Course == null)
             {
