@@ -17,6 +17,7 @@
     <script>
         $(document).ready(function () {
             $('#datatable').DataTable({
+                orderby: [[4, "desc"]],
                 ajax: {
                     url: '/Admin/Auth/GetList',
                     dataSrc: function (res) {

@@ -5,7 +5,7 @@
 
 <h1>Index</h1>
 
-@if (userInfo.Role != "Faculty" || userInfo.Role != "Student")
+@if (!userInfo.Role.Contains("Faculty".ToUpper()) && !userInfo.Role.Contains("Student".ToUpper()))
 {
     <p>
         <a asp-action="Create" class="btn btn-success">Create New</a>
@@ -16,11 +16,18 @@
 
 @section Scripts {
     <script>
-        var showAction = true;
+        var showAction = false;
     </script>
+    @if (!userInfo.Role.Contains("Faculty".ToUpper()) && !userInfo.Role.Contains("Student".ToUpper()))
+    {
+        <script>
+            var showAction = true;
+        </script>
+    }
     <script>
         $(document).ready(function () {
             $('#datatable').DataTable({
+                orderby: [[3, "desc"]],
                 ajax: {
                     url: '/Admin/Department/List',
                     dataSrc: function (res) {
@@ -51,18 +58,16 @@
                     {
                         data: 'id',
                         render: (data, type, row, meta) => {
-                            if (showAction === false) {
-                                return `<div style="pointer-events: none; opacity: 0.65">
-                                            <a href="/Admin/Department/Edit/${row.id}" class="btn btn-action btn-warning"><i class="fa fa-edit"></i></a>
-                                            <a href="/Admin/Department/Details/${row.id}" class="btn btn-action btn-info"><i class="fa fa-eye"></i></a>
-                                            <a href="/Admin/Department/Delete/${row.id}" class="btn btn-action btn-danger"><i class="fa fa-trash"></i></a>
-                                        </div>`
+                            if (showAction === true) {
+
+                                return `<div>
+                                        <a href="/Admin/Department/Edit/${row.id}" class="btn btn-action btn-warning"><i class="fa fa-edit"></i></a>
+                                        <a href="/Admin/Department/Details/${row.id}" class="btn btn-action btn-info"><i class="fa fa-eye"></i></a>
+                                        <a href="/Admin/Department/Delete/${row.id}" class="btn btn-action btn-danger"><i class="fa fa-trash"></i></a>
+                                    </div>`
                             }
-                            return `<div>
-                                            <a href="/Admin/Department/Edit/${row.id}" class="btn btn-action btn-warning"><i class="fa fa-edit"></i></a>
-                                            <a href="/Admin/Department/Details/${row.id}" class="btn btn-action btn-info"><i class="fa fa-eye"></i></a>
-                                            <a href="/Admin/Department/Delete/${row.id}" class="btn btn-action btn-danger"><i class="fa fa-trash"></i></a>
-                                        </div>`
+
+                            return '';
                         }
                     },
                 ],

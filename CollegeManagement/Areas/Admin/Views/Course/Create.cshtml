@@ -266,10 +266,13 @@
                     processData: false,
                     contentType: false,
                     success: function (res) {
+                        removeIndicator()
                         if (res.status) {
-                            removeIndicator()
                             notificationSuccess(res.msg);
                             window.location.href = "@Url.Action("Index","Course")";
+                        } else {
+
+                            notificationError(res.msg);
                         }
                     },
                     error: function (xhr, status, error) {

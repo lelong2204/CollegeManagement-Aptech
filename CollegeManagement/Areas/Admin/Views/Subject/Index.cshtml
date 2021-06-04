@@ -7,7 +7,7 @@
 
 <h1>Index</h1>
 
-@if (userInfo.Role != "Faculty")
+@if (!userInfo.Role.Contains("Faculty".ToUpper()))
 {
     <p>
         <a asp-action="Create" class="btn btn-success">Create New</a>
@@ -17,7 +17,7 @@
 </table>
 
 @section Scripts {
-    @if (userInfo.Role == "Faculty")
+    @if (userInfo.Role.Contains("Faculty".ToUpper()))
     {
         <script>
             var isFaculty = true
