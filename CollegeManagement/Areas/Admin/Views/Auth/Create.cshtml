@@ -13,11 +13,6 @@
     <div class="col-md-4">
         <form asp-action="Create" id="create_form" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group employee">
-                <label asp-for="FullName" class="control-label">Full Name</label>
-                <input asp-for="FullName" class="form-control" />
-                <span asp-validation-for="FullName" class="text-danger"></span>
-            </div>
             <div class="form-group">
                 <label asp-for="Role" class="control-label">Role</label>
                 <select asp-for="Role" class="select2 form-control">
@@ -27,6 +22,11 @@
                     }
                 </select>
                 <span asp-validation-for="Role" class="text-danger"></span>
+            </div>
+            <div class="form-group employee">
+                <label asp-for="FullName" class="control-label">Full Name</label>
+                <input asp-for="FullName" class="form-control" />
+                <span asp-validation-for="FullName" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="UserName" class="control-label">User Name</label>
@@ -65,12 +65,12 @@
                 </select>
                 <span asp-validation-for="TargetID" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group employee">
                 <label asp-for="Image" class="control-label"></label>
                 <button type="button" class="btn btn-info" id="img-select-btn">Change Image</button>
                 <input asp-for="Image" type="file" class="form-control" id="image-select" hidden accept="image/*" />
             </div>
-            <div class="form-group">
+            <div class="form-group employee">
                 <img class="upload-img" />
             </div>
             <div class="form-group">
@@ -144,6 +144,9 @@
             }
 
             $("#ConfirmPassword, #Password").on("change", function () {
+                if (!$("#ConfirmPassword").val() || $("#ConfirmPassword").val() === "") {
+                    return;
+                }
                 if ($("#ConfirmPassword").val() !== $("#Password").val()) {
                     $("#ConfirmPasswordError").text("New password and confirm password doesn't match")
                 } else {
